@@ -1,0 +1,45 @@
+# github.com/PaulSonOfLars/goloc v0.0.0-20190928104011-41745139b91a
+github.com/PaulSonOfLars/goloc
+# github.com/PaulSonOfLars/gotgbot v0.0.0-20191013160946-137f6d2752cc
+github.com/PaulSonOfLars/gotgbot
+github.com/PaulSonOfLars/gotgbot/ext
+github.com/PaulSonOfLars/gotgbot/handlers
+github.com/PaulSonOfLars/gotgbot/handlers/Filters
+github.com/PaulSonOfLars/gotgbot/parsemode
+# github.com/go-redis/redis v6.15.6+incompatible
+github.com/go-redis/redis
+github.com/go-redis/redis/internal
+github.com/go-redis/redis/internal/consistenthash
+github.com/go-redis/redis/internal/hashtag
+github.com/go-redis/redis/internal/pool
+github.com/go-redis/redis/internal/proto
+github.com/go-redis/redis/internal/util
+# github.com/google/uuid v1.1.1
+github.com/google/uuid
+# github.com/jinzhu/gorm v1.9.11
+github.com/jinzhu/gorm
+github.com/jinzhu/gorm/dialects/postgres
+# github.com/jinzhu/inflection v1.0.0
+github.com/jinzhu/inflection
+# github.com/joho/godotenv v1.3.0
+github.com/joho/godotenv
+# github.com/konsorten/go-windows-terminal-sequences v1.0.2
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/lib/pq v1.2.0
+github.com/lib/pq
+github.com/lib/pq/hstore
+github.com/lib/pq/oid
+github.com/lib/pq/scram
+# github.com/pkg/errors v0.8.1
+github.com/pkg/errors
+# github.com/sirupsen/logrus v1.4.2
+github.com/sirupsen/logrus
+# golang.org/x/sys v0.0.0-20191025090151-53bf42e6b339
+golang.org/x/sys/unix
+# golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/language
+# golang.org/x/tools v0.0.0-20190312170243-e65039ee4138
+golang.org/x/tools/go/ast/astutil

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translation>
+    <Rows id="1" name="modules/language.go:51">
+        <value>Bahasa telah diubah ke {1}.</value>
+        <!--modules/language.go:51-->
+    </Rows>
+    <Rows id="2" name="modules/language.go:58">
+        <value>&lt;b&gt;Maaf, bahasa tersebut belum didukung!&lt;/b&gt;</value>
+        <!--modules/language.go:58-->
+    </Rows>
+    <Counter>2</Counter>
+</translation>

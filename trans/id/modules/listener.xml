@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translation>
+    <Rows id="1" name="modules/listener.go:45">
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena belum menggunakan &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="2" name="modules/listener.go:51">
+        <value>🔊 Saya sudah pasang username</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="3" name="modules/listener.go:56">
+        <value>Unban Pengguna (Hanya Admin)</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="4" name="modules/listener.go:173">
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena belum menggunakan &lt;b&gt;foto profil&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="5" name="modules/listener.go:179">
+        <value>🔊 Saya sudah pasang foto</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="6" name="modules/listener.go:184">
+        <value>Unban Pengguna (Admin Saja)</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="7" name="modules/listener.go:298">
+        <value>🙋‍ &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; selamat datang di &lt;b&gt;{3}&lt;/b&gt; tekan tombol dibawah untuk &lt;b&gt;verifikasi&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="8" name="modules/listener.go:303">
+        <value>✅ Verifikasi</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="9" name="modules/listener.go:580">
+        <value>🚫 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;dibanned&lt;/b&gt;. [&lt;code&gt;{3}&lt;/code&gt;]</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="10" name="modules/listener.go:441">
+        <value>✅ Terimakasih</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="11" name="modules/listener.go:454">
+        <value>🚫 Anda belum memasang username.</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="12" name="modules/listener.go:458">
+        <value>🚫 Anda bukan pengguna yang dimaksud.</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="13" name="modules/listener.go:498">
+        <value>✅ Terimakasih.</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="14" name="modules/listener.go:511">
+        <value>🚫 Anda belum memasang profile picture.</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="15" name="modules/listener.go:515">
+        <value>🚫 Anda bukan pengguna yang dimaksud.</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="16" name="modules/listener.go:552">
+        <value>✅ Terimakasih</value>
+        <!--modules/listener.go:41-->
+    </Rows>
+    <Rows id="17" name="modules/listener.go:566">
+        <value>🚫 Anda bukan pengguna yang dimaksud.</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="18" name="modules/warn">
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;PERINGATKAN&lt;/b&gt; karena dia belum memasang &lt;b&gt;username&lt;/b&gt;. Peringatan {3}/{4} [&lt;code&gt;{5}&lt;/code&gt;]</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="19" name="modules/warn2">
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;DIKELUARKAN&lt;/b&gt; karena telah memiliki {3}/{4} peringatan [&lt;code&gt;{5}&lt;/code&gt;]</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Rows id="18" name="modules/warn3">
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;PERINGATKAN&lt;/b&gt; karena dia belum memasang &lt;b&gt;foto profil&lt;/b&gt;. Peringatan {3}/{4} [&lt;code&gt;{5}&lt;/code&gt;]</value>
+        <!--modules/listener.go:26-->
+    </Rows>
+    <Counter>20</Counter>
+</translation>
