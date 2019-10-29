@@ -42,8 +42,7 @@ func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
 				go func() { db <- sql.UpdateUserSpam(userid, reason) }()
 				err_handler.HandleTgErr(b, u, <-db)
 				_, err = msg.ReplyHTML(GetStringf(msg.Chat.Id, "modules/admins.go:46",
-					map[string]string{"1": strconv.Itoa(userid), "2": ban.Reason, "3":
-					strings.SplitN(msg.Text, " ", 3)[2]}))
+					map[string]string{"1": strconv.Itoa(userid), "2": ban.Reason, "3": strings.SplitN(msg.Text, " ", 3)[2]}))
 				err_handler.HandleErr(err)
 				err = logger.SendBanLog(b, userid, reason, u)
 				return err

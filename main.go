@@ -1,30 +1,15 @@
 package main
 
 import (
-	"github.com/PaulSonOfLars/goloc"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
 )
 
-func loadlang() {
-	files, err := ioutil.ReadDir("trans")
-	err_handler.FatalError(err)
-	for _, f := range files {
-		if f.IsDir() {
-			goloc.LoadAll(f.Name())
-		}
-	}
-}
-
 func main() {
-	// language
-	loadlang()
-
 	// connect DB
 	sql.InitDb()
 
@@ -33,8 +18,8 @@ func main() {
 	err_handler.FatalError(err)
 
 	// registering handlers
-	modules.LoadAdmins(updater)
 	modules.LoadLang(updater)
+	modules.LoadAdmins(updater)
 	modules.LoadSetting(updater)
 	modules.LoadSettingPanel(updater)
 	modules.LoadPm(updater)

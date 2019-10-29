@@ -169,6 +169,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 				fotoprofil := sql.GetPicture(chat.Id)
 				waktu := sql.GetSetting(chat.Id)
 				ver := sql.GetVerify(chat.Id)
+				warn := sql.GetWarnSetting(strconv.Itoa(chat.Id))
 
 				// Separating Queries
 				z, _ := regexp.MatchString("^m[cdef]_del$", msg.Data)
@@ -176,6 +177,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 				f, _ := regexp.MatchString("^md_(kick|ban|mute|warn)$", msg.Data)
 				g, _ := regexp.MatchString("^m[cdeo]_toggle$", msg.Data)
 				d, _ := regexp.MatchString("^mf_(plus|minus|duration|waktu)$", msg.Data)
+				k, _ := regexp.MatchString("^mb_(plus|minus|warn)$", msg.Data)
 
 				// Username Control Panel
 				if a == true {
@@ -257,6 +259,23 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 					} else if strings.Split(msg.Data, "mf_")[1] == "waktu" {
 						_, err := b.AnswerCallbackQueryText(msg.Id,
 							"🔄 Mengatur tenggat waktu untuk semua aksi.", true)
+						return err
+					}
+				} else if k == true {
+					// Warn Control Panel
+					if strings.Split(msg.Data, "mb_")[1] == "plus" {
+						sql.SetWarnLimit(strconv.Itoa(chat.Id), warn+1)
+						err_handler.HandleCbErr(b, u, err)
+						err = updateusercontrol(b, u)
+						return err
+					} else if strings.Split(msg.Data, "mb_")[1] == "minus" {
+						sql.SetWarnLimit(strconv.Itoa(chat.Id), warn-1)
+						err_handler.HandleCbErr(b, u, err)
+						err = updateusercontrol(b, u)
+						return err
+					} else if strings.Split(msg.Data, "mb_")[1] == "warn" {
+						_, err := b.AnswerCallbackQueryText(msg.Id,
+							"🔄 Mengatur hukuman untuk warn.", true)
 						return err
 					}
 				} else if g == true {
@@ -366,17 +385,12 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 
 func LoadSettingPanel(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewCommand("setting", panel))
-	u.Dispatcher.AddHandler(handlers.NewCallback(
-		regexp.MustCompile("^m[cdefg]_(toggle|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)").String(),
+	u.Dispatcher.AddHandler(handlers.NewCallback("^m[cdefgb]_(toggle|warn|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)",
 		usercontrolquery))
 	u.Dispatcher.AddHandler(handlers.NewCallback(
-		regexp.MustCompile("^mo_toggle").String(),
+		"mo_toggle",
 		spamcontrolquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^mk_").String(),
-		settingquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^close").String(),
-		closequery))
-	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^back_").String(),
-		backquery))
-
+	u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
 }

@@ -10,7 +10,34 @@ import (
 	"github.com/jumatberkah/antispambot/bot/helpers/chat_status"
 	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
+	"io/ioutil"
 )
+
+func loadlang() {
+	files, err := ioutil.ReadDir("trans")
+	err_handler.FatalError(err)
+	for _, f := range files {
+		if f.IsDir() {
+			goloc.LoadAll(f.Name())
+		}
+	}
+}
+
+//func loadlangbutton() [][]ext.InlineKeyboardButton {
+//files, err := ioutil.ReadDir("trans")
+//err_handler.FatalError(err)
+//num := 0
+//kn := make([][]ext.InlineKeyboardButton, 0)
+//ki := make([]ext.InlineKeyboardButton, 0)
+//for _, f := range files {
+//if f.IsDir() {
+//num++
+//ki[num-1] = ext.InlineKeyboardButton{Text: f.Name(), CallbackData: fmt.Sprintf("lang_%v", f.Name())}
+//}
+//}
+//kn = append(kn, ki)
+//return kn
+//}
 
 func GetString(chat_id int, val string) string {
 	var err error
@@ -73,5 +100,6 @@ func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
 }
 
 func LoadLang(u *gotgbot.Updater) {
+	loadlang()
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("setlang", setlang))
 }

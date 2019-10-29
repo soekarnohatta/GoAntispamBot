@@ -398,9 +398,9 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 					r := &spammer{}
 					response, err := http.Get(fmt.Sprintf("https://combot.org/api/cas/check?user_id=%v", user.Id))
 					err_handler.HandleErr(err)
-					if response.Close{
+					if response.Close {
 						return
-					} else if response != nil{
+					} else if response != nil {
 						body, err := ioutil.ReadAll(response.Body)
 						err_handler.HandleErr(err)
 						err = json.Unmarshal(body, &r)
@@ -702,6 +702,6 @@ func LoadListeners(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), verify))
 	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^(umute|uba)_\\d+$").String(), usernamequery))
 	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^(pmute|pban)_\\d+$").String(), picturequery))
-	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^wlcm_\\d+$").String(), verifyquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("wlcm_", verifyquery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("rmWarn", warnquery))
 }

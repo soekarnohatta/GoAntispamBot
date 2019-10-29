@@ -20,7 +20,7 @@ func MainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButt
 		a[0][0], a[1][0], a[2][0], a[0][1], a[1][1], a[2][1], a[0][2], a[2][3], a[3][0])
 
 	// Create Button(s)
-	var kn = make([][]ext.InlineKeyboardButton, 0)
+	kn := make([][]ext.InlineKeyboardButton, 0)
 
 	ki := make([]ext.InlineKeyboardButton, 6)
 	ki[0] = ext.InlineKeyboardButton{Text: a[0][0], CallbackData: "mc_toggle"}
@@ -40,13 +40,16 @@ func MainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButt
 	kd[5] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "md_del"}
 	kn = append(kn, kd)
 
-	kj := make([]ext.InlineKeyboardButton, 5)
+	kj := make([]ext.InlineKeyboardButton, 2)
 	kj[0] = ext.InlineKeyboardButton{Text: a[0][2], CallbackData: "me_toggle"}
-	kj[1] = ext.InlineKeyboardButton{Text: " ", CallbackData: "-"}
-	kj[2] = ext.InlineKeyboardButton{Text: " ", CallbackData: "-"}
-	kj[3] = ext.InlineKeyboardButton{Text: " ", CallbackData: "-"}
-	kj[4] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "me_del"}
+	kj[1] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "me_del"}
 	kn = append(kn, kj)
+
+	kk := make([]ext.InlineKeyboardButton, 5)
+	kk[0] = ext.InlineKeyboardButton{Text: "❗", CallbackData: "mb_warn"}
+	kk[1] = ext.InlineKeyboardButton{Text: "➕", CallbackData: "mb_plus"}
+	kk[2] = ext.InlineKeyboardButton{Text: "➖", CallbackData: "mb_minus"}
+	kn = append(kn, kk)
 
 	ku := make([]ext.InlineKeyboardButton, 5)
 	ku[0] = ext.InlineKeyboardButton{Text: "🕑", CallbackData: "mf_waktu"}

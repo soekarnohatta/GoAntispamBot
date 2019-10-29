@@ -7,7 +7,7 @@ import (
 type Warns struct {
 	UserId   string         `gorm:"primary_key"`
 	ChatId   string         `gorm:"primary_key"`
-	NumWarns int            `gorm:"default:3"`
+	NumWarns int            `gorm:"default:2"`
 	Reasons  pq.StringArray `gorm:"type:varchar(64)[]"`
 }
 
