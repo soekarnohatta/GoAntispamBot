@@ -13,7 +13,7 @@ type User struct {
 
 type Chat struct {
 	ChatId    string `gorm:"primary_key"`
-	ChatTitle string `gorm:"not null"`
+	ChatTitle string
 	ChatType  string `gorm:"not null"`
 	ChatLink  string
 }
@@ -22,7 +22,6 @@ func UpdateUser(userid int, username string, name string) error {
 	username = strings.ToLower(username)
 	tx := SESSION.Begin()
 
-	// upsert user
 	user := &User{UserId: userid, UserName: username, Name: name}
 	tx.Where(User{UserId: userid}).Assign(User{UserName: username, Name: name}).FirstOrCreate(user)
 	tx.Commit()
@@ -30,13 +29,12 @@ func UpdateUser(userid int, username string, name string) error {
 }
 
 func UpdateChat(chatid string, chattitle string, chattype string, clink string) error {
-	if chatid == "" || chattitle == "" {
-		return errors.New("Chat ID or Chat Title Should Not Nil")
+	if chatid == "" {
+		return errors.New("Chat Title Should Not Nil")
 	}
 
 	tx := SESSION.Begin()
 
-	// upsert chat
 	chat := &Chat{ChatId: chatid, ChatTitle: chattitle, ChatType: chattype, ChatLink: clink}
 	tx.Where(Chat{ChatId: chatid}).Assign(Chat{ChatTitle: chattitle, ChatType: chattype,
 		ChatLink: clink}).FirstOrCreate(chat)

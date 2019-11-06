@@ -13,7 +13,6 @@ type Setting struct {
 func UpdateSetting(chatid int, time string, delete string) error {
 	tx := SESSION.Begin()
 
-	// upsert setting
 	set := &Setting{Time: time, Deletion: delete}
 	tx.Where(Setting{ChatId: strconv.Itoa(chatid)}).Assign(Setting{Time: time, Deletion: delete}).FirstOrCreate(set)
 	tx.Commit()

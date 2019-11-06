@@ -10,6 +10,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"strconv"
+	"time"
 )
 
 type cache struct {
@@ -39,7 +40,7 @@ func admincache(chat *ext.Chat) {
 	}
 	one := &cache{admins}
 	jsonad, _ := json.Marshal(one)
-	sql.REDIS.Set(fmt.Sprintf("admin_%v", chat.Id), jsonad, 3600)
+	sql.REDIS.Set(fmt.Sprintf("admin_%v", chat.Id), jsonad, time.Hour*2)
 }
 
 func IsUserAdmin(chat *ext.Chat, user_id int) bool {
@@ -51,8 +52,10 @@ func IsUserAdmin(chat *ext.Chat, user_id int) bool {
 	}
 
 	admins, err := sql.REDIS.Get(fmt.Sprintf("admin_%v", chat.Id)).Result()
-	if err == redis.Nil {
-		admincache(chat)
+	if err != nil {
+		if err == redis.Nil {
+			admincache(chat)
+		}
 	}
 
 	var p cache
@@ -97,6 +100,24 @@ func RequireBotAdmin(chat *ext.Chat, msg *ext.Message) bool {
 func RequireUserAdmin(chat *ext.Chat, msg *ext.Message, userId int, member *ext.ChatMember) bool {
 	if !IsUserAdmin(chat, userId) {
 		_, err := msg.ReplyText("Anda harus menjadi administrator untuk melakukannya.")
+		err_handler.HandleErr(err)
+		return false
+	}
+	return true
+}
+
+func RequirePrivate(chat *ext.Chat, msg *ext.Message) bool {
+	if chat.Type != "private" {
+		_, err := msg.ReplyText("Penggunaan dibatasi pada pesan privat!")
+		err_handler.HandleErr(err)
+		return false
+	}
+	return true
+}
+
+func RequireSupergroup(chat *ext.Chat, msg *ext.Message) bool {
+	if chat.Type != "supergroup" {
+		_, err := msg.ReplyText("Penggunaan dibatasi pada supergrup!")
 		err_handler.HandleErr(err)
 		return false
 	}

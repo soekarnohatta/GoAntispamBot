@@ -16,7 +16,7 @@ func setusername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat.Type == "supergroup" {
+	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id, nil) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
@@ -49,7 +49,7 @@ func setverify(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat.Type == "supergroup" {
+	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id, nil) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
@@ -82,7 +82,7 @@ func setenforce(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat.Type == "supergroup" {
+	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id, nil) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
@@ -115,7 +115,7 @@ func setpicture(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat.Type == "supergroup" {
+	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id, nil) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
@@ -148,7 +148,7 @@ func settime(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat.Type == "supergroup" {
+	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id, nil) {
 			if len(args) != 0 {
 				match, err := regexp.MatchString("^\\d+[mhd]", strings.ToLower(args[0]))
@@ -158,23 +158,54 @@ func settime(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					err_handler.HandleErr(<-db)
 					_, err := msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:1"))
 					return err
-				} else {
-					_, err = msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:3"))
-					return err
 				}
-			} else {
-				_, err := msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:3"))
+				_, err = msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:3"))
 				return err
 			}
+			_, err := msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:3"))
+			return err
 		}
 	}
 	return gotgbot.ContinueGroups{}
 }
 
+func setnotif(_ ext.Bot, u *gotgbot.Update, args []string) error {
+	msg := u.EffectiveMessage
+	chat := u.EffectiveChat
+	user := u.EffectiveUser
+
+	if chat_status.RequirePrivate(chat, msg) == true {
+		if len(args) != 0 {
+			if strings.ToLower(args[0]) == "true" {
+				db := make(chan error)
+				go func() { db <- sql.UpdateNotification(user.Id, "true") }()
+				err_handler.HandleErr(<-db)
+				_, err := msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:1"))
+				return err
+			} else if strings.ToLower(args[0]) == "false" {
+				db := make(chan error)
+				go func() { db <- sql.UpdateNotification(user.Id, "true") }()
+				err_handler.HandleErr(<-db)
+				_, err := msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:1"))
+				return err
+			} else {
+				_, err := msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:2"))
+				return err
+			}
+		} else {
+			_, err := msg.ReplyHTML(GetString(chat.Id, "modules/setting.go:2"))
+			return err
+		}
+	}
+	return nil
+}
+
+// LoadSetting -> Register handlers
 func LoadSetting(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("username", setusername))
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("verify", setverify))
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("profilepicture", setpicture))
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("time", settime))
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("enforce", setenforce))
+	u.Dispatcher.AddHandler(handlers.NewArgsCommand("notif", setnotif))
 }

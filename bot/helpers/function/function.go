@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/jumatberkah/antispambot/bot/helpers/extraction"
+	"github.com/jumatberkah/antispambot/bot/modules/sql"
+	"strconv"
 )
 
 func MainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
@@ -14,10 +16,11 @@ func MainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButt
 		"<i>Baris Ketiga: Kontrol Verifikasi</i>\n"+
 		"<i>Baris Keempat: Kontrol Waktu dan Penghapusan Pesan</i>\n\n"+
 		"🔇 = <b>Mute</b>\n🚷 = <b>Kick</b>\n⛔ = <b>Ban</b>\n🔄 = <b>Reset</b>\n⚪/🔵 = <b>On/Off</b>\n"+
-		"🗑 = <b>Hapus Pesan Terkait</b>\n❗️= Warn\n\n------------------------------------------------"+
+		"🗑 = <b>Hapus Pesan Terkait</b>\n❗️= <b>Warn</b>\n\n------------------------------------------------"+
 		"<b>Kontrol Username	:</b> %v %v %v\n<b>Kontrol Foto Profil	:</b> %v %v %v\n"+
-		"<b>Kontrol Verifikasi	:</b> %v %v\n<b>Tenggat Waktu		:</b> %v \n",
-		a[0][0], a[1][0], a[2][0], a[0][1], a[1][1], a[2][1], a[0][2], a[2][3], a[3][0])
+		"<b>Kontrol Verifikasi	:</b> %v %v\n<b>Tenggat Waktu		:</b> %v \n<b>Jml Peringatan</b>	: %v",
+		a[0][0], a[1][0], a[2][0], a[0][1], a[1][1], a[2][1], a[0][2], a[2][3], a[3][0],
+		sql.GetWarnSetting(strconv.Itoa(chatId)))
 
 	// Create Button(s)
 	kn := make([][]ext.InlineKeyboardButton, 0)
@@ -45,7 +48,7 @@ func MainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButt
 	kj[1] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "me_del"}
 	kn = append(kn, kj)
 
-	kk := make([]ext.InlineKeyboardButton, 5)
+	kk := make([]ext.InlineKeyboardButton, 3)
 	kk[0] = ext.InlineKeyboardButton{Text: "❗", CallbackData: "mb_warn"}
 	kk[1] = ext.InlineKeyboardButton{Text: "➕", CallbackData: "mb_plus"}
 	kk[2] = ext.InlineKeyboardButton{Text: "➖", CallbackData: "mb_minus"}

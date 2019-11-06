@@ -60,6 +60,7 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 
 	var ent *ext.ParsedMessageEntity
 	var isId = false
+
 	if len(entities) > 0 {
 		ent = &entities[0]
 	} else {
@@ -69,7 +70,10 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 	if entities != nil && ent != nil && ent.Offset == (len(m.Text)-len(textToParse)) {
 		ent = &entities[0]
 		userId = ent.User.Id
-		text = strconv.Itoa(int(m.Text[ent.Offset+ent.Length]))
+		res := strings.SplitN(m.Text, " ", 3)
+		if len(res) >= 3 {
+			text = res[2]
+		}
 	} else if len(args) >= 1 && args[0][0] == '@' {
 		user := args[0]
 		userId = GetUserId(user)
@@ -123,11 +127,13 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 	return userId, text
 }
 
+// ExtractUser -> Extract an user id
 func ExtractUser(message *ext.Message, args []string) int {
-	userId, _ := ExtractUserAndText(message, args)
-	return userId
+	userID, _ := ExtractUserAndText(message, args)
+	return userID
 }
 
+// ExtractTime -> Extract the desired time
 func ExtractTime(b ext.Bot, m *ext.Message, timeVal string) int64 {
 	lastLetter := timeVal[len(timeVal)-1:]
 	lastLetter = strings.ToLower(lastLetter)

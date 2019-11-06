@@ -15,7 +15,6 @@ type Username struct {
 func UpdateUsername(chatid int, option string, action string, text string, del string) error {
 	tx := SESSION.Begin()
 
-	// upsert spam user
 	username := &Username{ChatId: strconv.Itoa(chatid), Option: option,
 		Action: action, Text: text, Deletion: del}
 	tx.Where(Username{ChatId: strconv.Itoa(chatid)}).Assign(Username{Option: option,

@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
@@ -13,11 +12,10 @@ import (
 	"github.com/jumatberkah/antispambot/bot/helpers/extraction"
 	"github.com/jumatberkah/antispambot/bot/helpers/logger"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 type spammer struct {
@@ -49,22 +47,20 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 				kb := make([][]ext.InlineKeyboardButton, 1)
 				kb[0] = make([]ext.InlineKeyboardButton, 1)
 				kb[0][0] = ext.InlineKeyboardButton{Text: GetString(chat.Id, "modules/listener.go:51"),
-					CallbackData: fmt.Sprintf("umute_%v", user.Id)}
+					CallbackData: fmt.Sprintf("umute_%v_%v", user.Id, chat.Id)}
 
 				kbk := make([][]ext.InlineKeyboardButton, 1)
 				kbk[0] = make([]ext.InlineKeyboardButton, 1)
 				kbk[0][0] = ext.InlineKeyboardButton{Text: GetString(chat.Id, "modules/listener.go:56"),
-					CallbackData: fmt.Sprintf("uba_%v", user.Id)}
+					CallbackData: fmt.Sprintf("uba_%v_%v", user.Id, chat.Id)}
 
 				markup := &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 
 				if db.Action != "warn" {
-					// Send Message
 					reply := b.NewSendableMessage(chat.Id, replytext)
 					reply.ParseMode = parsemode.Html
 					reply.ReplyToMessageId = msg.MessageId
 
-					// Implementing The Chosen Action To The Target
 					if db.Action == "mute" {
 						restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
 						restrictSend.UntilDate = bantime
@@ -77,14 +73,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 						}
 						markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 					} else if db.Action == "kick" {
-						restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
-						_, err = restrictSend.Send()
-						if err != nil {
-							if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-								_, err = b.SendMessage(chat.Id, err.Error())
-								return err
-							}
-						}
 						_, err = b.UnbanChatMember(chat.Id, user.Id)
 						if err != nil {
 							if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
@@ -105,7 +93,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 						}
 						markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kbk}
 					}
-					// Send message
 					reply.ReplyMarkup = markup
 					_, err = reply.Send()
 					if err != nil {
@@ -113,12 +100,20 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 							reply.ReplyToMessageId = 0
 							_, err = reply.Send()
 							return err
-						} else {
-							err_handler.HandleErr(err)
 						}
+						err_handler.HandleErr(err)
+					}
+					if sql.GetNotification(user.Id).Notification == "true" {
+						txt := GetStringf(user.Id, "unamep",
+							map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
+								"4": strconv.Itoa(user.Id), "5": chat.Title})
+						reply.Text = txt
+						reply.ReplyToMessageId = 0
+						reply.ChatId = user.Id
+						_, err = reply.Send()
+						err_handler.HandleErr(err)
 					}
 				} else {
-					// Send Warn
 					limit := sql.GetWarnSetting(strconv.Itoa(chat.Id))
 					warns, _ := sql.WarnUser(strconv.Itoa(user.Id), strconv.Itoa(chat.Id), "Username")
 
@@ -133,7 +128,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 					} else {
 						kb := make([][]ext.InlineKeyboardButton, 1)
 						kb[0] = make([]ext.InlineKeyboardButton, 1)
-						kb[0][0] = ext.InlineKeyboardButton{Text: "Remove Warn (Admin Only)",
+						kb[0][0] = ext.InlineKeyboardButton{Text: GetString(chat.Id, "rmwarn"),
 							CallbackData: fmt.Sprintf("rmWarn(%v)", user.Id)}
 						keyboard = ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 						replytext = GetStringf(msg.Chat.Id, "modules/warn",
@@ -150,9 +145,15 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 						msgs.ReplyToMessageId = 0
 						_, err = msgs.Send()
 					}
+					if sql.GetNotification(user.Id).Notification == "true" {
+						msgs.ReplyMarkup = nil
+						msgs.ReplyToMessageId = 0
+						msgs.ChatId = user.Id
+						_, err = msgs.Send()
+						err_handler.HandleErr(err)
+					}
 				}
 
-				// Delete His/Her Message(s)
 				if db.Deletion == "true" {
 					_, err = msg.Delete()
 					if err != nil {
@@ -183,9 +184,11 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
 		return gotgbot.EndGroups{}
 	}
+	if chat.Type != "supergroup" {
+		return gotgbot.EndGroups{}
+	}
 
 	photo, _ := user.GetProfilePhotos(0, 0)
-
 	if photo != nil && photo.TotalCount == 0 {
 		bantime := extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 		replytext := GetStringf(msg.Chat.Id, "modules/listener.go:173",
@@ -195,21 +198,19 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 		kb := make([][]ext.InlineKeyboardButton, 1)
 		kb[0] = make([]ext.InlineKeyboardButton, 1)
 		kb[0][0] = ext.InlineKeyboardButton{Text: GetString(chat.Id, "modules/listener.go:179"),
-			CallbackData: fmt.Sprintf("pmute_%v", user.Id)}
+			CallbackData: fmt.Sprintf("pmute_%v_%v", user.Id, chat.Id)}
 
 		kbk := make([][]ext.InlineKeyboardButton, 1)
 		kbk[0] = make([]ext.InlineKeyboardButton, 1)
 		kbk[0][0] = ext.InlineKeyboardButton{Text: GetString(chat.Id, "modules/listener.go:184"),
-			CallbackData: fmt.Sprintf("pban_%v", user.Id)}
+			CallbackData: fmt.Sprintf("pban_%v_%v", user.Id, chat.Id)}
 
 		markup := &ext.InlineKeyboardMarkup{}
 
-		// Send Message
 		reply := b.NewSendableMessage(chat.Id, replytext)
 		reply.ParseMode = parsemode.Html
 		reply.ReplyToMessageId = msg.MessageId
 
-		// Implementing The Chosen Action To The Target
 		if db.Action != "warn" {
 			if db.Action == "mute" {
 				restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
@@ -223,14 +224,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 				}
 				markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 			} else if db.Action == "kick" {
-				restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
-				_, err = restrictSend.Send()
-				if err != nil {
-					if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-						_, err = b.SendMessage(chat.Id, err.Error())
-						return err
-					}
-				}
 				_, err = b.UnbanChatMember(chat.Id, user.Id)
 				if err != nil {
 					if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
@@ -251,7 +244,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 				}
 				markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kbk}
 			}
-			// Send message
 			reply.ReplyMarkup = markup
 			_, err = reply.Send()
 			if err != nil {
@@ -259,12 +251,20 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 					reply.ReplyToMessageId = 0
 					_, err = reply.Send()
 					return err
-				} else {
-					err_handler.HandleErr(err)
 				}
+				err_handler.HandleErr(err)
+			}
+			if sql.GetNotification(user.Id).Notification == "true" {
+				txt := GetStringf(user.Id, "picturep",
+					map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
+						"4": strconv.Itoa(user.Id), "5": chat.Title})
+				reply.Text = txt
+				reply.ReplyToMessageId = 0
+				reply.ChatId = user.Id
+				_, err = reply.Send()
+				err_handler.HandleErr(err)
 			}
 		} else {
-			// Send Warn
 			limit := sql.GetWarnSetting(strconv.Itoa(chat.Id))
 			warns, _ := sql.WarnUser(strconv.Itoa(user.Id), strconv.Itoa(chat.Id), "No Profile Picture")
 
@@ -279,7 +279,7 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			} else {
 				kb := make([][]ext.InlineKeyboardButton, 1)
 				kb[0] = make([]ext.InlineKeyboardButton, 1)
-				kb[0][0] = ext.InlineKeyboardButton{Text: "Remove Warn (Admin Only)",
+				kb[0][0] = ext.InlineKeyboardButton{Text: GetString(chat.Id, "rmwarn"),
 					CallbackData: fmt.Sprintf("rmWarn(%v)", user.Id)}
 				keyboard = ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 				reply = GetStringf(msg.Chat.Id, "modules/warn3",
@@ -296,9 +296,15 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 				msgs.ReplyToMessageId = 0
 				_, err = msgs.Send()
 			}
+			if sql.GetNotification(user.Id).Notification == "true" {
+				msgs.ReplyMarkup = nil
+				msgs.ReplyToMessageId = 0
+				msgs.ChatId = user.Id
+				_, err = msgs.Send()
+				err_handler.HandleErr(err)
+			}
 		}
 
-		// Delete His/Her Message(s)
 		if db.Deletion == "true" {
 			_, err = msg.Delete()
 			if err != nil {
@@ -379,6 +385,69 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 	return gotgbot.ContinueGroups{}
 }
 
+func antispam(b ext.Bot, u *gotgbot.Update) error {
+	var err error
+	user := u.EffectiveUser
+	chat := u.EffectiveChat
+	msg := u.EffectiveMessage
+	db := sql.GetAntispam(chat.Id)
+
+	if db.Option == "false" {
+		return gotgbot.EndGroups{}
+	}
+	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
+		return gotgbot.EndGroups{}
+	}
+
+	if db.Arabs == "true" {
+		for _, a := range user.FirstName {
+			if unicode.Is(unicode.Arabic, a) {
+				return nil
+			}
+		}
+
+	} else if db.Forward == "true" {
+		if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
+			return nil
+		}
+	} else if db.Link == "true" {
+		accepted := make(map[string]struct{})
+		accepted["url"] = struct{}{}
+		entities := msg.ParseEntityTypes(accepted)
+
+		var ent *ext.ParsedMessageEntity
+
+		if len(entities) > 0 {
+			ent = &entities[0]
+		} else {
+			ent = nil
+		}
+
+		if entities != nil && ent != nil {
+			ent = &entities[0]
+		}
+	} else if db.NonLatin == "true" {
+		for _, a := range msg.Text {
+			if unicode.Is(unicode.Latin, a) == false {
+				return nil
+			}
+		}
+	}
+
+	// Delete His/Her Message(s)
+	if db.Deletion == "true" {
+		_, err = msg.Delete()
+		if err != nil {
+			if err.Error() == "Bad Request: message can't be deleted" {
+				_, err = msg.ReplyText(err.Error())
+				return err
+			}
+		}
+	}
+
+	return gotgbot.ContinueGroups{}
+}
+
 func spam(b ext.Bot, u *gotgbot.Update) error {
 	user := u.EffectiveUser
 	chat := u.EffectiveChat
@@ -394,32 +463,12 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	if msg != nil {
 		if chat.Type == "supergroup" {
 			if sql.GetEnforceGban(chat.Id).Option == "true" {
-				go func() {
-					r := &spammer{}
-					response, err := http.Get(fmt.Sprintf("https://combot.org/api/cas/check?user_id=%v", user.Id))
-					err_handler.HandleErr(err)
-					if response.Close {
-						return
-					} else if response != nil {
-						body, err := ioutil.ReadAll(response.Body)
-						err_handler.HandleErr(err)
-						err = json.Unmarshal(body, &r)
-						err_handler.HandleErr(err)
-						if r.Status == true {
-							err = spamfunc(b, u)
-							err_handler.HandleErr(err)
-							err = logger.SendLog(b, u, "spam", "CAS Banned (Powered By CAS)")
-							err_handler.HandleErr(err)
-						}
-					}
-				}()
-
 				ban := sql.GetUserSpam(user.Id)
 				if ban != nil {
 					err := spamfunc(b, u)
 					err_handler.HandleErr(err)
 					err = logger.SendLog(b, u, "spam", ban.Reason)
-					return err
+					return gotgbot.EndGroups{}
 				}
 			}
 		}
@@ -436,6 +485,7 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 		db := make(chan error)
 		go func() { db <- sql.UpdateUser(user.Id, user.Username, user.FirstName) }()
 		err_handler.HandleErr(<-db)
+		db = make(chan error)
 		go func() { db <- sql.UpdateChat(strconv.Itoa(chat.Id), chat.Title, chat.Type, chat.InviteLink) }()
 		err_handler.HandleErr(<-db)
 
@@ -478,6 +528,11 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 			go func() { db <- sql.UpdateLang(chat.Id, "id") }()
 			err_handler.HandleErr(<-db)
 		}
+		if sql.GetNotification(user.Id) == nil {
+			db := make(chan error)
+			go func() { db <- sql.UpdateNotification(user.Id, "true") }()
+			err_handler.HandleErr(<-db)
+		}
 	}
 	return gotgbot.ContinueGroups{}
 }
@@ -489,33 +544,48 @@ func usernamequery(b ext.Bot, u *gotgbot.Update) error {
 	chat := msg.Message.Chat
 
 	if msg != nil {
-		if chat.Type == "supergroup" {
-			data, _ := regexp.MatchString("^umute_\\d+$", msg.Data)
-			data2, _ := regexp.MatchString("^uba_\\d+$", msg.Data)
-			if data == true {
-				if strings.Split(msg.Data, "umute_")[1] == strconv.Itoa(user.Id) {
-					if user.Username != "" {
-						_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:441"), true)
-						if err != nil {
-							_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-							return err
-						}
-						_, err = msg.Message.Delete()
-						if err != nil {
-							_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-							return err
-						}
-						_, err = b.UnRestrictChatMember(chat.Id, user.Id)
-						return err
-					} else {
-						_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:454"), true)
-						return err
-					}
-				} else {
-					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:458"), true)
+		data, _ := regexp.MatchString("^umute_\\d+_.", msg.Data)
+		data2, _ := regexp.MatchString("^uba_\\d+_.", msg.Data)
+		if data == true {
+			splt := strings.Split(msg.Data, "umute_")[1]
+			if strings.Split(splt, "_")[0] == strconv.Itoa(user.Id) {
+				if user.Username == "" {
+					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:454"), true)
 					return err
 				}
-			} else if data2 == true {
+
+				if chat.Type == "supergroup" {
+					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:441"), true)
+					if err != nil {
+						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
+						return err
+					}
+					_, err = msg.Message.Delete()
+					if err != nil {
+						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
+						return err
+					}
+					_, err = b.UnRestrictChatMember(chat.Id, user.Id)
+					return err
+				} else {
+					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:441"), true)
+					if err != nil {
+						err_handler.HandleCbErr(b, u, err)
+					}
+					_, err = msg.Message.Delete()
+					if err != nil {
+						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
+						return err
+					}
+					cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
+					_, err = b.UnRestrictChatMember(cid, user.Id)
+					return err
+				}
+			}
+			_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:458"), true)
+			return err
+		} else if data2 == true {
+			if chat.Type == "supergroup" {
 				if chat_status.IsUserAdmin(chat, user.Id) == true {
 					i, _ := strconv.Atoi(strings.Split(msg.Data, "uba_")[1])
 					_, err = b.UnbanChatMember(chat.Id, i)
@@ -529,10 +599,13 @@ func usernamequery(b ext.Bot, u *gotgbot.Update) error {
 						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
 						return err
 					}
-
 					return err
 				}
+			} else if chat.Type == "private" {
+				_, err = b.AnswerCallbackQuery(msg.Id)
+				return err
 			}
+
 		}
 	}
 	return gotgbot.ContinueGroups{}
@@ -545,36 +618,51 @@ func picturequery(b ext.Bot, u *gotgbot.Update) error {
 	chat := msg.Message.Chat
 
 	if msg != nil {
-		if chat.Type == "supergroup" {
-			photo, _ := user.GetProfilePhotos(0, 0)
-			data, _ := regexp.MatchString("^pmute_\\d+$", msg.Data)
-			data2, _ := regexp.MatchString("^pban_\\d+$", msg.Data)
-			if data == true {
-				if strings.Split(msg.Data, "pmute_")[1] == strconv.Itoa(user.Id) {
-					if photo.TotalCount != 0 {
-						_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:498"), true)
-						if err != nil {
-							_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-							return err
-						}
-						_, err = msg.Message.Delete()
-						if err != nil {
-							_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-							return err
-						}
-						_, err = b.UnRestrictChatMember(chat.Id, user.Id)
-						return err
-					} else {
-						_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:511"), true)
-						return err
-					}
-				} else {
-					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:515"), true)
+		data, _ := regexp.MatchString("^pmute_\\d+_.", msg.Data)
+		data2, _ := regexp.MatchString("^pba_\\d+_.", msg.Data)
+		if data == true {
+			splt := strings.Split(msg.Data, "pmute_")[1]
+			if strings.Split(splt, "_")[0] == strconv.Itoa(user.Id) {
+				photo, _ := user.GetProfilePhotos(0, 0)
+				if photo != nil && photo.TotalCount == 0 {
+					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:511"), true)
 					return err
 				}
-			} else if data2 == true {
+
+				if chat_status.RequireSupergroup(chat, msg.Message) {
+					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:441"), true)
+					if err != nil {
+						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
+						return err
+					}
+					_, err = msg.Message.Delete()
+					if err != nil {
+						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
+						return err
+					}
+					_, err = b.UnRestrictChatMember(chat.Id, user.Id)
+					return err
+				} else {
+					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:441"), true)
+					if err != nil {
+						err_handler.HandleCbErr(b, u, err)
+					}
+					_, err = msg.Message.Delete()
+					if err != nil {
+						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
+						return err
+					}
+					cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
+					_, err = b.UnRestrictChatMember(cid, user.Id)
+					return err
+				}
+			}
+			_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:515"), true)
+			return err
+		} else if data2 == true {
+			if chat.Type == "supergroup" {
 				if chat_status.IsUserAdmin(chat, user.Id) == true {
-					i, _ := strconv.Atoi(strings.Split(msg.Data, "pban_")[1])
+					i, _ := strconv.Atoi(strings.Split(msg.Data, "uba_")[1])
 					_, err = b.UnbanChatMember(chat.Id, i)
 					_, err = b.AnswerCallbackQueryText(msg.Id, "Unbanned!", true)
 					if err != nil {
@@ -586,10 +674,13 @@ func picturequery(b ext.Bot, u *gotgbot.Update) error {
 						_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
 						return err
 					}
-
 					return err
 				}
+			} else if chat.Type == "private" {
+				_, err = b.AnswerCallbackQuery(msg.Id)
+				return err
 			}
+
 		}
 	}
 	return gotgbot.ContinueGroups{}
@@ -619,10 +710,9 @@ func verifyquery(b ext.Bot, u *gotgbot.Update) error {
 					_, err = b.UnRestrictChatMember(chat.Id, user.Id)
 					return err
 
-				} else {
-					_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:566"), true)
-					return err
 				}
+				_, err = b.AnswerCallbackQueryText(msg.Id, GetString(chat.Id, "modules/listener.go:566"), true)
+				return err
 			}
 		}
 	}
@@ -651,10 +741,10 @@ func warnquery(bot ext.Bot, u *gotgbot.Update) error {
 			msg.ParseMode = parsemode.Html
 			_, err := msg.Send()
 			return err
-		} else {
-			_, err := u.EffectiveMessage.EditText("User already has no warns.")
-			return err
 		}
+		_, err := u.EffectiveMessage.EditText("User already has no warns.")
+		return err
+
 	}
 	return nil
 }
@@ -694,14 +784,15 @@ func spamfunc(b ext.Bot, u *gotgbot.Update) error {
 	return nil
 }
 
+// LoadListeners -> Register handlers
 func LoadListeners(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, picture))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), verify))
-	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^(umute|uba)_\\d+$").String(), usernamequery))
-	u.Dispatcher.AddHandler(handlers.NewCallback(regexp.MustCompile("^(pmute|pban)_\\d+$").String(), picturequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("^(umute|uba)_", usernamequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("^(pmute|pban)_", picturequery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("wlcm_", verifyquery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("rmWarn", warnquery))
 }

@@ -14,7 +14,6 @@ type Verify struct {
 func UpdateVerify(chatId int, option string, text string, del string) error {
 	tx := SESSION.Begin()
 
-	// upsert spam user
 	set := &Verify{ChatId: strconv.Itoa(chatId), Option: option, Text: text, Deletion: del}
 	tx.Where(Verify{ChatId: strconv.Itoa(chatId)}).Assign(Verify{Option: option,
 		Text: text, Deletion: del}).FirstOrCreate(set)

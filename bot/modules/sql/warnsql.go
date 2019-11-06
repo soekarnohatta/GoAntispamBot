@@ -13,7 +13,7 @@ type Warns struct {
 
 type WarnSettings struct {
 	ChatId    string `gorm:"primary_key"`
-	WarnLimit int    `gorm:"default:3"`
+	WarnLimit int    `gorm:"default:2"`
 }
 
 func WarnUser(userId string, chatId string, reason string) (int, []string) {
@@ -21,10 +21,8 @@ func WarnUser(userId string, chatId string, reason string) (int, []string) {
 	tx := SESSION.Begin()
 	tx.FirstOrInit(warnedUser)
 
-	// Increment warns
 	warnedUser.NumWarns++
 
-	// Add reason if it exists
 	if reason != "" {
 		if len(reason) >= 64 {
 			reason = reason[:63]
@@ -32,7 +30,6 @@ func WarnUser(userId string, chatId string, reason string) (int, []string) {
 		warnedUser.Reasons = append(warnedUser.Reasons, reason)
 	}
 
-	// Upsert warn
 	tx.Save(warnedUser)
 	tx.Commit()
 
@@ -46,7 +43,6 @@ func RemoveWarn(userId string, chatId string) bool {
 
 	tx.FirstOrInit(warnedUser)
 
-	// only remove if user has warns
 	if warnedUser.NumWarns > 0 {
 		warnedUser.NumWarns -= 1
 		tx.Save(warnedUser)
@@ -63,7 +59,6 @@ func ResetWarns(userId string, chatId string) {
 
 	tx.FirstOrInit(warnedUser)
 
-	// resetting all warn fields
 	warnedUser.NumWarns = 0
 	warnedUser.Reasons = make([]string, 0)
 	tx.Save(warnedUser)
@@ -79,11 +74,10 @@ func GetWarns(userId string, chatId string) (int, []string) {
 func SetWarnLimit(chatId string, warnLimit int) {
 	warnSetting := &WarnSettings{ChatId: chatId}
 	tx := SESSION.Begin()
-	// init record if it doesn't exist
 	tx.FirstOrInit(warnSetting)
 	warnSetting.WarnLimit = warnLimit
-	// upsert record
 	tx.Save(warnSetting)
+	tx.Commit()
 }
 
 func GetWarnSetting(chatId string) int {

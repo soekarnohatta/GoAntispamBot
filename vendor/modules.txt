@@ -41,5 +41,5 @@ golang.org/x/text/internal/language
 golang.org/x/text/internal/language/compact
 golang.org/x/text/internal/tag
 golang.org/x/text/language
-# golang.org/x/tools v0.0.0-20190312170243-e65039ee4138
+# golang.org/x/tools v0.0.0-20191026034945-b2104f82a97d
 golang.org/x/tools/go/ast/astutil

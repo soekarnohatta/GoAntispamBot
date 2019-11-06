@@ -16,18 +16,19 @@ func start(_ ext.Bot, u *gotgbot.Update) error {
 		"	2. /verify (true/false) - User harus verifikasi ketika masuk grup.\n" +
 		"	3. /time (int m/h/d) - Untuk menentukan tenggat waktu semua perintah.\n" +
 		"	4. /profilepicture (true/false) - Untuk mematikan atau menyalakan fitur mute user jika belum pasang pp\n" +
-		"	5. /setting - Untuk menyetel semua pengaturan\n\n" +
+		"	5. /notif (true/false) - Untuk mematikan atau menyalakan fitur notifikasi privat.\n" +
+		"	6. /setting - Untuk menyetel semua pengaturan\n\n" +
 		"Jika butuh bantuan silahkan masuk ke @polybotsupport. <b>Mohon donasi untuk pengembangan lebih lanjut.</b>"
 
 	if chat.Type == "supergroup" {
 		_, err := msg.Delete()
 		return err
-	} else {
-		_, err := msg.ReplyHTML(txtStart)
-		return err
 	}
+	_, err := msg.ReplyHTML(txtStart)
+	return err
 }
 
+// LoadPm -> Register handlers
 func LoadPm(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewCommand("start", start))
 }

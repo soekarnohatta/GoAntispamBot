@@ -19,7 +19,7 @@ func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	var err error
 	msg := u.EffectiveMessage
 
-	if chat_status.IsOwner(msg.From.Id) == true {
+	if chat_status.IsOwner(msg.From.Id) {
 		userid, reason := extraction.ExtractUserAndText(msg, args)
 
 		if userid == 0 {
@@ -37,55 +37,35 @@ func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
 			if ban.Reason == reason {
 				_, err = msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:41"))
 				return gotgbot.EndGroups{}
-			} else {
-				db := make(chan error)
-				go func() { db <- sql.UpdateUserSpam(userid, reason) }()
-				err_handler.HandleTgErr(b, u, <-db)
-				_, err = msg.ReplyHTML(GetStringf(msg.Chat.Id, "modules/admins.go:46",
-					map[string]string{"1": strconv.Itoa(userid), "2": ban.Reason, "3": strings.SplitN(msg.Text, " ", 3)[2]}))
-				err_handler.HandleErr(err)
-				err = logger.SendBanLog(b, userid, reason, u)
-				return err
 			}
-		} else {
-			group := sql.GetAllChat
-			banerr := []string{"Bad Request: USER_ID_INVALID", "Bad Request: USER_NOT_PARTICIPANT" +
-				"Bad Request: chat member status can't be changed in private chats"}
 
+			_, err = msg.ReplyHTML(GetStringf(msg.Chat.Id, "modules/admins.go:46",
+				map[string]string{"1": strconv.Itoa(userid), "2": ban.Reason, "3": reason}))
+			err_handler.HandleErr(err)
 			db := make(chan error)
 			go func() { db <- sql.UpdateUserSpam(userid, reason) }()
 			err_handler.HandleTgErr(b, u, <-db)
-			_, err = msg.ReplyHTML(GetStringf(msg.Chat.Id, "modules/admins.go:55",
-				map[string]string{"1": strconv.Itoa(userid)}))
-			err_handler.HandleErr(err)
-
-			go func() {
-				for _, a := range group() {
-					cid, _ := strconv.Atoi(a.ChatId)
-					if sql.GetEnforceGban(cid) != nil && sql.GetEnforceGban(cid).Option == "true" {
-						_, err = b.KickChatMember(cid, userid)
-						if err != nil {
-							if function.Contains(banerr, err.Error()) == true {
-								return
-							} else if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
-								sql.DelChat(a.ChatId)
-								return
-							}
-						}
-					}
-				}
-			}()
-
-			_, err = msg.ReplyHTML(GetStringf(msg.Chat.Id, "modules/admins.go:75",
-				map[string]string{"1": strconv.Itoa(userid), "2": reason}))
-			err_handler.HandleErr(err)
 			err = logger.SendBanLog(b, userid, reason, u)
 			return err
 		}
-	} else {
-		_, err := msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:81"))
+
+		_, err = msg.ReplyHTML(GetStringf(msg.Chat.Id, "modules/admins.go:55",
+			map[string]string{"1": strconv.Itoa(userid)}))
+		err_handler.HandleErr(err)
+
+		db := make(chan error)
+		go func() { db <- sql.UpdateUserSpam(userid, reason) }()
+		err_handler.HandleTgErr(b, u, <-db)
+
+		_, err = b.SendMessageHTML(msg.Chat.Id, GetStringf(msg.Chat.Id, "modules/admins.go:75",
+			map[string]string{"1": strconv.Itoa(userid), "2": reason}))
+		err_handler.HandleErr(err)
+		err = logger.SendBanLog(b, userid, reason, u)
 		return err
 	}
+
+	_, err = b.SendMessageHTML(msg.Chat.Id, GetString(msg.Chat.Id, "modules/admins.go:81"))
+	return err
 }
 
 func ungban(b ext.Bot, u *gotgbot.Update, args []string) error {
@@ -130,15 +110,12 @@ func ungban(b ext.Bot, u *gotgbot.Update, args []string) error {
 			_, err = msg.ReplyHTMLf(GetStringf(msg.Chat.Id, "modules/admins.go:124",
 				map[string]string{"1": strconv.Itoa(userid)}))
 			return err
-		} else {
-			_, err = msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:128"))
-			return err
 		}
-
-	} else {
-		_, err := msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:81"))
+		_, err = msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:128"))
 		return err
 	}
+	_, err = msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:81"))
+	return err
 }
 
 func stats(_ ext.Bot, u *gotgbot.Update) error {
@@ -150,10 +127,9 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 
 		_, err := msg.ReplyHTML(teks)
 		return err
-	} else {
-		_, err := msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:81"))
-		return err
 	}
+	_, err := msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:81"))
+	return err
 }
 
 func broadcast(b ext.Bot, u *gotgbot.Update) error {
@@ -181,12 +157,12 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 		_, err = msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>, <code>%v</code> <b>Has Failed</b>\n",
 			errnum)
 		return err
-	} else {
-		_, err := msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:81"))
-		return err
 	}
+	_, err = msg.ReplyHTML(GetString(msg.Chat.Id, "modules/admins.go:81"))
+	return err
 }
 
+// LoadAdmins -> Register Handler
 func LoadAdmins(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("gban", gban))
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("ungban", ungban))

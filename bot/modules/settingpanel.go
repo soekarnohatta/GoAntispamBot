@@ -21,7 +21,7 @@ func panel(b ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat.Type == "supergroup" {
+	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.IsUserAdmin(chat, user.Id) == true {
 			teks, _, kn := function.MainMenu(chat.Id)
 			reply := b.NewSendableMessage(chat.Id, teks)
@@ -229,9 +229,8 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 							_, err := b.AnswerCallbackQueryText(msg.Id,
 								"❌ Invalid time amount specified.", true)
 							return err
-						} else {
-							j++
 						}
+						j++
 
 						err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), waktu.Deletion)
 						err_handler.HandleCbErr(b, u, err)
@@ -243,13 +242,8 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 						if strings.ContainsAny(lastLetter, "m & d & h") {
 							t := waktu.Time[:len(waktu.Time)-1]
 							j, err := strconv.Atoi(t)
-							if err != nil {
-								_, err := b.AnswerCallbackQueryText(msg.Id,
-									"❌ Invalid time amount specified.", true)
-								return err
-							} else {
-								j--
-							}
+							err_handler.HandleCbErr(b, u, err)
+							j--
 
 							err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), waktu.Deletion)
 							err_handler.HandleCbErr(b, u, err)
@@ -262,15 +256,14 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 						return err
 					}
 				} else if k == true {
-					// Warn Control Panel
 					if strings.Split(msg.Data, "mb_")[1] == "plus" {
-						sql.SetWarnLimit(strconv.Itoa(chat.Id), warn+1)
-						err_handler.HandleCbErr(b, u, err)
+						num := warn + 1
+						sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
 						err = updateusercontrol(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mb_")[1] == "minus" {
-						sql.SetWarnLimit(strconv.Itoa(chat.Id), warn-1)
-						err_handler.HandleCbErr(b, u, err)
+						num := warn - 1
+						sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
 						err = updateusercontrol(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mb_")[1] == "warn" {
@@ -358,31 +351,26 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.CallbackQuery
 	chat := msg.Message.Chat
 
-	// Strings
 	opsisama := "Bad Request: message is not modified: specified new message content and " +
 		"reply markup are exactly the same as a current " +
 		"content and reply markup of the message"
 
-	// Main Action
 	teks, _, kn := function.MainControlMenu(chat.Id)
 	_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
 		teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
 	if err != nil {
 		if err.Error() == opsisama {
-			_, err := b.AnswerCallbackQueryText(msg.Id, "❌ Anda memilih pilihan yang sama",
-				false)
-			return err
-		} else {
-			_, err := b.AnswerCallbackQueryText(msg.Id, "🔄 Mohon pelan - pelan dalam bertindak.",
-				true)
+			_, err := b.AnswerCallbackQuery(msg.Id)
 			return err
 		}
-	} else {
 		_, err := b.AnswerCallbackQuery(msg.Id)
 		return err
 	}
+	_, err = b.AnswerCallbackQuery(msg.Id)
+	return err
 }
 
+// LoadSettingPanel -> Register handlers
 func LoadSettingPanel(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewCommand("setting", panel))
 	u.Dispatcher.AddHandler(handlers.NewCallback("^m[cdefgb]_(toggle|warn|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)",

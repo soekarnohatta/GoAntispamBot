@@ -23,42 +23,26 @@ func loadlang() {
 	}
 }
 
-//func loadlangbutton() [][]ext.InlineKeyboardButton {
-//files, err := ioutil.ReadDir("trans")
-//err_handler.FatalError(err)
-//num := 0
-//kn := make([][]ext.InlineKeyboardButton, 0)
-//ki := make([]ext.InlineKeyboardButton, 0)
-//for _, f := range files {
-//if f.IsDir() {
-//num++
-//ki[num-1] = ext.InlineKeyboardButton{Text: f.Name(), CallbackData: fmt.Sprintf("lang_%v", f.Name())}
-//}
-//}
-//kn = append(kn, ki)
-//return kn
-//}
-
-func GetString(chat_id int, val string) string {
+// GetString -> Get the desired string
+func GetString(chatID int, val string) string {
 	var err error
-	lang, err := sql.REDIS.Get(fmt.Sprintf("lang_%v", chat_id)).Result()
+	lang, err := sql.REDIS.Get(fmt.Sprintf("lang_%v", chatID)).Result()
 	if err == redis.Nil || lang == "" {
-		lang = sql.GetLang(chat_id).Lang
+		lang = sql.GetLang(chatID).Lang
 	} else if err != nil {
-		err_handler.HandleErr(err)
-		return err.Error()
+		lang = "en"
 	}
 	return goloc.Trnl(lang, val)
 }
 
-func GetStringf(chat_id int, val string, args map[string]string) string {
+// GetStringf -> Get the desired string
+func GetStringf(chatID int, val string, args map[string]string) string {
 	var err error
-	lang, err := sql.REDIS.Get(fmt.Sprintf("lang_%v", chat_id)).Result()
+	lang, err := sql.REDIS.Get(fmt.Sprintf("lang_%v", chatID)).Result()
 	if err == redis.Nil || lang == "" {
-		lang = sql.GetLang(chat_id).Lang
+		lang = sql.GetLang(chatID).Lang
 	} else if err != nil {
-		err_handler.HandleErr(err)
-		return err.Error()
+		lang = "id"
 	}
 	err_handler.HandleErr(err)
 	return goloc.Trnlf(lang, val, args)
@@ -79,26 +63,24 @@ func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
 					_, err = msg.ReplyText(GetStringf(chat.Id, "modules/language.go:51",
 						map[string]string{"1": args[0]}))
 					return err
-				} else {
-					_, err = msg.ReplyText(GetStringf(chat.Id, "modules/language.go:51",
-						map[string]string{"1": args[0]}))
-					return err
 				}
-			} else {
-				_, err := msg.ReplyText(GetString(chat.Id, "modules/language.go:58"))
+				_, err = msg.ReplyText(GetStringf(chat.Id, "modules/language.go:51",
+					map[string]string{"1": args[0]}))
 				return err
+
 			}
-		} else {
-			_, err := msg.ReplyText("Please insert the language code so that i can change your language")
+			_, err := msg.ReplyText(GetString(chat.Id, "modules/language.go:58"))
 			return err
 		}
-
-	} else {
-		_, err := msg.Delete()
+		_, err := msg.ReplyText("Please insert the language code so that i can change your language")
 		return err
+
 	}
+	_, err := msg.Delete()
+	return err
 }
 
+// LoadLang -> Register handlers
 func LoadLang(u *gotgbot.Updater) {
 	loadlang()
 	u.Dispatcher.AddHandler(handlers.NewArgsCommand("setlang", setlang))

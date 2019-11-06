@@ -15,7 +15,6 @@ type Picture struct {
 func UpdatePicture(chatid int, option string, action string, text string, del string) error {
 	tx := SESSION.Begin()
 
-	// upsert picture
 	pic := &Picture{Option: option, Action: action, Text: text, Deletion: del}
 	tx.Where(Picture{ChatId: strconv.Itoa(chatid)}).Assign(Picture{Option: option, Action: action,
 		Text: text, Deletion: del}).FirstOrCreate(pic)
