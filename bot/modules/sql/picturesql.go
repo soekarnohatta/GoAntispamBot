@@ -19,6 +19,7 @@ func UpdatePicture(chatid int, option string, action string, text string, del st
 	tx.Where(Picture{ChatId: strconv.Itoa(chatid)}).Assign(Picture{Option: option, Action: action,
 		Text: text, Deletion: del}).FirstOrCreate(pic)
 	tx.Commit()
+
 	return tx.Error
 }
 

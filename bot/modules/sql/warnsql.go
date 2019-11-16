@@ -63,6 +63,7 @@ func ResetWarns(userId string, chatId string) {
 	warnedUser.Reasons = make([]string, 0)
 	tx.Save(warnedUser)
 	tx.Commit()
+
 }
 
 func GetWarns(userId string, chatId string) (int, []string) {
@@ -78,6 +79,7 @@ func SetWarnLimit(chatId string, warnLimit int) {
 	warnSetting.WarnLimit = warnLimit
 	tx.Save(warnSetting)
 	tx.Commit()
+
 }
 
 func GetWarnSetting(chatId string) int {

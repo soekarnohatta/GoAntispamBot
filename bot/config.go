@@ -14,6 +14,7 @@ type Config struct {
 	OwnerId       int
 	LogEvent      int
 	LogBan        int
+	MainGrp       int
 	SudoUsers     []string
 	SqlUri        string
 	WebhookUrl    string
@@ -47,6 +48,10 @@ func init() {
 	returnConfig.LogEvent, err = strconv.Atoi(os.Getenv("LOG_EVENT"))
 	if err != nil {
 		log.Fatal("Missing Log Group ID")
+	}
+	returnConfig.MainGrp, err = strconv.Atoi(os.Getenv("MAIN_GRP"))
+	if err != nil {
+		log.Fatal("Missing Main Group ID")
 	}
 	returnConfig.LogBan, err = strconv.Atoi(os.Getenv("LOG_BAN"))
 	if err != nil {

@@ -15,6 +15,7 @@ func UpdateNotification(chatid int, notification string) error {
 	set := &Notification{ChatId: strconv.Itoa(chatid), Notification: notification}
 	tx.Where(Notification{ChatId: strconv.Itoa(chatid)}).Assign(Notification{Notification: notification}).FirstOrCreate(set)
 	tx.Commit()
+
 	return tx.Error
 }
 
@@ -29,6 +30,7 @@ func DelNotification(chatid int) bool {
 
 	tx.Delete(filter)
 	tx.Commit()
+
 	return true
 }
 

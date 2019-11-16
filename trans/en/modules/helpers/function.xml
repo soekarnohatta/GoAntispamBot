@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translation>
+    <Rows id="1" name="modules/helpers/function.go:13">
+        <value>&lt;b&gt;Group Settings:&lt;/b&gt;
+            &lt;i&gt;First row: Punish a user without username&lt;/i&gt;
+            &lt;i&gt;Second row: Punish a user without profile photos&lt;/i&gt;
+            &lt;i&gt;Third Row: Verification Control&lt;/i&gt;
+            &lt;i&gt;Fourth Row: Number of Warns&lt;/i&gt;
+            &lt;i&gt;Fifth Row: Specified time for the punishment&lt;/i&gt;
+            🔇 = &lt;b&gt;Mute&lt;/b&gt;
+            🚷 = &lt;b&gt;Kick&lt;/b&gt;
+            ⛔ = &lt;b&gt;Ban&lt;/b&gt;
+            🔄 = &lt;b&gt;Reset&lt;/b&gt;
+            ⚪/🔵 = &lt;b&gt;On/Off&lt;/b&gt;
+            🗑 = &lt;b&gt;Delete his/her messages&lt;/b&gt;
+            ❗️= &lt;b&gt;Warn&lt;/b&gt;
+            ------------------------------------------------
+            &lt;b&gt;Username Control :&lt;/b&gt; {1} {2} {3}
+            &lt;b&gt;Profile Picture Control :&lt;/b&gt; {4} {5} {6}
+            &lt;b&gt;Verification Control :&lt;/b&gt; {7} {8}
+            &lt;b&gt;Time :&lt;/b&gt; {9}
+            &lt;b&gt;Number of Warns :&lt;/b&gt; {10}
+        </value>
+        <!--modules/helpers/function.go:13-->
+    </Rows>
+    <Rows id="2" name="modules/helpers/function.go:66">
+        <value>&lt;b&gt;Anti Spam Settings:&lt;/b&gt;
+            &lt;b&gt;Anti Spam: &lt;/b&gt; {1}
+        </value>
+        <!--modules/helpers/function.go:66-->
+    </Rows>
+    <Rows id="3" name="modules/helpers/function.go:85">
+        <value>📍 &lt;b&gt;Available Menu:&lt;/b&gt;</value>
+        <!--modules/helpers/function.go:85-->
+    </Rows>
+    <Rows id="4" name="modules/helpers/function.go:91">
+        <value>🔐 User Control</value>
+        <!--modules/helpers/function.go:91-->
+    </Rows>
+    <Rows id="5" name="modules/helpers/function.go:92">
+        <value>🧩 Spam Control</value>
+        <!--modules/helpers/function.go:92-->
+    </Rows>
+    <Rows id="6" name="modules/helpers/function.go:96">
+        <value>💿 Media Control</value>
+        <!--modules/helpers/function.go:96-->
+    </Rows>
+    <Rows id="7" name="modules/helpers/function.go:97">
+        <value>📨 Message Control</value>
+        <!--modules/helpers/function.go:97-->
+    </Rows>
+    <Rows id="8" name="modules/helpers/function.go:101">
+        <value>🛑 Reset</value>
+        <!--modules/helpers/function.go:101-->
+    </Rows>
+    <Rows id="9" name="modules/helpers/function.go:105">
+        <value>❌ Close</value>
+        <!--modules/helpers/function.go:105-->
+    </Rows>
+    <Counter>9</Counter>
+</translation>

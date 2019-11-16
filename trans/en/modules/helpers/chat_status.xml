@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translation>
+    <Rows id="1" name="modules/helpers/chat_status.go:73">
+        <value>You need to be an admin to do this.</value>
+        <!--modules/helpers/chat_status.go:73-->
+    </Rows>
+    <Rows id="2" name="modules/helpers/chat_status.go:82">
+        <value>&lt;b&gt;You are not are not sudoers&lt;/b&gt;</value>
+        <!--modules/helpers/chat_status.go:82-->
+    </Rows>
+    <Rows id="3" name="modules/helpers/chat_status.go:91">
+        <value>This command can only be used in private!</value>
+        <!--modules/helpers/chat_status.go:91-->
+    </Rows>
+    <Rows id="4" name="modules/helpers/chat_status.go:100">
+        <value>This command can only be used in groups!</value>
+        <!--modules/helpers/chat_status.go:100-->
+    </Rows>
+    <Rows id="5" name="modules/helpers/chat_status.go:111">
+        <value>I can't restrict people here! Make sure i'm an Admin with full permissions!</value>
+        <!--modules/helpers/chat_status.go:111-->
+    </Rows>
+    <Rows id="6" name="modules/helpers/chat_status.go:122">
+        <value>I can't delete messages here! Make sure i'm an Admin with full permissions!</value>
+        <!--modules/helpers/chat_status.go:122-->
+    </Rows>
+    <Counter>6</Counter>
+</translation>

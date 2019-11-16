@@ -20,6 +20,7 @@ func UpdateUsername(chatid int, option string, action string, text string, del s
 	tx.Where(Username{ChatId: strconv.Itoa(chatid)}).Assign(Username{Option: option,
 		Action: action, Text: text, Deletion: del}).FirstOrCreate(username)
 	tx.Commit()
+
 	return tx.Error
 }
 
@@ -34,6 +35,7 @@ func DelUsername(chatid int) bool {
 
 	tx.Delete(filter)
 	tx.Commit()
+
 	return true
 }
 

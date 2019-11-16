@@ -6,6 +6,9 @@ github.com/PaulSonOfLars/gotgbot/ext
 github.com/PaulSonOfLars/gotgbot/handlers
 github.com/PaulSonOfLars/gotgbot/handlers/Filters
 github.com/PaulSonOfLars/gotgbot/parsemode
+# github.com/allegro/bigcache v1.2.1
+github.com/allegro/bigcache
+github.com/allegro/bigcache/queue
 # github.com/go-redis/redis v6.15.6+incompatible
 github.com/go-redis/redis
 github.com/go-redis/redis/internal
@@ -23,6 +26,8 @@ github.com/jinzhu/gorm/dialects/postgres
 github.com/jinzhu/inflection
 # github.com/joho/godotenv v1.3.0
 github.com/joho/godotenv
+# github.com/keighl/barkup v0.0.0-20170220130926-692ec4e5a83a
+github.com/keighl/barkup
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/lib/pq v1.2.0
@@ -32,6 +37,8 @@ github.com/lib/pq/oid
 github.com/lib/pq/scram
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
+# github.com/robfig/cron v1.2.0
+github.com/robfig/cron
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
 # golang.org/x/sys v0.0.0-20191025090151-53bf42e6b339
@@ -43,3 +50,7 @@ golang.org/x/text/internal/tag
 golang.org/x/text/language
 # golang.org/x/tools v0.0.0-20191026034945-b2104f82a97d
 golang.org/x/tools/go/ast/astutil
+golang.org/x/tools/go/ssa/interp/testdata/src/fmt
+# launchpad.net/goamz v0.0.0-20140813150539-000000000049
+launchpad.net/goamz/aws
+launchpad.net/goamz/s3

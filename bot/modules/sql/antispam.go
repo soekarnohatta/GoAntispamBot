@@ -22,6 +22,7 @@ func UpdateAntispam(chatid int, option string, arabs string, del string, fwd str
 	tx.Where(Antispam{ChatId: strconv.Itoa(chatid)}).Assign(Antispam{Option: option,
 		Arabs: arabs, Deletion: del, Forward: fwd, Link: link, NonLatin: nonlatin}).FirstOrCreate(antispam)
 	tx.Commit()
+
 	return tx.Error
 }
 
@@ -36,6 +37,7 @@ func DelAntispam(chatid int) bool {
 
 	tx.Delete(filter)
 	tx.Commit()
+
 	return true
 }
 

@@ -39,6 +39,7 @@ func DelUserSpam(userid int) bool {
 
 	tx.Delete(filter)
 	tx.Commit()
+
 	return true
 }
 
@@ -57,6 +58,7 @@ func UpdateChatSpam(chatid int, reason string) error {
 	cht := &ChatSpam{ChatId: strconv.Itoa(chatid), Reason: reason}
 	tx.Where(ChatSpam{ChatId: strconv.Itoa(chatid)}).Assign(ChatSpam{Reason: reason}).FirstOrCreate(cht)
 	tx.Commit()
+
 	return tx.Error
 }
 
@@ -71,6 +73,7 @@ func DelChatSpam(chatid int) bool {
 
 	tx.Delete(filter)
 	tx.Commit()
+
 	return true
 }
 
@@ -80,6 +83,7 @@ func UpdateEnforceGban(chatid int, option string) error {
 	chat := &EnforceGban{ChatId: strconv.Itoa(chatid), Option: option}
 	tx.Where(EnforceGban{ChatId: strconv.Itoa(chatid)}).Assign(EnforceGban{Option: option}).FirstOrCreate(chat)
 	tx.Commit()
+
 	return tx.Error
 }
 
@@ -94,6 +98,7 @@ func DelEnforceGban(chatid int) bool {
 
 	tx.Delete(filter)
 	tx.Commit()
+
 	return true
 
 }

@@ -15,6 +15,7 @@ func UpdateLang(chatid int, lang string) error {
 	set := &Lang{ChatId: strconv.Itoa(chatid), Lang: lang}
 	tx.Where(Lang{ChatId: strconv.Itoa(chatid)}).Assign(Lang{Lang: lang}).FirstOrCreate(set)
 	tx.Commit()
+
 	return tx.Error
 }
 
@@ -29,6 +30,7 @@ func DelLang(chatid int) bool {
 
 	tx.Delete(filter)
 	tx.Commit()
+
 	return true
 }
 
