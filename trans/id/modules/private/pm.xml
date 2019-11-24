@@ -5,7 +5,7 @@
             hadir dengan berbagai fitur keamanan. Berikut adalah beberapa perintah yang dapat Anda gunakan:
             1. /username (true / false) - Untuk mematikan atau menghidupkan fitur pengguna bisu jika seseorang tidak
             memiliki nama pengguna.
-            2. /verification (true / false) - Pengguna harus memverifikasi saat memasuki grup.
+            2. /verify (true / false) - Pengguna harus memverifikasi saat memasuki grup.
             3. /time (int m / h / d) - Untuk menentukan waktu untuk semua hukuman.
             4. /profilepicture (true / false) - Untuk mematikan atau menghidupkan fitur pengguna bisu jika Anda belum
             menginstal hal

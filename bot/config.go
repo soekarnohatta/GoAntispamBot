@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-// Config -> Config values
 type Config struct {
 	ApiKey        string
 	OwnerId       int
@@ -26,7 +25,6 @@ type Config struct {
 	CleanPolling  string
 }
 
-// BotConfig -> Return config
 var BotConfig Config
 
 func init() {

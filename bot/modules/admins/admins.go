@@ -11,6 +11,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
+	"github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 )
@@ -51,7 +52,7 @@ func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return gotgbot.EndGroups{}
 	}
 
-	_, err = msg.ReplyHTML(function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
+	_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
 		map[string]string{"1": strconv.Itoa(userid)}))
 	err_handler.HandleErr(err)
 
@@ -165,8 +166,9 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 
 // LoadAdmins -> Register Handler
 func LoadAdmins(u *gotgbot.Updater) {
-	go u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("gban", []rune{'/', '.'}, gban))
-	go u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ungban", []rune{'/', '.'}, ungban))
-	go u.Dispatcher.AddHandler(handlers.NewPrefixCommand("stats", []rune{'/', '.'}, stats))
-	go u.Dispatcher.AddHandler(handlers.NewPrefixCommand("broadcast", []rune{'/', '.'}, broadcast))
+	defer logrus.Info("Admins Module Loaded...")
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("gban", []rune{'/', '.'}, gban))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ungban", []rune{'/', '.'}, ungban))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("stats", []rune{'/', '.'}, stats))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("broadcast", []rune{'/', '.'}, broadcast))
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
+	"github.com/sirupsen/logrus"
 )
 
 func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
@@ -47,5 +48,6 @@ func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 // LoadLang -> Register handlers
 func LoadLang(u *gotgbot.Updater) {
-	go u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setlang", []rune{'/', '.'}, setlang))
+	defer logrus.Info("Lang Module Loaded...")
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setlang", []rune{'/', '.'}, setlang))
 }

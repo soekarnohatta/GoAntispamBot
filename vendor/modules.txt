@@ -1,6 +1,6 @@
 # github.com/PaulSonOfLars/goloc v0.0.0-20190928104011-41745139b91a
 github.com/PaulSonOfLars/goloc
-# github.com/PaulSonOfLars/gotgbot v0.0.0-20191013160946-137f6d2752cc
+# github.com/PaulSonOfLars/gotgbot v0.0.0-20191117224821-883066135bc6
 github.com/PaulSonOfLars/gotgbot
 github.com/PaulSonOfLars/gotgbot/ext
 github.com/PaulSonOfLars/gotgbot/handlers
@@ -50,7 +50,6 @@ golang.org/x/text/internal/tag
 golang.org/x/text/language
 # golang.org/x/tools v0.0.0-20191026034945-b2104f82a97d
 golang.org/x/tools/go/ast/astutil
-golang.org/x/tools/go/ssa/interp/testdata/src/fmt
 # launchpad.net/goamz v0.0.0-20140813150539-000000000049
 launchpad.net/goamz/aws
 launchpad.net/goamz/s3

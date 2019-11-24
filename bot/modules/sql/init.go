@@ -2,7 +2,6 @@ package sql
 
 import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/lib/pq"
@@ -20,6 +19,6 @@ func InitDb() {
 	SESSION = db
 
 	db.AutoMigrate(&User{}, &Chat{}, &UserSpam{}, &ChatSpam{}, &Setting{}, &Verify{}, &Picture{}, &Username{},
-		&EnforceGban{}, &Lang{}, &Warns{}, &WarnSettings{}, &Notification{}, &Antispam{})
+		&EnforceGban{}, &Lang{}, &Warns{}, &WarnSettings{}, &Notification{}, &Antispam{}, &NewUser{})
 	logrus.Info("Database has been connected & Auto-migrated database schema")
 }

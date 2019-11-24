@@ -4,7 +4,6 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/admins"
-	"github.com/jumatberkah/antispambot/bot/modules/backups"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
@@ -25,14 +24,14 @@ func main() {
 	caching.InitCache()
 	sql.InitDb()
 
-	go language.LoadLang(updater)
-	go admins.LoadAdmins(updater)
-	go setting.LoadSetting(updater)
-	go setting.LoadSettingPanel(updater)
-	go private.LoadPm(updater)
-	go backups.LoadBackups(updater)
-	go backups.Backup(*updater.Bot, &gotgbot.Update{})
-	go listener.LoadListeners(updater)
+	language.LoadLang(updater)
+	admins.LoadAdmins(updater)
+	setting.LoadSetting(updater)
+	setting.LoadSettingPanel(updater)
+	private.LoadPm(updater)
+	// go backups.LoadBackups(updater)
+	// go backups.Backup(*updater.Bot, &gotgbot.Update{})
+	listener.LoadListeners(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {
 		logrus.Warn("Using Webhook...")

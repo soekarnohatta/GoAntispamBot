@@ -39,6 +39,5 @@ func GetStringf(chatID int, val string, args map[string]string) string {
 	} else if err != nil {
 		lang = "en"
 	}
-	err_handler.HandleErr(err)
 	return goloc.Trnlf(lang, val, args)
 }

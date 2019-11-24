@@ -14,96 +14,95 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
+	"github.com/leekchan/timeutil"
+	"github.com/sirupsen/logrus"
+	"html"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
-/* type spammer struct {
- *	Status bool `json:"ok"`
-}*/
-
 func username(b ext.Bot, u *gotgbot.Update) error {
-	var err error
+	db := sql.GetUsername(u.EffectiveChat.Id)
+	if db.Option != "true" {
+		return gotgbot.ContinueGroups{}
+	}
+
 	user := u.EffectiveUser
 	chat := u.EffectiveChat
 	msg := u.EffectiveMessage
 
-	db := sql.GetUsername(chat.Id)
-	if db.Option != "true" {
-		return nil
-	}
-	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
-		return gotgbot.EndGroups{}
+	if chat_status.IsUserAdmin(chat, user.Id) == true {
+		return gotgbot.ContinueGroups{}
 	}
 	if chat.Type != "supergroup" {
-		return nil
+		return gotgbot.ContinueGroups{}
 	}
 	if user.Username != "" {
-		return nil
+		return gotgbot.ContinueGroups{}
 	}
 
-	bantime := extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
-	replytext := function.GetStringf(msg.Chat.Id, "modules/listener/listener.go:45",
-		map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
+	replytext := function.GetStringf(chat.Id, "modules/listener/listener.go:45",
+		map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName), "3": db.Action,
 			"4": strconv.Itoa(user.Id)})
 
-	kb := make([][]ext.InlineKeyboardButton, 1)
-	kb[0] = make([]ext.InlineKeyboardButton, 1)
-	kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:51"),
-		CallbackData: fmt.Sprintf("umute_%v_%v", user.Id, chat.Id)}
-
-	kbk := make([][]ext.InlineKeyboardButton, 1)
-	kbk[0] = make([]ext.InlineKeyboardButton, 1)
-	kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:56"),
-		CallbackData: fmt.Sprintf("uba_%v_%v", user.Id, chat.Id)}
-
-	markup := &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
+	markup := &ext.InlineKeyboardMarkup{}
 
 	if db.Action != "warn" {
 		reply := b.NewSendableMessage(chat.Id, replytext)
 		reply.ParseMode = parsemode.Html
 		reply.ReplyToMessageId = msg.MessageId
 
-		if db.Action == "mute" {
+		switch db.Action {
+		case "mute":
 			restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
-			restrictSend.UntilDate = bantime
-			_, err = restrictSend.Send()
+			restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
+			_, err := restrictSend.Send()
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					_, err = b.SendMessage(chat.Id, err.Error())
-					return err
+					err_handler.HandleTgErr(b, u, err)
 				}
+				err_handler.HandleErr(err)
 			}
+			kb := make([][]ext.InlineKeyboardButton, 1)
+			kb[0] = make([]ext.InlineKeyboardButton, 1)
+			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:51"),
+				CallbackData: fmt.Sprintf("umute_%v_%v", user.Id, chat.Id)}
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
-		} else if db.Action == "kick" {
-			_, err = b.UnbanChatMember(chat.Id, user.Id)
+		case "kick":
+			_, err := b.UnbanChatMember(chat.Id, user.Id)
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					_, err = b.SendMessage(chat.Id, err.Error())
-					return err
+					err_handler.HandleTgErr(b, u, err)
 				}
+				err_handler.HandleErr(err)
 			}
 			markup = nil
-		} else if db.Action == "ban" {
+		case "ban":
 			restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = -1
-			_, err = restrictSend.Send()
+			_, err := restrictSend.Send()
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					_, err = b.SendMessage(chat.Id, err.Error())
-					return err
+					err_handler.HandleTgErr(b, u, err)
 				}
+				err_handler.HandleErr(err)
 			}
+			kbk := make([][]ext.InlineKeyboardButton, 1)
+			kbk[0] = make([]ext.InlineKeyboardButton, 1)
+			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:56"),
+				CallbackData: fmt.Sprintf("uba_%v_%v", user.Id, chat.Id)}
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kbk}
 		}
+
 		reply.ReplyMarkup = markup
-		_, err = reply.Send()
+		_, err := reply.Send()
 		if err != nil {
 			if err.Error() == "Bad Request: reply message not found" {
 				reply.ReplyToMessageId = 0
-				_, err = reply.Send()
-				return err
+				_, err := reply.Send()
+				err_handler.HandleErr(err)
 			}
 			err_handler.HandleErr(err)
 		}
@@ -115,150 +114,152 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 			reply.Text = txt
 			reply.ReplyToMessageId = 0
 			reply.ChatId = user.Id
-			_, err = reply.Send()
+			_, err := reply.Send()
 			err_handler.HandleErr(err)
 		}
 	} else {
 		limit := sql.GetWarnSetting(strconv.Itoa(chat.Id))
 		warns, _ := sql.WarnUser(strconv.Itoa(user.Id), strconv.Itoa(chat.Id), "Username")
 
-		var keyboard ext.InlineKeyboardMarkup
 		if warns >= limit {
 			go sql.ResetWarns(strconv.Itoa(user.Id), strconv.Itoa(chat.Id))
 			replytext = function.GetStringf(msg.Chat.Id, "modules/warn2",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns),
 					"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)})
 
-			_, err = chat.UnbanMember(user.Id)
+			_, err := chat.UnbanMember(user.Id)
+			err_handler.HandleErr(err)
 		} else {
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "rmwarn"),
 				CallbackData: fmt.Sprintf("rmWarn(%v)", user.Id)}
-			keyboard = ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
+			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 			replytext = function.GetStringf(msg.Chat.Id, "modules/warn",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns),
 					"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)})
 		}
 
-		msgs := b.NewSendableMessage(chat.Id, replytext)
-		msgs.ParseMode = parsemode.Html
-		msgs.ReplyToMessageId = msg.MessageId
-		msgs.ReplyMarkup = &keyboard
-		_, err = msgs.Send()
+		reply := b.NewSendableMessage(chat.Id, replytext)
+		reply.ParseMode = parsemode.Html
+		reply.ReplyToMessageId = msg.MessageId
+		reply.ReplyMarkup = markup
+		_, err := reply.Send()
 		if err != nil {
-			msgs.ReplyToMessageId = 0
-			_, err = msgs.Send()
+			reply.ReplyToMessageId = 0
+			_, err := reply.Send()
+			err_handler.HandleErr(err)
 		}
 
 		if sql.GetNotification(user.Id).Notification == "true" {
-			msgs.ReplyMarkup = nil
-			msgs.ReplyToMessageId = 0
-			msgs.ChatId = user.Id
-			_, err = msgs.Send()
+			reply.ReplyMarkup = nil
+			reply.ReplyToMessageId = 0
+			reply.ChatId = user.Id
+			_, err = reply.Send()
 			err_handler.HandleErr(err)
 		}
 	}
 
 	if db.Deletion == "true" {
-		_, err = msg.Delete()
+		_, err := msg.Delete()
 		if err != nil {
 			if err.Error() == "Bad Request: message can't be deleted" {
-				_, err = msg.ReplyText(err.Error())
-				return err
+				_, err := msg.ReplyText(err.Error())
+				err_handler.HandleTgErr(b, u, err)
 			}
 		}
 	}
-	err = logger.SendLog(b, u, "username", "")
+	err := logger.SendLog(b, u, "username", "")
 	err_handler.HandleErr(err)
-	return gotgbot.ContinueGroups{}
+	return err
 }
 
 func picture(b ext.Bot, u *gotgbot.Update) error {
-	var err error
+	db := sql.GetPicture(u.EffectiveChat.Id)
+	if db.Option != "true" {
+		return gotgbot.ContinueGroups{}
+	}
+
 	user := u.EffectiveUser
 	chat := u.EffectiveChat
 	msg := u.EffectiveMessage
 
-	db := sql.GetPicture(chat.Id)
-	if db.Option != "true" {
-		return nil
-	}
-	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
-		return gotgbot.EndGroups{}
+	if chat_status.IsUserAdmin(chat, user.Id) == true {
+		return gotgbot.ContinueGroups{}
 	}
 	if chat.Type != "supergroup" {
-		return nil
+		return gotgbot.ContinueGroups{}
 	}
 	photo, _ := user.GetProfilePhotos(0, 0)
 	if photo != nil && photo.TotalCount != 0 {
-		return nil
+		return gotgbot.ContinueGroups{}
 	}
 
-	bantime := extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 	replytext := function.GetStringf(msg.Chat.Id, "modules/listener/listener.go:173",
 		map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
 			"4": strconv.Itoa(user.Id)})
 
-	kb := make([][]ext.InlineKeyboardButton, 1)
-	kb[0] = make([]ext.InlineKeyboardButton, 1)
-	kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:179"),
-		CallbackData: fmt.Sprintf("pmute_%v_%v", user.Id, chat.Id)}
-
-	kbk := make([][]ext.InlineKeyboardButton, 1)
-	kbk[0] = make([]ext.InlineKeyboardButton, 1)
-	kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:184"),
-		CallbackData: fmt.Sprintf("pban_%v_%v", user.Id, chat.Id)}
-
 	markup := &ext.InlineKeyboardMarkup{}
-
 	reply := b.NewSendableMessage(chat.Id, replytext)
 	reply.ParseMode = parsemode.Html
 	reply.ReplyToMessageId = msg.MessageId
 
 	if db.Action != "warn" {
-		if db.Action == "mute" {
+		switch db.Action {
+		case "mute":
 			restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
-			restrictSend.UntilDate = bantime
-			_, err = restrictSend.Send()
+			restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
+			_, err := restrictSend.Send()
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					_, err = b.SendMessage(chat.Id, err.Error())
-					return err
+					err_handler.HandleTgErr(b, u, err)
 				}
+				err_handler.HandleErr(err)
 			}
+			kb := make([][]ext.InlineKeyboardButton, 1)
+			kb[0] = make([]ext.InlineKeyboardButton, 1)
+			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:179"),
+				CallbackData: fmt.Sprintf("pmute_%v_%v", user.Id, chat.Id)}
+
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
-		} else if db.Action == "kick" {
-			_, err = b.UnbanChatMember(chat.Id, user.Id)
+		case "kick":
+			_, err := b.UnbanChatMember(chat.Id, user.Id)
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					_, err = b.SendMessage(chat.Id, err.Error())
-					return err
+					err_handler.HandleTgErr(b, u, err)
 				}
+				err_handler.HandleErr(err)
 			}
 			markup = nil
-		} else if db.Action == "ban" {
+		case "ban":
 			restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = -1
-			_, err = restrictSend.Send()
+			_, err := restrictSend.Send()
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					_, err = b.SendMessage(chat.Id, err.Error())
-					return err
+					err_handler.HandleTgErr(b, u, err)
 				}
+				err_handler.HandleErr(err)
 			}
+			kbk := make([][]ext.InlineKeyboardButton, 1)
+			kbk[0] = make([]ext.InlineKeyboardButton, 1)
+			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:184"),
+				CallbackData: fmt.Sprintf("pban_%v_%v", user.Id, chat.Id)}
+
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kbk}
 		}
+
 		reply.ReplyMarkup = markup
-		_, err = reply.Send()
+		_, err := reply.Send()
 		if err != nil {
 			if err.Error() == "Bad Request: reply message not found" {
 				reply.ReplyToMessageId = 0
-				_, err = reply.Send()
-				return err
+				_, err := reply.Send()
+				err_handler.HandleErr(err)
 			}
 			err_handler.HandleErr(err)
 		}
+
 		if sql.GetNotification(user.Id).Notification == "true" {
 			txt := function.GetStringf(user.Id, "picturep",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
@@ -266,7 +267,7 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			reply.Text = txt
 			reply.ReplyToMessageId = 0
 			reply.ChatId = user.Id
-			_, err = reply.Send()
+			_, err := reply.Send()
 			err_handler.HandleErr(err)
 		}
 	} else {
@@ -274,19 +275,19 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 		warns, _ := sql.WarnUser(strconv.Itoa(user.Id), strconv.Itoa(chat.Id), "No Profile Picture")
 
 		var reply string
-		var keyboard ext.InlineKeyboardMarkup
 		if warns >= limit {
 			go sql.ResetWarns(strconv.Itoa(user.Id), strconv.Itoa(chat.Id))
 			reply = function.GetStringf(msg.Chat.Id, "modules/warn2",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns),
 					"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)})
-			_, err = chat.UnbanMember(user.Id)
+			_, err := chat.UnbanMember(user.Id)
+			err_handler.HandleTgErr(b, u, err)
 		} else {
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "rmwarn"),
 				CallbackData: fmt.Sprintf("rmWarn(%v)", user.Id)}
-			keyboard = ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
+			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 			reply = function.GetStringf(msg.Chat.Id, "modules/warn3",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns),
 					"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)})
@@ -295,11 +296,12 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 		msgs := b.NewSendableMessage(chat.Id, reply)
 		msgs.ParseMode = parsemode.Html
 		msgs.ReplyToMessageId = msg.MessageId
-		msgs.ReplyMarkup = &keyboard
-		_, err = msgs.Send()
+		msgs.ReplyMarkup = markup
+		_, err := msgs.Send()
 		if err != nil {
 			msgs.ReplyToMessageId = 0
-			_, err = msgs.Send()
+			_, err := msgs.Send()
+			err_handler.HandleErr(err)
 		}
 		if sql.GetNotification(user.Id).Notification == "true" {
 			msgs.ReplyMarkup = nil
@@ -311,34 +313,33 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 	}
 
 	if db.Deletion == "true" {
-		_, err = msg.Delete()
+		_, err := msg.Delete()
 		if err != nil {
 			if err.Error() == "Bad Request: message can't be deleted" {
-				_, err = msg.ReplyText(err.Error())
-				return err
+				_, err := msg.ReplyText(err.Error())
+				err_handler.HandleErr(err)
 			}
 		}
 	}
-	err = logger.SendLog(b, u, "picture", "")
+	err := logger.SendLog(b, u, "picture", "")
 	err_handler.HandleErr(err)
-	return gotgbot.ContinueGroups{}
+	return err
 }
 
 func verify(b ext.Bot, u *gotgbot.Update) error {
-	var err error
+	db := sql.GetVerify(u.EffectiveChat.Id)
+	if db.Option != "true" {
+		return gotgbot.ContinueGroups{}
+	}
+
 	user := u.EffectiveUser
 	chat := u.EffectiveChat
 	msg := u.EffectiveMessage
-	db := sql.GetVerify(chat.Id)
 
-	if db.Option != "true" {
-		return nil
-	}
-	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
+	if chat_status.IsUserAdmin(chat, user.Id) == true {
 		return gotgbot.EndGroups{}
 	}
 
-	bantime := extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 	replytext := function.GetStringf(msg.Chat.Id, "modules/listener/listener/listener.go:298",
 		map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": chat.Title, "4": strconv.Itoa(user.Id)})
 
@@ -348,13 +349,13 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 		CallbackData: fmt.Sprintf("wlcm_%v", user.Id)}
 
 	restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
-	restrictSend.UntilDate = bantime
-	_, err = restrictSend.Send()
+	restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
+	_, err := restrictSend.Send()
 	if err != nil {
 		if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-			_, err = b.SendMessage(chat.Id, err.Error())
-			return err
+			err_handler.HandleTgErr(b, u, err)
 		}
+		err_handler.HandleErr(err)
 	}
 
 	reply := b.NewSendableMessage(chat.Id, replytext)
@@ -381,7 +382,8 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 		}
 	}
 	err = logger.SendLog(b, u, "welcome", "")
-	return gotgbot.ContinueGroups{}
+	err_handler.HandleErr(err)
+	return err
 }
 
 func spam(b ext.Bot, u *gotgbot.Update) error {
@@ -390,16 +392,16 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
-		return gotgbot.EndGroups{}
+		return gotgbot.ContinueGroups{}
 	}
 	if chat_status.IsBotAdmin(chat, nil) == false {
-		return gotgbot.EndGroups{}
+		return gotgbot.ContinueGroups{}
 	}
 	if chat.Type != "supergroup" {
-		return nil
+		return gotgbot.ContinueGroups{}
 	}
 	if sql.GetEnforceGban(chat.Id).Option != "true" {
-		return nil
+		return gotgbot.ContinueGroups{}
 	}
 	ban := sql.GetUserSpam(user.Id)
 	if ban != nil {
@@ -408,7 +410,89 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 		err = logger.SendLog(b, u, "spam", ban.Reason)
 		return gotgbot.EndGroups{}
 	}
+	return gotgbot.ContinueGroups{}
+}
 
+func get_join_date(_ ext.Bot, u *gotgbot.Update) error {
+	msg := u.EffectiveMessage
+	for _, user := range msg.NewChatMembers {
+		date := time.Now().Unix()
+		err := sql.UpdateNewUser(msg.Chat.Id, strconv.Itoa(user.Id), fmt.Sprint(date))
+		fmt.Print(date)
+		err_handler.HandleErr(err)
+	}
+	return gotgbot.ContinueGroups{}
+}
+
+func removelink(b ext.Bot, u *gotgbot.Update) error {
+	msg := u.EffectiveMessage
+	chat := u.EffectiveChat
+	user := u.EffectiveUser
+
+	if chat.Type != "supergroup" {
+		return gotgbot.EndGroups{}
+	}
+
+	accepted := make(map[string]struct{})
+	accepted["url"] = struct{}{}
+	accepted["text_link"] = struct{}{}
+
+	entities := msg.ParseEntityTypes(accepted)
+
+	var ent *ext.ParsedMessageEntity
+	if len(entities) > 0 {
+		ent = &entities[0]
+	} else {
+		ent = nil
+	}
+
+	if entities != nil && ent != nil {
+		x := sql.GetNewUser(user.Id)
+		cid, _ := strconv.Atoi(x.ChatId)
+		if cid == chat.Id {
+			i, _ := strconv.ParseInt(x.Date, 10, 64)
+			tim := time.Now()
+			baseTime := time.Date(tim.Year(), tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(),
+				tim.Nanosecond(), time.UTC)
+			td := timeutil.Timedelta{Minutes: 1}
+			result := baseTime.Add(td.Duration())
+			if time.Now().Unix()-result.Unix() > i {
+				_, err := msg.Delete()
+				err_handler.HandleTgErr(b, u, err)
+				_, err = b.SendMessage(chat.Id, fmt.Sprintf("Removed message from %v,"+
+					"\nReason: new user and external link(s)", user.FirstName))
+				err_handler.HandleErr(err)
+				return gotgbot.ContinueGroups{}
+			} else {
+				sql.DelNewUser(user.Id)
+				return gotgbot.ContinueGroups{}
+			}
+		}
+	}
+
+	if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
+		x := sql.GetNewUser(user.Id)
+		cid, _ := strconv.Atoi(x.ChatId)
+		if cid == chat.Id {
+			i, _ := strconv.ParseInt(x.Date, 10, 64)
+			tim := time.Now()
+			baseTime := time.Date(tim.Year(), tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(),
+				tim.Nanosecond(), time.UTC)
+			td := timeutil.Timedelta{Minutes: 1}
+			result := baseTime.Add(td.Duration())
+			if time.Now().Unix()-result.Unix() > i {
+				_, err := msg.Delete()
+				err_handler.HandleTgErr(b, u, err)
+				_, err = b.SendMessage(chat.Id, fmt.Sprintf("Removed message from %v,"+
+					"\nReason: new user and forwarded message(s)", user.FirstName))
+				err_handler.HandleErr(err)
+				return gotgbot.ContinueGroups{}
+			} else {
+				sql.DelNewUser(user.Id)
+				return gotgbot.ContinueGroups{}
+			}
+		}
+	}
 	return gotgbot.ContinueGroups{}
 }
 
@@ -485,7 +569,8 @@ func usernamequery(b ext.Bot, u *gotgbot.Update) error {
 		splt := strings.Split(msg.Data, "umute_")[1]
 		if strings.Split(splt, "_")[0] == strconv.Itoa(user.Id) {
 			if user.Username == "" {
-				_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:454"), true)
+				_, err = b.AnswerCallbackQueryText(msg.Id,
+					function.GetString(chat.Id, "modules/listener/listener.go:454"), true)
 				return err
 			}
 
@@ -542,7 +627,6 @@ func usernamequery(b ext.Bot, u *gotgbot.Update) error {
 		}
 
 	}
-
 	return gotgbot.ContinueGroups{}
 }
 
@@ -616,7 +700,6 @@ func picturequery(b ext.Bot, u *gotgbot.Update) error {
 		}
 
 	}
-
 	return gotgbot.ContinueGroups{}
 }
 
@@ -644,7 +727,8 @@ func verifyquery(b ext.Bot, u *gotgbot.Update) error {
 				return err
 
 			}
-			_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:566"), true)
+			_, err = b.AnswerCallbackQueryText(msg.Id,
+				function.GetString(chat.Id, "modules/listener/listener.go:566"), true)
 			return err
 		}
 	}
@@ -658,7 +742,6 @@ func warnquery(bot ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 	pattern, _ := regexp.Compile(`rmWarn\((.+?)\)`)
 
-	// Check permissions
 	if chat_status.IsUserAdmin(chat, user.Id) == false {
 		_, _ = bot.AnswerCallbackQueryText(query.Id, "You need to be an admin to do this.", true)
 		return gotgbot.EndGroups{}
@@ -719,13 +802,16 @@ func spamfunc(b ext.Bot, u *gotgbot.Update) error {
 
 // LoadListeners -> Register handlers
 func LoadListeners(u *gotgbot.Updater) {
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, picture))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), verify))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("^(umute|uba)_", usernamequery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("^(pmute|pban)_", picturequery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("wlcm_", verifyquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("rmWarn", warnquery))
+	defer logrus.Info("Listeners Module Loaded...")
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
+	//u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), get_join_date))
+	//u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, removelink))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, picture))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), verify))
+	u.Dispatcher.AddHandler(handlers.NewCallback("^(umute|uba)_", usernamequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("^(pmute|pban)_", picturequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("wlcm_", verifyquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("rmWarn", warnquery))
 }

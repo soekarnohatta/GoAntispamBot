@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/private/pm.go:15">
-        <value>Hello, I'm a bot to mute users who don't have a username and block spammers and
-            comes with various security features. Here are a few commands you can use:
+        <value>Hello, I'm a bot to mute users who don't have a username and block spammers and comes with various
+            security features. Here are a few commands you can use:
             1. /username (true / false) - To turn off or turn on the mute user feature if someone does not have a
             username.
             2. /verify (true / false) - Users must verify when entering the group.
             3. /time (int m / h / d) - To specify the time for all punishment.
             4. /profilepicture (true / false) - To turn off or turn on the mute user feature if you haven't installed pp
             5. /notif (true / false) - To turn off or turn on the private notification feature.
-            6. /settings - To adjust all settings
-            If you need help please go to @polybotsupport.
-            <b>Please donate for further development.</b>
+            6. /settings - To adjust all settings.
+            If you need help please go to @polybotsupport. Please donate for further development.
         </value>
         <!--modules/private/pm.go:15-->
     </Rows>

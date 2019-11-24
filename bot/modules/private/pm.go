@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
+	"github.com/sirupsen/logrus"
 )
 
 func start(_ ext.Bot, u *gotgbot.Update) error {
@@ -26,5 +27,6 @@ func start(_ ext.Bot, u *gotgbot.Update) error {
 
 // LoadPm -> Register handlers
 func LoadPm(u *gotgbot.Updater) {
-	go u.Dispatcher.AddHandler(handlers.NewPrefixCommand("start", []rune{'/', '.'}, start))
+	defer logrus.Info("PM Module Loaded...")
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("start", []rune{'/', '.'}, start))
 }

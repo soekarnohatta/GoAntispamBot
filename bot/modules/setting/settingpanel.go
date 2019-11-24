@@ -11,6 +11,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
+	"github.com/sirupsen/logrus"
 	"regexp"
 	"strconv"
 	"strings"
@@ -376,12 +377,13 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 
 // LoadSettingPanel -> Register handlers
 func LoadSettingPanel(u *gotgbot.Updater) {
-	go u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))
-	go u.Dispatcher.AddHandler(handlers.NewCallback(
+	defer logrus.Info("Setting Panel Module Loaded...")
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))
+	u.Dispatcher.AddHandler(handlers.NewCallback(
 		"^m[cdefgb]_(toggle|warn|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)",
 		usercontrolquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamcontrolquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamcontrolquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
 }
