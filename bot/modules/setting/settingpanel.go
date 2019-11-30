@@ -9,6 +9,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/extraction"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
@@ -25,7 +26,7 @@ func panel(b ext.Bot, u *gotgbot.Update) error {
 
 	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.IsUserAdmin(chat, user.Id) == true {
-			teks, _, kn := function.MainMenu(chat.Id)
+			teks, _, kn := mainMenu(chat.Id)
 			reply := b.NewSendableMessage(chat.Id, teks)
 			reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&kn}
 			reply.ParseMode = parsemode.Html
@@ -46,7 +47,7 @@ func backquery(b ext.Bot, u *gotgbot.Update) error {
 	if msg != nil {
 		if chat.Type == "supergroup" {
 			if chat_status.IsUserAdmin(chat, user.Id) == true {
-				teks, _, kn := function.MainMenu(chat.Id)
+				teks, _, kn := mainMenu(chat.Id)
 				_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId, teks, parsemode.Html,
 					&ext.InlineKeyboardMarkup{&kn})
 				return err
@@ -89,7 +90,7 @@ func settingquery(b ext.Bot, u *gotgbot.Update) error {
 		if chat.Type == "supergroup" {
 			if chat_status.IsUserAdmin(chat, user.Id) == true {
 				if msg.Data == "mk_utama" {
-					teks, _, kn := function.MainControlMenu(chat.Id)
+					teks, _, kn := mainControlMenu(chat.Id)
 					_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
 						teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
 					return err
@@ -112,7 +113,7 @@ func settingquery(b ext.Bot, u *gotgbot.Update) error {
 					err = updateusercontrol(b, u)
 					return err
 				} else if msg.Data == "mk_spam" {
-					teks, _, kn := function.MainSpamMenu(chat.Id)
+					teks, _, kn := mainSpamMenu(chat.Id)
 					_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
 						teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
 					return err
@@ -144,7 +145,7 @@ func spamcontrolquery(b ext.Bot, u *gotgbot.Update) error {
 							err = sql.UpdateEnforceGban(chat.Id, "true")
 							err_handler.HandleCbErr(b, u, err)
 						}
-						teks, _, kn := function.MainSpamMenu(chat.Id)
+						teks, _, kn := mainSpamMenu(chat.Id)
 						_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
 							teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
 						return err
@@ -360,7 +361,7 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 		"reply markup are exactly the same as a current " +
 		"content and reply markup of the message"
 
-	teks, _, kn := function.MainControlMenu(chat.Id)
+	teks, _, kn := mainControlMenu(chat.Id)
 	_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
 		teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
 	if err != nil {
@@ -375,14 +376,121 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 	return err
 }
 
+func mainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
+	a := extraction.GetEmoji(chatId)
+	if a != nil {
+		teks := function.GetStringf(chatId, "modules/helpers/function.go:13",
+			map[string]string{"1": a[0][0], "2": a[1][0], "3": a[2][0], "4": a[0][1], "5": a[1][1], "6": a[2][1], "7": a[0][2],
+				"8": a[2][3], "9": a[3][0], "10": strconv.Itoa(sql.GetWarnSetting(strconv.Itoa(chatId)))})
+
+		kn := make([][]ext.InlineKeyboardButton, 0)
+
+		ki := make([]ext.InlineKeyboardButton, 6)
+		ki[0] = ext.InlineKeyboardButton{Text: a[0][0], CallbackData: "mc_toggle"}
+		ki[1] = ext.InlineKeyboardButton{Text: "🔇", CallbackData: "mc_mute"}
+		ki[2] = ext.InlineKeyboardButton{Text: "🚷", CallbackData: "mc_kick"}
+		ki[3] = ext.InlineKeyboardButton{Text: "⛔", CallbackData: "mc_ban"}
+		ki[4] = ext.InlineKeyboardButton{Text: "❗", CallbackData: "mc_warn"}
+		ki[5] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "mc_del"}
+		kn = append(kn, ki)
+
+		kd := make([]ext.InlineKeyboardButton, 6)
+		kd[0] = ext.InlineKeyboardButton{Text: a[0][1], CallbackData: "md_toggle"}
+		kd[1] = ext.InlineKeyboardButton{Text: "🔇", CallbackData: "md_mute"}
+		kd[2] = ext.InlineKeyboardButton{Text: "🚷", CallbackData: "md_kick"}
+		kd[3] = ext.InlineKeyboardButton{Text: "⛔", CallbackData: "md_ban"}
+		kd[4] = ext.InlineKeyboardButton{Text: "❗", CallbackData: "md_warn"}
+		kd[5] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "md_del"}
+		kn = append(kn, kd)
+
+		kj := make([]ext.InlineKeyboardButton, 2)
+		kj[0] = ext.InlineKeyboardButton{Text: a[0][2], CallbackData: "me_toggle"}
+		kj[1] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "me_del"}
+		kn = append(kn, kj)
+
+		kk := make([]ext.InlineKeyboardButton, 3)
+		kk[0] = ext.InlineKeyboardButton{Text: "❗", CallbackData: "mb_warn"}
+		kk[1] = ext.InlineKeyboardButton{Text: "➕", CallbackData: "mb_plus"}
+		kk[2] = ext.InlineKeyboardButton{Text: "➖", CallbackData: "mb_minus"}
+		kn = append(kn, kk)
+
+		ku := make([]ext.InlineKeyboardButton, 5)
+		ku[0] = ext.InlineKeyboardButton{Text: "🕑", CallbackData: "mf_waktu"}
+		ku[1] = ext.InlineKeyboardButton{Text: "➕", CallbackData: "mf_plus"}
+		ku[2] = ext.InlineKeyboardButton{Text: "➖", CallbackData: "mf_minus"}
+		ku[3] = ext.InlineKeyboardButton{Text: a[3][0], CallbackData: "mf_duration"}
+		ku[4] = ext.InlineKeyboardButton{Text: "🗑", CallbackData: "mf_del"}
+		kn = append(kn, ku)
+
+		kg := make([]ext.InlineKeyboardButton, 2)
+		kg[0] = ext.InlineKeyboardButton{Text: "🔙", CallbackData: "back_main"}
+		kg[1] = ext.InlineKeyboardButton{Text: "✖", CallbackData: "close"}
+		kn = append(kn, kg)
+
+		return teks, a, kn
+	}
+	return "", nil, nil
+}
+
+func mainSpamMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
+	a := extraction.GetEmoji(chatId)
+	if a != nil {
+		teks := function.GetStringf(chatId, "modules/helpers/function.go:66", map[string]string{"1": a[0][3]})
+
+		var kn = make([][]ext.InlineKeyboardButton, 0)
+
+		ki := make([]ext.InlineKeyboardButton, 1)
+		ki[0] = ext.InlineKeyboardButton{Text: a[0][3], CallbackData: "mo_toggle"}
+		kn = append(kn, ki)
+
+		kg := make([]ext.InlineKeyboardButton, 2)
+		kg[0] = ext.InlineKeyboardButton{Text: "🔙", CallbackData: "back_main"}
+		kg[1] = ext.InlineKeyboardButton{Text: "✖", CallbackData: "close"}
+		kn = append(kn, kg)
+
+		return teks, a, kn
+	}
+	return "", nil, nil
+}
+
+func mainMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
+	a := extraction.GetEmoji(chatId)
+	if a != nil {
+		teks := function.GetString(chatId, "modules/helpers/function.go:85")
+
+		var kn = make([][]ext.InlineKeyboardButton, 0)
+
+		ki := make([]ext.InlineKeyboardButton, 2)
+		ki[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:91"), CallbackData: "mk_utama"}
+		ki[1] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:92"), CallbackData: "mk_spam"}
+		kn = append(kn, ki)
+
+		kz := make([]ext.InlineKeyboardButton, 2)
+		kz[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:96"), CallbackData: "mk_media"}
+		kz[1] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:97"), CallbackData: "mk_pesan"}
+		kn = append(kn, kz)
+
+		kd := make([]ext.InlineKeyboardButton, 1)
+		kd[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:101"), CallbackData: "mk_reset"}
+		kn = append(kn, kd)
+
+		kk := make([]ext.InlineKeyboardButton, 1)
+		kk[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:105"), CallbackData: "close"}
+		kn = append(kn, kk)
+
+		return teks, a, kn
+	}
+	return "", nil, nil
+}
+
 func LoadSettingPanel(u *gotgbot.Updater) {
 	defer logrus.Info("Setting Panel Module Loaded...")
-	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))
-	u.Dispatcher.AddHandler(handlers.NewCallback(
+	go u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))
+	go u.Dispatcher.AddHandler(handlers.NewCallback(
 		"^m[cdefgb]_(toggle|warn|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)",
 		usercontrolquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamcontrolquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
+	go u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamcontrolquery))
+	go u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
+	go u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
+	go u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
 }

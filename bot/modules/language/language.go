@@ -51,5 +51,5 @@ func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func LoadLang(u *gotgbot.Updater) {
 	defer logrus.Info("Lang Module Loaded...")
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setlang", []rune{'/', '.'}, setlang))
+	go u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setlang", []rune{'/', '.'}, setlang))
 }
