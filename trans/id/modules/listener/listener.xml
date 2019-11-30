@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/listener/listener.go:45">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena ia belum
-            memasang &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena ia belum memasang &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -15,8 +14,7 @@
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="4" name="modules/listener/listener.go:173">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena ia belum
-            memasang &lt;b&gt; profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena ia belum memasang &lt;b&gt; profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -29,9 +27,7 @@
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="7" name="modules/listener/listener.go:298">
-        <value>🙋‍ &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; selamat datang di &lt;b&gt;{3}&lt;/b&gt; mohon
-            tekan tombol dibawah untuk &lt;b&gt;verifikasi&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
-        </value>
+        <value>🙋‍ &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; selamat datang di &lt;b&gt;{3}&lt;/b&gt; mohon tekan tombol dibawah untuk &lt;b&gt;verifikasi&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]</value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="8" name="modules/listener/listener.go:303">
@@ -39,8 +35,7 @@
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="9" name="modules/listener/listener.go:580">
-        <value>🚫 Pengguna &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; diblokir secara global, dan sudah &lt;b&gt;dikeluarkan&lt;/b&gt;.
-            [&lt;code&gt;{3}&lt;/code&gt;]
+        <value>🚫 Pengguna &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; diblokir secara global, dan sudah &lt;b&gt;dikeluarkan&lt;/b&gt;. [&lt;code&gt;{3}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -77,26 +72,22 @@
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="18" name="modules/warn">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;PERINGATKAN&lt;/b&gt; karena
-            ia belum memasang &lt;b&gt;username&lt;/b&gt;. Peringatan {3}/{4}. [&lt;code&gt;{5}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;PERINGATKAN&lt;/b&gt; karena ia belum memasang &lt;b&gt;username&lt;/b&gt;. Peringatan {3}/{4}. [&lt;code&gt;{5}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="19" name="modules/warn2">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;DIKELUARKAN&lt;/b&gt; karena
-            ia sudah memiliki {3}/{4} peringatan penuh. [&lt;code&gt;{5}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;DIKELUARKAN&lt;/b&gt; karena ia sudah memiliki {3}/{4} peringatan penuh. [&lt;code&gt;{5}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="20" name="modules/warn3">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;PERINGATKAN&lt;/b&gt; karena
-            ia belum memasang &lt;b&gt;profile photo&lt;/b&gt;. Peringatan {3}/{4}. [&lt;code&gt;{5}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah di &lt;b&gt;PERINGATKAN&lt;/b&gt; karena ia belum memasang &lt;b&gt;profile photo&lt;/b&gt;. Peringatan {3}/{4}. [&lt;code&gt;{5}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="21" name="unamep">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; anda telah &lt;b&gt;di{3}&lt;/b&gt; di &lt;b&gt;{5}&lt;/b&gt;
-            karena belum memasang &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; anda telah &lt;b&gt;di{3}&lt;/b&gt; di &lt;b&gt;{5}&lt;/b&gt; karena belum memasang &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -105,14 +96,12 @@
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="23" name="picturep">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; anda telah &lt;b&gt;di{3}&lt;/b&gt; di &lt;b&gt;{5}&lt;/b&gt;
-            karena belum memasang &lt;b&gt;profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; anda telah &lt;b&gt;di{3}&lt;/b&gt; di &lt;b&gt;{5}&lt;/b&gt; karena belum memasang &lt;b&gt;profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="24" name="verifyp">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; Anda harus &lt;b&gt;VERIFIKASI&lt;/b&gt; diri
-            Anda agar diterima di &lt;b&gt;{3}&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; Anda harus &lt;b&gt;VERIFIKASI&lt;/b&gt; diri Anda agar diterima di &lt;b&gt;{3}&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>

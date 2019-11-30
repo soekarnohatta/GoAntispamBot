@@ -15,9 +15,8 @@ func UpdateSetting(chatid int, time string, delete string) error {
 
 	set := &Setting{Time: time, Deletion: delete}
 	tx.Where(Setting{ChatId: strconv.Itoa(chatid)}).Assign(Setting{Time: time, Deletion: delete}).FirstOrCreate(set)
-	tx.Commit()
-
-	return tx.Error
+	ret := tx.Commit().Error
+	return ret
 }
 
 func DelSetting(ChatId int) bool {

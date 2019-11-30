@@ -375,7 +375,6 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 	return err
 }
 
-// LoadSettingPanel -> Register handlers
 func LoadSettingPanel(u *gotgbot.Updater) {
 	defer logrus.Info("Setting Panel Module Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))

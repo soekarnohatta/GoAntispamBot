@@ -10,35 +10,35 @@
     </Rows>
     <Rows id="3" name="modules/admins/admins.go:43">
         <value>&lt;b&gt;Updated Gban&lt;/b&gt;
-            👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
-            📝 &lt;b&gt;Previous Reason:&lt;/b&gt; &lt;code&gt;{2}&lt;/code&gt;
-            ✍ &lt;b&gt;Updated Reason:&lt;/b&gt; &lt;code&gt;{3}&lt;/code&gt;
+👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
+📝 &lt;b&gt;Previous Reason:&lt;/b&gt; &lt;code&gt;{2}&lt;/code&gt;
+✍ &lt;b&gt;Updated Reason:&lt;/b&gt; &lt;code&gt;{3}&lt;/code&gt;
         </value>
         <!--modules/admins/admins.go:43-->
     </Rows>
     <Rows id="4" name="modules/admins/admins.go:54">
         <value>🚫 &lt;b&gt;Beginning global ban procedure(s) of&lt;/b&gt;
-            👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
+👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
         </value>
         <!--modules/admins/admins.go:54-->
     </Rows>
     <Rows id="5" name="modules/admins/admins.go:62">
         <value>&lt;b&gt;New Gban&lt;/b&gt;
-            👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
-            ✍ &lt;b&gt;Reason:&lt;/b&gt; &lt;code&gt;{2}&lt;/code&gt;
+👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
+✍ &lt;b&gt;Reason:&lt;/b&gt; &lt;code&gt;{2}&lt;/code&gt;
         </value>
         <!--modules/admins/admins.go:62-->
     </Rows>
 
     <Rows id="6" name="modules/admins/admins.go:88">
         <value>⚠ &lt;b&gt;Beginning unglobal ban procedure(s) of&lt;/b&gt;
-            👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
+👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
         </value>
         <!--modules/admins/admins.go:88-->
     </Rows>
     <Rows id="7" name="modules/admins/admins.go:111">
         <value>&lt;b&gt;New Un-Gban&lt;/b&gt;
-            👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
+👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
         </value>
         <!--modules/admins/admins.go:111-->
     </Rows>

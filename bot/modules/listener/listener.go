@@ -34,19 +34,18 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.IsUserAdmin(chat, user.Id) == true {
-		return gotgbot.ContinueGroups{}
+		return nil
 	}
 	if chat.Type != "supergroup" {
-		return gotgbot.ContinueGroups{}
+		return nil
 	}
 	if user.Username != "" {
 		return gotgbot.ContinueGroups{}
 	}
 
 	replytext := function.GetStringf(chat.Id, "modules/listener/listener.go:45",
-		map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName), "3": db.Action,
+		map[string]string{"1": strconv.Itoa(user.Id), "2": html.UnescapeString(user.FirstName), "3": db.Action,
 			"4": strconv.Itoa(user.Id)})
-
 	markup := &ext.InlineKeyboardMarkup{}
 
 	if db.Action != "warn" {
@@ -185,10 +184,10 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.IsUserAdmin(chat, user.Id) == true {
-		return gotgbot.ContinueGroups{}
+		return nil
 	}
 	if chat.Type != "supergroup" {
-		return gotgbot.ContinueGroups{}
+		return nil
 	}
 	photo, _ := user.GetProfilePhotos(0, 0)
 	if photo != nil && photo.TotalCount != 0 {
@@ -198,7 +197,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 	replytext := function.GetStringf(msg.Chat.Id, "modules/listener/listener.go:173",
 		map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
 			"4": strconv.Itoa(user.Id)})
-
 	markup := &ext.InlineKeyboardMarkup{}
 	reply := b.NewSendableMessage(chat.Id, replytext)
 	reply.ParseMode = parsemode.Html
@@ -337,7 +335,7 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.IsUserAdmin(chat, user.Id) == true {
-		return gotgbot.EndGroups{}
+		return nil
 	}
 
 	replytext := function.GetStringf(msg.Chat.Id, "modules/listener/listener/listener.go:298",
@@ -403,6 +401,7 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	if sql.GetEnforceGban(chat.Id).Option != "true" {
 		return gotgbot.ContinueGroups{}
 	}
+
 	ban := sql.GetUserSpam(user.Id)
 	if ban != nil {
 		err := spamfunc(b, u)
@@ -430,7 +429,7 @@ func removelink(b ext.Bot, u *gotgbot.Update) error {
 	user := u.EffectiveUser
 
 	if chat.Type != "supergroup" {
-		return gotgbot.EndGroups{}
+		return nil
 	}
 
 	accepted := make(map[string]struct{})
@@ -448,39 +447,48 @@ func removelink(b ext.Bot, u *gotgbot.Update) error {
 
 	if entities != nil && ent != nil {
 		x := sql.GetNewUser(user.Id)
-		cid, _ := strconv.Atoi(x.ChatId)
-		if cid == chat.Id {
-			i, _ := strconv.ParseInt(x.Date, 10, 64)
-			tim := time.Now()
-			baseTime := time.Date(tim.Year(), tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(),
-				tim.Nanosecond(), time.UTC)
-			td := timeutil.Timedelta{Minutes: 1}
-			result := baseTime.Add(td.Duration())
-			if time.Now().Unix()-result.Unix() > i {
-				_, err := msg.Delete()
-				err_handler.HandleTgErr(b, u, err)
-				_, err = b.SendMessage(chat.Id, fmt.Sprintf("Removed message from %v,"+
-					"\nReason: new user and external link(s)", user.FirstName))
-				err_handler.HandleErr(err)
-				return gotgbot.ContinueGroups{}
-			} else {
-				sql.DelNewUser(user.Id)
-				return gotgbot.ContinueGroups{}
-			}
+		fmt.Print("flnk")
+		fmt.Print(x.ChatId)
+
+		fmt.Print("xlnk")
+		fmt.Print(x.ChatId)
+		fmt.Print(chat.Id)
+		i, _ := strconv.ParseInt(x.Date, 10, 64)
+		tim := time.Now()
+		baseTime := time.Date(tim.Year(), tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(),
+			tim.Nanosecond(), time.UTC)
+		td := timeutil.Timedelta{Minutes: 1}
+		result := baseTime.Add(td.Duration())
+		fmt.Print("last")
+		if result.Unix()-time.Now().Unix() > i {
+			_, err := msg.Delete()
+			err_handler.HandleTgErr(b, u, err)
+			_, err = b.SendMessage(chat.Id, fmt.Sprintf("Removed message from %v,"+
+				"\nReason: new user and external link(s)", user.FirstName))
+			err_handler.HandleErr(err)
+			return gotgbot.ContinueGroups{}
+		} else {
+			sql.DelNewUser(user.Id)
+			return gotgbot.ContinueGroups{}
 		}
+
 	}
 
 	if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
 		x := sql.GetNewUser(user.Id)
-		cid, _ := strconv.Atoi(x.ChatId)
-		if cid == chat.Id {
+		fmt.Print("flnk")
+		fmt.Print(x.ChatId)
+		if x.ChatId == strconv.Itoa(chat.Id) {
+			fmt.Print("z")
+			fmt.Print(x.ChatId)
+			fmt.Print(chat.Id)
 			i, _ := strconv.ParseInt(x.Date, 10, 64)
 			tim := time.Now()
 			baseTime := time.Date(tim.Year(), tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(),
 				tim.Nanosecond(), time.UTC)
 			td := timeutil.Timedelta{Minutes: 1}
-			result := baseTime.Add(td.Duration())
-			if time.Now().Unix()-result.Unix() > i {
+			_ = baseTime.Add(td.Duration())
+			if time.Now().Unix()-(time.Now().Unix()+int64(1*60)) < i {
 				_, err := msg.Delete()
 				err_handler.HandleTgErr(b, u, err)
 				_, err = b.SendMessage(chat.Id, fmt.Sprintf("Removed message from %v,"+
@@ -558,24 +566,23 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 }
 
 func usernamequery(b ext.Bot, u *gotgbot.Update) error {
-	var err error
 	msg := u.CallbackQuery
 	user := msg.From
 	chat := msg.Message.Chat
 
 	data, _ := regexp.MatchString("^umute_\\d+_.", msg.Data)
 	data2, _ := regexp.MatchString("^uba_\\d+_.", msg.Data)
-	if data == true {
+	if data {
 		splt := strings.Split(msg.Data, "umute_")[1]
 		if strings.Split(splt, "_")[0] == strconv.Itoa(user.Id) {
 			if user.Username == "" {
-				_, err = b.AnswerCallbackQueryText(msg.Id,
+				_, err := b.AnswerCallbackQueryText(msg.Id,
 					function.GetString(chat.Id, "modules/listener/listener.go:454"), true)
 				return err
 			}
 
 			if chat.Type == "supergroup" {
-				_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:441"), true)
+				_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:441"), true)
 				if err != nil {
 					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
 					return err
@@ -588,41 +595,33 @@ func usernamequery(b ext.Bot, u *gotgbot.Update) error {
 				_, err = b.UnRestrictChatMember(chat.Id, user.Id)
 				return err
 			} else {
-				_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:441"), true)
-				if err != nil {
-					err_handler.HandleCbErr(b, u, err)
-				}
+				_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id,
+					"modules/listener/listener.go:441"), true)
+				err_handler.HandleErr(err)
 				_, err = msg.Message.Delete()
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
 				_, err = b.UnRestrictChatMember(cid, user.Id)
 				return err
 			}
 		}
-		_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:458"), true)
+		_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id,
+			"modules/listener/listener.go:458"), true)
 		return err
 	} else if data2 == true {
 		if chat.Type == "supergroup" {
 			if chat_status.IsUserAdmin(chat, user.Id) == true {
 				i, _ := strconv.Atoi(strings.Split(msg.Data, "uba_")[1])
-				_, err = b.UnbanChatMember(chat.Id, i)
+				_, err := b.UnbanChatMember(chat.Id, i)
+				err_handler.HandleErr(err)
 				_, err = b.AnswerCallbackQueryText(msg.Id, "Unbanned!", true)
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				_, err = msg.Message.Delete()
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				return err
 			}
 		} else if chat.Type == "private" {
-			_, err = b.AnswerCallbackQuery(msg.Id)
+			_, err := b.AnswerCallbackQuery(msg.Id)
 			return err
 		}
 
@@ -649,33 +648,26 @@ func picturequery(b ext.Bot, u *gotgbot.Update) error {
 
 			if chat.Type == "supergroup" {
 				_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:441"), true)
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				_, err = msg.Message.Delete()
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				_, err = b.UnRestrictChatMember(chat.Id, user.Id)
+				err_handler.HandleErr(err)
 				return err
 			} else {
 				_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:441"), true)
-				if err != nil {
-					err_handler.HandleCbErr(b, u, err)
-				}
+				err_handler.HandleErr(err)
 				_, err = msg.Message.Delete()
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
 				_, err = b.UnRestrictChatMember(cid, user.Id)
+				err_handler.HandleErr(err)
 				return err
 			}
 		}
-		_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:515"), true)
+		_, err = b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id,
+			"modules/listener/listener.go:515"), true)
+		err_handler.HandleErr(err)
 		return err
 	} else if data2 == true {
 		if chat.Type == "supergroup" {
@@ -683,19 +675,14 @@ func picturequery(b ext.Bot, u *gotgbot.Update) error {
 				i, _ := strconv.Atoi(strings.Split(msg.Data, "uba_")[1])
 				_, err = b.UnbanChatMember(chat.Id, i)
 				_, err = b.AnswerCallbackQueryText(msg.Id, "Unbanned!", true)
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				_, err = msg.Message.Delete()
-				if err != nil {
-					_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-					return err
-				}
+				err_handler.HandleErr(err)
 				return err
 			}
 		} else if chat.Type == "private" {
 			_, err = b.AnswerCallbackQuery(msg.Id)
+			err_handler.HandleErr(err)
 			return err
 		}
 
@@ -732,7 +719,6 @@ func verifyquery(b ext.Bot, u *gotgbot.Update) error {
 			return err
 		}
 	}
-
 	return gotgbot.ContinueGroups{}
 }
 
@@ -743,8 +729,9 @@ func warnquery(bot ext.Bot, u *gotgbot.Update) error {
 	pattern, _ := regexp.Compile(`rmWarn\((.+?)\)`)
 
 	if chat_status.IsUserAdmin(chat, user.Id) == false {
-		_, _ = bot.AnswerCallbackQueryText(query.Id, "You need to be an admin to do this.", true)
-		return gotgbot.EndGroups{}
+		_, err := bot.AnswerCallbackQueryText(query.Id, "You need to be an admin to do this.", true)
+		err_handler.HandleErr(err)
+		return err
 	}
 
 	if pattern.MatchString(query.Data) {
@@ -760,9 +747,8 @@ func warnquery(bot ext.Bot, u *gotgbot.Update) error {
 		}
 		_, err := u.EffectiveMessage.EditText("User already has no warns.")
 		return err
-
 	}
-	return nil
+	return gotgbot.ContinueGroups{}
 }
 
 func spamfunc(b ext.Bot, u *gotgbot.Update) error {
@@ -800,12 +786,11 @@ func spamfunc(b ext.Bot, u *gotgbot.Update) error {
 	return nil
 }
 
-// LoadListeners -> Register handlers
 func LoadListeners(u *gotgbot.Updater) {
 	defer logrus.Info("Listeners Module Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
+	//u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, get_join_date))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
-	//u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), get_join_date))
 	//u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, removelink))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, picture))

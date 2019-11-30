@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/private/pm.go:15">
-        <value>Halo, saya bot untuk membisukan pengguna yang tidak memiliki nama pengguna dan memblokir spammer dan
-            hadir dengan berbagai fitur keamanan. Berikut adalah beberapa perintah yang dapat Anda gunakan:
-            1. /username (true / false) - Untuk mematikan atau menghidupkan fitur pengguna bisu jika seseorang tidak
-            memiliki nama pengguna.
+        <value>Halo, saya bot untuk membisukan pengguna yang tidak memiliki nama pengguna dan memblokir spammer dan hadir dengan berbagai fitur keamanan. Berikut adalah beberapa perintah yang dapat Anda gunakan:
+            1. /username (true / false) - Untuk mematikan atau menghidupkan fitur pengguna bisu jika seseorang tidak memiliki nama pengguna.
             2. /verify (true / false) - Pengguna harus memverifikasi saat memasuki grup.
             3. /time (int m / h / d) - Untuk menentukan waktu untuk semua hukuman.
-            4. /profilepicture (true / false) - Untuk mematikan atau menghidupkan fitur pengguna bisu jika Anda belum
-            menginstal hal
+            4. /profilepicture (true / false) - Untuk mematikan atau menghidupkan fitur pengguna bisu jika Anda belum menginstal hal
             5. /notif (true / false) - Untuk mematikan atau menghidupkan fitur notifikasi pribadi.
-            6. /settings - Untuk menyesuaikan semua pengaturan
+            6. /settings - Untuk menyesuaikan semua pengaturan.
             Jika Anda butuh bantuan, silakan kunjungi @polybotsupport. Mohon donasi untuk pengembangan lebih lanjut.
         </value>
         <!--modules/private/pm.go:15-->

@@ -17,9 +17,8 @@ func UpdateVerify(chatId int, option string, text string, del string) error {
 	set := &Verify{ChatId: strconv.Itoa(chatId), Option: option, Text: text, Deletion: del}
 	tx.Where(Verify{ChatId: strconv.Itoa(chatId)}).Assign(Verify{Option: option,
 		Text: text, Deletion: del}).FirstOrCreate(set)
-	tx.Commit()
-
-	return tx.Error
+	ret := tx.Commit().Error
+	return ret
 }
 
 func DelVerify(chatid int) bool {

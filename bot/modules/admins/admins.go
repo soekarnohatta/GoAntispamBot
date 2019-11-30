@@ -17,18 +17,19 @@ import (
 )
 
 func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
-	var err error
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
 		return gotgbot.EndGroups{}
 	}
+
 	userid, reason := extraction.ExtractUserAndText(msg, args)
 	if userid == 0 {
-		_, err = b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
+		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
 		err_handler.HandleErr(err)
-		return gotgbot.EndGroups{}
+		return err
 	}
+
 	if reason == "" {
 		reason = "None"
 	}
@@ -36,55 +37,50 @@ func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	ban := sql.GetUserSpam(userid)
 	if ban != nil {
 		if ban.Reason == reason {
-			_, err = b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:38"))
+			_, err := b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:38"))
 			err_handler.HandleErr(err)
-			return gotgbot.EndGroups{}
+			return err
 		}
 
-		_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:43",
+		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:43",
 			map[string]string{"1": strconv.Itoa(userid), "2": ban.Reason, "3": reason}))
 		err_handler.HandleErr(err)
-		db := make(chan error)
-		go func() { db <- sql.UpdateUserSpam(userid, reason) }()
-		err_handler.HandleTgErr(b, u, <-db)
+		err = sql.UpdateUserSpam(userid, reason)
+		err_handler.HandleTgErr(b, u, err)
 		err = logger.SendBanLog(b, userid, reason, u)
 		err_handler.HandleErr(err)
-		return gotgbot.EndGroups{}
+		return err
 	}
 
-	_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
+	_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
 		map[string]string{"1": strconv.Itoa(userid)}))
 	err_handler.HandleErr(err)
 
-	db := make(chan error)
-	go func() { db <- sql.UpdateUserSpam(userid, reason) }()
-	err_handler.HandleTgErr(b, u, <-db)
+	err = sql.UpdateUserSpam(userid, reason)
+	err_handler.HandleTgErr(b, u, err)
 
 	_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:62",
 		map[string]string{"1": strconv.Itoa(userid), "2": reason}))
 	err_handler.HandleErr(err)
 	err = logger.SendBanLog(b, userid, reason, u)
 	err_handler.HandleErr(err)
-	return gotgbot.EndGroups{}
+	return err
 }
 
 func ungban(b ext.Bot, u *gotgbot.Update, args []string) error {
-	var err error
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
-		return gotgbot.EndGroups{}
+		return nil
 	}
 
 	userid, _ := extraction.ExtractUserAndText(msg, args)
-
 	if userid == 0 {
-		_, err = msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
+		_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
 		return err
 	}
 
 	ban := sql.GetUserSpam(userid)
-
 	if ban != nil {
 		_, err := msg.ReplyHTMLf(function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:88",
 			map[string]string{"1": strconv.Itoa(userid)}))
@@ -112,15 +108,16 @@ func ungban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err = msg.ReplyHTMLf(function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:111",
 			map[string]string{"1": strconv.Itoa(userid)}))
 		err_handler.HandleErr(err)
-		return gotgbot.EndGroups{}
+		return err
 	}
-	_, err = msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:116"))
+	_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:116"))
 	err_handler.HandleErr(err)
-	return gotgbot.EndGroups{}
+	return err
 }
 
 func stats(_ ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
+
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
 		return gotgbot.EndGroups{}
 	}
@@ -131,7 +128,7 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 
 	_, err := msg.ReplyHTML(teks)
 	err_handler.HandleErr(err)
-	return gotgbot.EndGroups{}
+	return err
 }
 
 func broadcast(b ext.Bot, u *gotgbot.Update) error {
@@ -161,10 +158,9 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 
 	_, err = msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>, <code>%v</code> <b>Has Failed</b>\n", errnum)
 	err_handler.HandleErr(err)
-	return gotgbot.EndGroups{}
+	return err
 }
 
-// LoadAdmins -> Register Handler
 func LoadAdmins(u *gotgbot.Updater) {
 	defer logrus.Info("Admins Module Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("gban", []rune{'/', '.'}, gban))

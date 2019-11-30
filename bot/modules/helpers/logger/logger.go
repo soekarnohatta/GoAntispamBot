@@ -5,13 +5,13 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/jumatberkah/antispambot/bot"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"strconv"
 	"time"
 )
 
 func SendBanLog(b ext.Bot, uid int, rson string, u *gotgbot.Update) error {
 	user := u.EffectiveUser
-
 	t := time.Now()
 	formatted := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d",
 		t.Year(), t.Month(), t.Day(),
@@ -25,6 +25,7 @@ func SendBanLog(b ext.Bot, uid int, rson string, u *gotgbot.Update) error {
 	sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
 	sendLog.ParseMode = "HTML"
 	_, err := sendLog.Send()
+	err_handler.HandleErr(err)
 	return err
 }
 
@@ -39,8 +40,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 		waktu.Hour(), waktu.Minute(), waktu.Second())
 
 	if t == "username" {
-		var txtLog string
-		txtLog = fmt.Sprintf("#NOUSERNAME\n"+
+		txtLog := fmt.Sprintf("#NOUSERNAME\n"+
 			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
@@ -50,10 +50,10 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = "HTML"
 		_, err := sendLog.Send()
+		err_handler.HandleErr(err)
 		return err
 	} else if t == "picture" {
-		var txtLog string
-		txtLog = fmt.Sprintf("#NOPROFILEPICTURE\n"+
+		txtLog := fmt.Sprintf("#NOPROFILEPICTURE\n"+
 			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
@@ -63,10 +63,10 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = "HTML"
 		_, err := sendLog.Send()
+		err_handler.HandleErr(err)
 		return err
 	} else if t == "welcome" {
-		var txtLog string
-		txtLog = fmt.Sprintf("#NEWMEMBER\n"+
+		txtLog := fmt.Sprintf("#NEWMEMBER\n"+
 			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
@@ -76,6 +76,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = "HTML"
 		_, err := sendLog.Send()
+		err_handler.HandleErr(err)
 		return err
 	} else if t == "error" {
 		txtLog := fmt.Sprintf("#ERROR\n"+
@@ -84,10 +85,10 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = "HTML"
 		_, err := sendLog.Send()
+		err_handler.HandleErr(err)
 		return err
 	} else if t == "spam" {
-		var txtLog string
-		txtLog = fmt.Sprintf("#SPAMMER\n"+
+		txtLog := fmt.Sprintf("#SPAMMER\n"+
 			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
@@ -98,6 +99,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
 		sendLog.ParseMode = "HTML"
 		_, err := sendLog.Send()
+		err_handler.HandleErr(err)
 		return err
 	}
 	return nil

@@ -15,9 +15,8 @@ func UpdateNewUser(chatid int, userid string, date string) error {
 
 	set := &NewUser{ChatId: strconv.Itoa(chatid), UserId: userid, Date: date}
 	tx.Where(NewUser{ChatId: strconv.Itoa(chatid)}).Assign(NewUser{ChatId: strconv.Itoa(chatid)}).FirstOrCreate(set)
-	tx.Commit()
-
-	return tx.Error
+	ret := tx.Commit().Error
+	return ret
 }
 
 func DelNewUser(userid int) bool {

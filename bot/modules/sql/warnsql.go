@@ -79,7 +79,6 @@ func SetWarnLimit(chatId string, warnLimit int) {
 	warnSetting.WarnLimit = warnLimit
 	tx.Save(warnSetting)
 	tx.Commit()
-
 }
 
 func GetWarnSetting(chatId string) int {

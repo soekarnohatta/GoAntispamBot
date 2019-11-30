@@ -24,9 +24,8 @@ func UpdateUser(userid int, username string, name string) error {
 
 	user := &User{UserId: userid, UserName: username, Name: name}
 	tx.Where(User{UserId: userid}).Assign(User{UserName: username, Name: name}).FirstOrCreate(user)
-	tx.Commit()
-
-	return tx.Error
+	ret := tx.Commit().Error
+	return ret
 }
 
 func UpdateChat(chatid string, chattitle string, chattype string, clink string) error {
@@ -39,9 +38,8 @@ func UpdateChat(chatid string, chattitle string, chattype string, clink string) 
 	chat := &Chat{ChatId: chatid, ChatTitle: chattitle, ChatType: chattype, ChatLink: clink}
 	tx.Where(Chat{ChatId: chatid}).Assign(Chat{ChatTitle: chattitle, ChatType: chattype,
 		ChatLink: clink}).FirstOrCreate(chat)
-	tx.Commit()
-
-	return tx.Error
+	ret := tx.Commit().Error
+	return ret
 }
 
 func DelUser(userid int) bool {

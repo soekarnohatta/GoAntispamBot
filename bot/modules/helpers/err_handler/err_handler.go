@@ -8,7 +8,7 @@ import (
 
 func HandleErr(err error) {
 	if err != nil {
-		logrus.Println(err)
+		logrus.Error(err)
 	}
 }
 
@@ -30,5 +30,6 @@ func HandleCbErr(b ext.Bot, u *gotgbot.Update, err error) {
 	if err != nil {
 		var msg = u.CallbackQuery
 		_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
+		HandleErr(err)
 	}
 }

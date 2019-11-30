@@ -2,7 +2,7 @@
 <translation>
     <Rows id="1" name="modules/listener/listener.go:45">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; has been &lt;b&gt;{3}d&lt;/b&gt; because he/she
-            hasn't set &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+hasn't set &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -16,7 +16,7 @@
     </Rows>
     <Rows id="4" name="modules/listener/listener.go:173">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; has been &lt;b&gt;{3}d&lt;/b&gt; because he/she
-            hasn't set &lt;b&gt;a profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+hasn't set &lt;b&gt;a profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -30,7 +30,7 @@
     </Rows>
     <Rows id="7" name="modules/listener/listener.go:298">
         <value>🙋‍ &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; welcome to &lt;b&gt;{3}&lt;/b&gt;please click
-            button below to &lt;b&gt;verify&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+button below to &lt;b&gt;verify&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -39,8 +39,8 @@
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="9" name="modules/listener/listener.go:580">
-        <value>🚫 User &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; is banned in this bot, and so has been
-            &lt;b&gt;removed&lt;/b&gt;. [&lt;code&gt;{3}&lt;/code&gt;]
+        <value>🚫 User &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; is banned, and so has been
+&lt;b&gt;removed&lt;/b&gt;. [&lt;code&gt;{3}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -78,25 +78,25 @@
     </Rows>
     <Rows id="18" name="modules/warn">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; has been &lt;b&gt;WARNED&lt;/b&gt; because
-            he/she hasn't set &lt;b&gt;username&lt;/b&gt;. Warn {3}/{4} [&lt;code&gt;{5}&lt;/code&gt;]
+he/she hasn't set &lt;b&gt;username&lt;/b&gt;. Warn {3}/{4} [&lt;code&gt;{5}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="19" name="modules/warn2">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; has been &lt;b&gt;KICKED&lt;/b&gt; because
-            he/she already has {3}/{4} warnings [&lt;code&gt;{5}&lt;/code&gt;]
+he/she already has {3}/{4} warnings [&lt;code&gt;{5}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="20" name="modules/warn3">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; has been &lt;b&gt;WARNED&lt;/b&gt; because
-            he/she hasn't set &lt;b&gt;profile photo&lt;/b&gt;. Warn {3}/{4} [&lt;code&gt;{5}&lt;/code&gt;]
+he/she hasn't set &lt;b&gt;profile photo&lt;/b&gt;. Warn {3}/{4} [&lt;code&gt;{5}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="21" name="unamep">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; you have been &lt;b&gt;{3}d&lt;/b&gt; in &lt;b&gt;{5}&lt;/b&gt;
-            because you haven't set &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+because you haven't set &lt;b&gt;username&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
@@ -106,13 +106,13 @@
     </Rows>
     <Rows id="23" name="picturep">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; you have been &lt;b&gt;{3}d&lt;/b&gt; in &lt;b&gt;{5}&lt;/b&gt;
-            because you haven't set &lt;b&gt;profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+because you haven't set &lt;b&gt;profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="24" name="verifyp">
         <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; you have to &lt;b&gt;VERIFY&lt;/b&gt; yourself
-            in order to be accepted in &lt;b&gt;{3}&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
+in order to be accepted in &lt;b&gt;{3}&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
         </value>
         <!--modules/listener/listener.go:26-->
     </Rows>

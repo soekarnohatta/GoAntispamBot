@@ -14,18 +14,17 @@ func start(_ ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 
 	txtStart := function.GetString(chat.Id, "modules/private/pm.go:15")
-
 	if chat.Type == "supergroup" {
 		_, err := msg.Delete()
 		err_handler.HandleErr(err)
-		return gotgbot.EndGroups{}
+		return err
 	}
+
 	_, err := msg.ReplyHTML(txtStart)
 	err_handler.HandleErr(err)
-	return gotgbot.EndGroups{}
+	return err
 }
 
-// LoadPm -> Register handlers
 func LoadPm(u *gotgbot.Updater) {
 	defer logrus.Info("PM Module Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("start", []rune{'/', '.'}, start))

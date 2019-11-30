@@ -11,8 +11,8 @@ import (
 	"strconv"
 )
 
-type cache struct {
-	Adminid []string `json:"admin"`
+type Cache struct {
+	Admin []string `json:"admin"`
 }
 
 func IsOwner(userId int) bool {
@@ -37,9 +37,9 @@ func IsUserAdmin(chat *ext.Chat, user_id int) bool {
 		admincache(chat)
 	}
 
-	var x cache
+	var x Cache
 	_ = json.Unmarshal(admins, &x)
-	if function.Contains(x.Adminid, strconv.Itoa(user_id)) {
+	if function.Contains(x.Admin, strconv.Itoa(user_id)) {
 		return true
 	}
 
@@ -134,7 +134,8 @@ func admincache(chat *ext.Chat) {
 		admins = append(admins, strconv.Itoa(y.User.Id))
 	}
 
-	w := &cache{admins}
+	w := &Cache{admins}
 	z, _ := json.Marshal(w)
-	_ = caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), z)
+	err := caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), z)
+	err_handler.HandleErr(err)
 }

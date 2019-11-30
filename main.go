@@ -16,21 +16,21 @@ import (
 )
 
 func main() {
-	updater, err := gotgbot.NewUpdater(bot.BotConfig.ApiKey)
-	err_handler.FatalError(err)
-
 	function.LoadAllLang()
 	caching.InitRedis()
 	caching.InitCache()
 	sql.InitDb()
+
+	updater, err := gotgbot.NewUpdater(bot.BotConfig.ApiKey)
+	err_handler.FatalError(err)
 
 	language.LoadLang(updater)
 	admins.LoadAdmins(updater)
 	setting.LoadSetting(updater)
 	setting.LoadSettingPanel(updater)
 	private.LoadPm(updater)
-	// go backups.LoadBackups(updater)
-	// go backups.Backup(*updater.Bot, &gotgbot.Update{})
+	// backups.LoadBackups(updater)
+	// backups.Backup(*updater.Bot, &gotgbot.Update{})
 	listener.LoadListeners(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {

@@ -21,23 +21,46 @@ func LoadAllLang() {
 }
 
 func GetString(chatID int, val string) string {
-	var err error
 	lang, err := caching.REDIS.Get(fmt.Sprintf("lang_%v", chatID)).Result()
-	if err == redis.Nil || lang == "" {
-		lang = sql.GetLang(chatID).Lang
-	} else if err != nil {
-		lang = "en"
+	if err != nil {
+		if err == redis.Nil || lang == "" {
+			lg := sql.GetLang(chatID)
+			if lg != nil {
+				lang = lg.Lang
+			} else {
+				lang = "en"
+			}
+		} else {
+			lang = "en"
+		}
 	}
-	return goloc.Trnl(lang, val)
+
+	ret := goloc.Trnl(lang, val)
+	if ret != "" {
+		return ret
+	}
+	return "None"
 }
 
 func GetStringf(chatID int, val string, args map[string]string) string {
-	var err error
-	lang, err := caching.REDIS.Get(fmt.Sprintf("lang_%v", chatID)).Result()
-	if err == redis.Nil || lang == "" {
-		lang = sql.GetLang(chatID).Lang
-	} else if err != nil {
-		lang = "en"
+	if args != nil && chatID != 0 && val != "" {
+		lang, err := caching.REDIS.Get(fmt.Sprintf("lang_%v", chatID)).Result()
+		if err != nil {
+			if err == redis.Nil || lang == "" {
+				lg := sql.GetLang(chatID)
+				if lg != nil {
+					lang = lg.Lang
+				} else {
+					lang = "en"
+				}
+			} else {
+				lang = "en"
+			}
+		}
+		ret := goloc.Trnlf(lang, val, args)
+		if ret != "" {
+			return ret
+		}
 	}
-	return goloc.Trnlf(lang, val, args)
+	return "None"
 }

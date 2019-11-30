@@ -20,18 +20,21 @@ func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	user := u.EffectiveUser
 
 	if chat_status.RequireUserAdmin(chat, msg, user.Id) == false {
-		return gotgbot.EndGroups{}
+		return nil
 	}
+
 	if len(args) == 0 {
 		_, err := msg.ReplyText("Please insert the language code so that i can change your language")
 		err_handler.HandleErr(err)
-		return gotgbot.EndGroups{}
+		return err
 	}
+
 	if !goloc.IsLangSupported(args[0]) {
 		_, err := msg.ReplyText(function.GetString(chat.Id, "modules/language/language.go:58"))
 		err_handler.HandleErr(err)
-		return gotgbot.EndGroups{}
+		return err
 	}
+
 	_, err := caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), args[0], 0).Result()
 	if err != nil {
 		err = sql.UpdateLang(chat.Id, args[0])
@@ -43,10 +46,9 @@ func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	_, err = msg.ReplyText(function.GetStringf(chat.Id, "modules/language/language.go:51",
 		map[string]string{"1": args[0]}))
 	err_handler.HandleErr(err)
-	return gotgbot.EndGroups{}
+	return err
 }
 
-// LoadLang -> Register handlers
 func LoadLang(u *gotgbot.Updater) {
 	defer logrus.Info("Lang Module Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setlang", []rune{'/', '.'}, setlang))
