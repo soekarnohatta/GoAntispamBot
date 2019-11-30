@@ -755,7 +755,7 @@ func spamfunc(b ext.Bot, u *gotgbot.Update) error {
 
 func LoadListeners(u *gotgbot.Updater) {
 	defer logrus.Info("Listeners Module Loaded...")
-	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
+	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
 	//go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, get_join_date))
 	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
 	//go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, removelink))
