@@ -270,7 +270,8 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			err_handler.HandleErr(err)
 		}
 
-		if sql.GetNotification(user.Id).Notification == "true" {
+		notif := sql.GetNotification(user.Id)
+		if notif != nil && notif.Notification == "true" {
 			txt := function.GetStringf(user.Id, "picturep",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
 					"4": strconv.Itoa(user.Id), "5": chat.Title})
@@ -354,7 +355,7 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 		return nil
 	}
 
-	replytext := function.GetStringf(msg.Chat.Id, "modules/listener/listener/listener.go:298",
+	replytext := function.GetStringf(msg.Chat.Id, "modules/listener/listener.go:298",
 		map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": chat.Title, "4": strconv.Itoa(user.Id)})
 
 	kb := make([][]ext.InlineKeyboardButton, 1)
