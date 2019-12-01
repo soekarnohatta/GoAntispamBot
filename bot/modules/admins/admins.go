@@ -12,6 +12,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
+	"html"
 	"strconv"
 	"strings"
 )
@@ -144,7 +145,7 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 
 	for _, a := range group() {
 		cid, _ := strconv.Atoi(a.ChatId)
-		_, err = b.SendMessageHTML(cid, strings.Split(msg.Text, "/broadcast")[1])
+		_, err = b.SendMessageHTML(cid, html.EscapeString(strings.Split(msg.Text, "/broadcast")[1]))
 		if err != nil {
 			if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
 				sql.DelChat(a.ChatId)

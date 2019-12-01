@@ -38,7 +38,7 @@ func panel(b ext.Bot, u *gotgbot.Update) error {
 	return nil
 }
 
-func backquery(b ext.Bot, u *gotgbot.Update) error {
+func backQuery(b ext.Bot, u *gotgbot.Update) error {
 	var err error
 	msg := u.CallbackQuery
 	user := msg.From
@@ -60,7 +60,7 @@ func backquery(b ext.Bot, u *gotgbot.Update) error {
 	return gotgbot.ContinueGroups{}
 }
 
-func closequery(b ext.Bot, u *gotgbot.Update) error {
+func closeQuery(b ext.Bot, u *gotgbot.Update) error {
 	var err error
 	msg := u.CallbackQuery
 	user := msg.From
@@ -80,7 +80,7 @@ func closequery(b ext.Bot, u *gotgbot.Update) error {
 	return gotgbot.ContinueGroups{}
 }
 
-func settingquery(b ext.Bot, u *gotgbot.Update) error {
+func settingQuery(b ext.Bot, u *gotgbot.Update) error {
 	var err error
 	msg := u.CallbackQuery
 	user := msg.From
@@ -110,7 +110,7 @@ func settingquery(b ext.Bot, u *gotgbot.Update) error {
 					caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "en", 0)
 					caching.REDIS.BgSave()
 
-					err = updateusercontrol(b, u)
+					err = updateUserControl(b, u)
 					return err
 				} else if msg.Data == "mk_spam" {
 					teks, _, kn := mainSpamMenu(chat.Id)
@@ -126,7 +126,7 @@ func settingquery(b ext.Bot, u *gotgbot.Update) error {
 	return gotgbot.ContinueGroups{}
 }
 
-func spamcontrolquery(b ext.Bot, u *gotgbot.Update) error {
+func spamControlQuery(b ext.Bot, u *gotgbot.Update) error {
 	var err error
 	msg := u.CallbackQuery
 	user := msg.From
@@ -186,13 +186,13 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 				if a == true {
 					err = sql.UpdateUsername(chat.Id, username.Option, strings.Split(msg.Data, "mc_")[1], "-", username.Deletion)
 					err_handler.HandleCbErr(b, u, err)
-					err = updateusercontrol(b, u)
+					err = updateUserControl(b, u)
 					return err
 				} else if f == true {
 					// Profile Photo Control Panel
 					err = sql.UpdatePicture(chat.Id, fotoprofil.Option, strings.Split(msg.Data, "md_")[1], "-", fotoprofil.Deletion)
 					err_handler.HandleCbErr(b, u, err)
-					err = updateusercontrol(b, u)
+					err = updateUserControl(b, u)
 					return err
 				} else if d == true {
 					// Time Control Panel
@@ -220,7 +220,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 							err_handler.HandleCbErr(b, u, err)
 						}
 
-						err = updateusercontrol(b, u)
+						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mf_")[1] == "plus" {
 						lastLetter := waktu.Time[len(waktu.Time)-1:]
@@ -237,7 +237,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 
 						err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), waktu.Deletion)
 						err_handler.HandleCbErr(b, u, err)
-						err = updateusercontrol(b, u)
+						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mf_")[1] == "minus" {
 						lastLetter := waktu.Time[len(waktu.Time)-1:]
@@ -250,7 +250,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 
 							err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), waktu.Deletion)
 							err_handler.HandleCbErr(b, u, err)
-							err = updateusercontrol(b, u)
+							err = updateUserControl(b, u)
 							return err
 						}
 					} else if strings.Split(msg.Data, "mf_")[1] == "waktu" {
@@ -262,12 +262,12 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 					if strings.Split(msg.Data, "mb_")[1] == "plus" {
 						num := warn + 1
 						sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
-						err = updateusercontrol(b, u)
+						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mb_")[1] == "minus" {
 						num := warn - 1
 						sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
-						err = updateusercontrol(b, u)
+						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mb_")[1] == "warn" {
 						_, err := b.AnswerCallbackQueryText(msg.Id,
@@ -302,7 +302,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 						}
 					}
 
-					err = updateusercontrol(b, u)
+					err = updateUserControl(b, u)
 					return err
 				} else if z == true {
 					// On/Off Deletion
@@ -340,7 +340,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 						}
 					}
 
-					err = updateusercontrol(b, u)
+					err = updateUserControl(b, u)
 					return err
 				}
 			}
@@ -349,7 +349,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 	return gotgbot.ContinueGroups{}
 }
 
-func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
+func updateUserControl(b ext.Bot, u *gotgbot.Update) error {
 	var err error
 	msg := u.CallbackQuery
 	chat := msg.Message.Chat
@@ -357,7 +357,7 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 	_, err = b.AnswerCallbackQuery(msg.Id)
 	err_handler.HandleErr(err)
 
-	opsisama := "Bad Request: message is not modified: specified new message content and " +
+	opsiSama := "Bad Request: message is not modified: specified new message content and " +
 		"reply markup are exactly the same as a current " +
 		"content and reply markup of the message"
 
@@ -365,7 +365,7 @@ func updateusercontrol(b ext.Bot, u *gotgbot.Update) error {
 	_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
 		teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
 	if err != nil {
-		if err.Error() == opsisama {
+		if err.Error() == opsiSama {
 			_, err := b.AnswerCallbackQuery(msg.Id)
 			return err
 		}
@@ -489,8 +489,8 @@ func LoadSettingPanel(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewCallback(
 		"^m[cdefgb]_(toggle|warn|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)",
 		usercontrolquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamcontrolquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamControlQuery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingQuery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("close", closeQuery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("back_", backQuery))
 }
