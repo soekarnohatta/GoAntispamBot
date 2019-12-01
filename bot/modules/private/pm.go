@@ -27,5 +27,5 @@ func start(_ ext.Bot, u *gotgbot.Update) error {
 
 func LoadPm(u *gotgbot.Updater) {
 	defer logrus.Info("PM Module Loaded...")
-	go u.Dispatcher.AddHandler(handlers.NewPrefixCommand("start", []rune{'/', '.'}, start))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("start", []rune{'/', '.'}, start))
 }

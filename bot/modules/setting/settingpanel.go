@@ -485,12 +485,12 @@ func mainMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
 
 func LoadSettingPanel(u *gotgbot.Updater) {
 	defer logrus.Info("Setting Panel Module Loaded...")
-	go u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))
-	go u.Dispatcher.AddHandler(handlers.NewCallback(
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))
+	u.Dispatcher.AddHandler(handlers.NewCallback(
 		"^m[cdefgb]_(toggle|warn|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)",
 		usercontrolquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamcontrolquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamcontrolquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("close", closequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("back_", backquery))
 }

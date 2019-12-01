@@ -513,7 +513,7 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 			err_handler.HandleErr(<-db)
 		}
 		if sql.GetLang(chat.Id) == nil {
-			caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 0)
+			caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 7200)
 			caching.REDIS.BgSave()
 			db := make(chan error)
 			go func() { db <- sql.UpdateLang(chat.Id, "id") }()
@@ -524,8 +524,9 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 			go func() { db <- sql.UpdateNotification(user.Id, "true") }()
 			err_handler.HandleErr(<-db)
 		}
+		return gotgbot.ContinueGroups{}
 	}
-	return gotgbot.ContinueGroups{}
+	return nil
 }
 
 func usernamequery(b ext.Bot, u *gotgbot.Update) error {
@@ -588,7 +589,6 @@ func usernamequery(b ext.Bot, u *gotgbot.Update) error {
 			_, err := b.AnswerCallbackQuery(msg.Id)
 			return err
 		}
-
 	}
 	return gotgbot.ContinueGroups{}
 }
@@ -756,15 +756,15 @@ func spamfunc(b ext.Bot, u *gotgbot.Update) error {
 
 func LoadListeners(u *gotgbot.Updater) {
 	defer logrus.Info("Listeners Module Loaded...")
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
 	//go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, get_join_date))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
 	//go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, removelink))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, picture))
-	go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), verify))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("^(umute|uba)_", usernamequery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("^(pmute|pban)_", picturequery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("wlcm_", verifyquery))
-	go u.Dispatcher.AddHandler(handlers.NewCallback("rmWarn", warnquery))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, picture))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), verify))
+	u.Dispatcher.AddHandler(handlers.NewCallback("^(umute|uba)_", usernamequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("^(pmute|pban)_", picturequery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("wlcm_", verifyquery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("rmWarn", warnquery))
 }

@@ -24,11 +24,11 @@ func main() {
 	go caching.InitCache()
 	go sql.InitDb()
 
-	go language.LoadLang(updater)
-	go admins.LoadAdmins(updater)
-	go setting.LoadSetting(updater)
-	go setting.LoadSettingPanel(updater)
-	go private.LoadPm(updater)
+	language.LoadLang(updater)
+	admins.LoadAdmins(updater)
+	setting.LoadSetting(updater)
+	setting.LoadSettingPanel(updater)
+	private.LoadPm(updater)
 	listener.LoadListeners(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {

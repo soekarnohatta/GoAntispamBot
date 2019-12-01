@@ -35,7 +35,7 @@ func setlang(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return err
 	}
 
-	_, err := caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), args[0], 0).Result()
+	_, err := caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), args[0], 7200).Result()
 	if err != nil {
 		err = sql.UpdateLang(chat.Id, args[0])
 		err_handler.HandleTgErr(b, u, err)
