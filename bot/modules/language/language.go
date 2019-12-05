@@ -25,13 +25,11 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 	if len(args) == 0 {
 		_, err := msg.ReplyText("Please insert the language code so that i can change your language")
-		err_handler.HandleErr(err)
 		return err
 	}
 
 	if !goloc.IsLangSupported(args[0]) {
 		_, err := msg.ReplyText(function.GetString(chat.Id, "modules/language/language.go:58"))
-		err_handler.HandleErr(err)
 		return err
 	}
 
@@ -45,7 +43,6 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 	_, err = msg.ReplyText(function.GetStringf(chat.Id, "modules/language/language.go:51",
 		map[string]string{"1": args[0]}))
-	err_handler.HandleErr(err)
 	return err
 }
 

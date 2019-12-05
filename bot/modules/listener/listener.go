@@ -66,7 +66,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
-				err_handler.HandleErr(err)
 			}
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
@@ -80,7 +79,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
-				err_handler.HandleErr(err)
 			}
 			markup = nil
 		case "ban":
@@ -92,7 +90,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
-				err_handler.HandleErr(err)
 			}
 			kbk := make([][]ext.InlineKeyboardButton, 1)
 			kbk[0] = make([]ext.InlineKeyboardButton, 1)
@@ -109,7 +106,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 				_, err := reply.Send()
 				err_handler.HandleErr(err)
 			}
-			err_handler.HandleErr(err)
 		}
 
 		notif := sql.GetNotification(user.Id)
@@ -134,7 +130,12 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 					"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)})
 
 			_, err := chat.UnbanMember(user.Id)
-			err_handler.HandleErr(err)
+			if err != nil {
+				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
+					err_handler.HandleTgErr(b, u, err)
+					return err
+				}
+			}
 		} else {
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
@@ -225,7 +226,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
-				err_handler.HandleErr(err)
 			}
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
@@ -240,7 +240,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
-				err_handler.HandleErr(err)
 			}
 			markup = nil
 		case "ban":
@@ -252,7 +251,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
-				err_handler.HandleErr(err)
 			}
 			kbk := make([][]ext.InlineKeyboardButton, 1)
 			kbk[0] = make([]ext.InlineKeyboardButton, 1)
@@ -270,7 +268,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 				_, err := reply.Send()
 				err_handler.HandleErr(err)
 			}
-			err_handler.HandleErr(err)
 		}
 
 		notif := sql.GetNotification(user.Id)
@@ -295,7 +292,12 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns),
 					"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)})
 			_, err := chat.UnbanMember(user.Id)
-			err_handler.HandleTgErr(b, u, err)
+			if err != nil {
+				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
+					err_handler.HandleTgErr(b, u, err)
+					return err
+				}
+			}
 		} else {
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
@@ -373,7 +375,6 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 		if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 			err_handler.HandleTgErr(b, u, err)
 		}
-		err_handler.HandleErr(err)
 	}
 
 	reply := b.NewSendableMessage(chat.Id, replyText)

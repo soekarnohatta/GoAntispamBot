@@ -19,10 +19,10 @@ func main() {
 	updater, err := gotgbot.NewUpdater(bot.BotConfig.ApiKey)
 	err_handler.FatalError(err)
 
-	go function.LoadAllLang()
-	go caching.InitRedis()
-	go caching.InitCache()
-	go sql.InitDb()
+	function.LoadAllLang()
+	caching.InitRedis()
+	caching.InitCache()
+	sql.InitDb()
 
 	language.LoadLang(updater)
 	admins.LoadAdmins(updater)
@@ -49,6 +49,5 @@ func main() {
 		logrus.Warn("Using Long Polling...")
 		_ = updater.StartPolling()
 	}
-
 	updater.Idle()
 }

@@ -21,7 +21,7 @@ func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
-		return gotgbot.EndGroups{}
+		return nil
 	}
 
 	userid, reason := extraction.ExtractUserAndText(msg, args)
@@ -120,7 +120,7 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
-		return gotgbot.EndGroups{}
+		return nil
 	}
 
 	teks := fmt.Sprintf("<b>Statistics</b>\n"+
@@ -137,7 +137,7 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
-		return gotgbot.EndGroups{}
+		return nil
 	}
 
 	group := sql.GetAllChat
