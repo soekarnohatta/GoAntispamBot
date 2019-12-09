@@ -2,24 +2,24 @@
 <translation>
     <Rows id="1" name="modules/helpers/function.go:13">
         <value>&lt;b&gt;Pengaturan Grup:&lt;/b&gt;
-            &lt;i&gt;Baris Pertama : Mengatur hukuman untuk pengguna yang belum pasang username&lt;/i&gt;
-            &lt;i&gt;Baris Kedua : Mengatur hukuman untuk pengguna yang belum pasang profil foto&lt;/i&gt;
-            &lt;i&gt;Baris Ketiga : Kontol Verifikasi&lt;/i&gt;
-            &lt;i&gt;Baris Keempat : Batas Peringatan&lt;/i&gt;
-            &lt;i&gt;Baris Kelima : Tenggat waktu untuk hukuman&lt;/i&gt;
-            🔇 = &lt;b&gt;Mute&lt;/b&gt;
-            🚷 = &lt;b&gt;Kick&lt;/b&gt;
-            ⛔ = &lt;b&gt;Ban&lt;/b&gt;
-            🔄 = &lt;b&gt;Reset&lt;/b&gt;
-            ⚪/🔵 = &lt;b&gt;On/Off&lt;/b&gt;
-            🗑 = &lt;b&gt;Hapus pesan terkait&lt;/b&gt;
-            ❗️= &lt;b&gt;Warn&lt;/b&gt;
-            ------------------------------------------------
-            &lt;b&gt;Username Control :&lt;/b&gt; {1} {2} {3}
-            &lt;b&gt;Profile Picture Control :&lt;/b&gt; {4} {5} {6}
-            &lt;b&gt;Verification Control :&lt;/b&gt; {7} {8}
-            &lt;b&gt;Waktu :&lt;/b&gt; {9}
-            &lt;b&gt;Batas Peringatan :&lt;/b&gt; {10}
+&lt;i&gt;Baris Pertama : Mengatur hukuman untuk pengguna yang belum pasang username&lt;/i&gt;
+&lt;i&gt;Baris Kedua : Mengatur hukuman untuk pengguna yang belum pasang profil foto&lt;/i&gt;
+&lt;i&gt;Baris Ketiga : Kontol Verifikasi&lt;/i&gt;
+&lt;i&gt;Baris Keempat : Batas Peringatan&lt;/i&gt;
+&lt;i&gt;Baris Kelima : Tenggat waktu untuk hukuman&lt;/i&gt;
+🔇 = &lt;b&gt;Bisu&lt;/b&gt;
+🚷 = &lt;b&gt;Dikeluarkan&lt;/b&gt;
+⛔ = &lt;b&gt;Diblokir&lt;/b&gt;
+🔄 = &lt;b&gt;Atur Ulang&lt;/b&gt;
+🔵/⚪ = &lt;b&gt;Hidup/Mati&lt;/b&gt;
+🗑 = &lt;b&gt;Hapus pesan terkait&lt;/b&gt;
+❗️= &lt;b&gt;Warn&lt;/b&gt;
+------------------------------------------------
+&lt;b&gt;Kontrol Username :&lt;/b&gt; {1} {2} {3}
+&lt;b&gt;Kontrol Foto Profil :&lt;/b&gt; {4} {5} {6}
+&lt;b&gt;Kontrol Verifikasi :&lt;/b&gt; {7} {8}
+&lt;b&gt;Waktu :&lt;/b&gt; {9}
+&lt;b&gt;Batas Peringatan :&lt;/b&gt; {10}
         </value>
         <!--modules/helpers/function.go:13-->
     </Rows>

@@ -16,5 +16,6 @@ func InitRedis() {
 		DialTimeout:  time.Second,
 		MinIdleConns: 0,
 	})
+
 	REDIS = client
 }

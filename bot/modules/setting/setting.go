@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-func setusername(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func setUsername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
@@ -27,7 +27,6 @@ func setusername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					err := sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
 					err_handler.HandleErr(err)
 					_, err = msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-					err_handler.HandleErr(err)
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
 					err := sql.UpdateUsername(chat.Id, "false", "mute", "-", "true")
@@ -36,20 +35,19 @@ func setusername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					return err
 				} else {
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-					err_handler.HandleErr(err)
 					return err
 				}
 			} else {
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-				err_handler.HandleErr(err)
 				return err
 			}
 		}
+		return nil
 	}
 	return nil
 }
 
-func setverify(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func setVerify(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
@@ -61,7 +59,6 @@ func setverify(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					err := sql.UpdateVerify(chat.Id, "true", "-", "true")
 					err_handler.HandleErr(err)
 					_, err = msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-					err_handler.HandleErr(err)
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
 					err := sql.UpdateVerify(chat.Id, "false", "-", "true")
@@ -70,20 +67,19 @@ func setverify(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					return err
 				} else {
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-					err_handler.HandleErr(err)
 					return err
 				}
 			} else {
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-				err_handler.HandleErr(err)
 				return err
 			}
 		}
+		return nil
 	}
 	return nil
 }
 
-func setenforce(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func setEnforce(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
@@ -96,31 +92,28 @@ func setenforce(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					go func() { db <- sql.UpdateEnforceGban(chat.Id, "true") }()
 					err_handler.HandleErr(<-db)
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-					err_handler.HandleErr(err)
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
 					db := make(chan error)
 					go func() { db <- sql.UpdateEnforceGban(chat.Id, "false") }()
 					err_handler.HandleErr(<-db)
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-					err_handler.HandleErr(err)
 					return err
 				} else {
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-					err_handler.HandleErr(err)
 					return err
 				}
 			} else {
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-				err_handler.HandleErr(err)
 				return err
 			}
 		}
+		return nil
 	}
 	return nil
 }
 
-func setpicture(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func setPicture(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
@@ -133,31 +126,28 @@ func setpicture(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					go func() { db <- sql.UpdatePicture(chat.Id, "true", "mute", "-", "true") }()
 					err_handler.HandleErr(<-db)
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-					err_handler.HandleErr(err)
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
 					db := make(chan error)
 					go func() { db <- sql.UpdatePicture(chat.Id, "false", "mute", "-", "true") }()
 					err_handler.HandleErr(<-db)
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-					err_handler.HandleErr(err)
 					return err
 				} else {
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-					err_handler.HandleErr(err)
 					return err
 				}
 			} else {
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-				err_handler.HandleErr(err)
 				return err
 			}
 		}
+		return nil
 	}
 	return nil
 }
 
-func settime(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func setTime(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
@@ -171,22 +161,20 @@ func settime(_ ext.Bot, u *gotgbot.Update, args []string) error {
 					go func() { db <- sql.UpdateSetting(chat.Id, args[0], "true") }()
 					err_handler.HandleErr(<-db)
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-					err_handler.HandleErr(err)
 					return err
 				}
 				_, err = msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:3"))
-				err_handler.HandleErr(err)
 				return err
 			}
 			_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:3"))
-			err_handler.HandleErr(err)
 			return err
 		}
+		return nil
 	}
 	return nil
 }
 
-func setnotif(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func setNotif(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
@@ -198,30 +186,26 @@ func setnotif(_ ext.Bot, u *gotgbot.Update, args []string) error {
 				go func() { db <- sql.UpdateNotification(user.Id, "true") }()
 				err_handler.HandleErr(<-db)
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-				err_handler.HandleErr(err)
 				return err
 			} else if strings.ToLower(args[0]) == "false" {
 				db := make(chan error)
 				go func() { db <- sql.UpdateNotification(user.Id, "false") }()
 				err_handler.HandleErr(<-db)
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
-				err_handler.HandleErr(err)
 				return err
 			} else {
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-				err_handler.HandleErr(err)
 				return err
 			}
 		} else {
 			_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
-			err_handler.HandleErr(err)
 			return err
 		}
 	}
 	return nil
 }
 
-func admincache(b ext.Bot, u *gotgbot.Update) error {
+func adminCache(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
@@ -229,27 +213,29 @@ func admincache(b ext.Bot, u *gotgbot.Update) error {
 	if chat_status.RequireSupergroup(chat, msg) == false {
 		return gotgbot.EndGroups{}
 	}
+
 	if chat_status.RequireUserAdmin(chat, msg, user.Id) == false {
 		return gotgbot.EndGroups{}
 	}
 
 	err := caching.CACHE.Delete(fmt.Sprintf("admin_%v", chat.Id))
+
 	if err != nil {
 		err_handler.HandleTgErr(b, u, err)
 		return err
 	}
+
 	_, err = msg.ReplyHTML("Admin cache has been cleaned")
-	err_handler.HandleErr(err)
 	return err
 }
 
 func LoadSetting(u *gotgbot.Updater) {
 	defer logrus.Info("Setting Module Loaded...")
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("username", []rune{'/', '.'}, setusername))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("verify", []rune{'/', '.'}, setverify))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("profilepicture", []rune{'/', '.'}, setpicture))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("time", []rune{'/', '.'}, settime))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("enforce", []rune{'/', '.'}, setenforce))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("notif", []rune{'/', '.'}, setnotif))
-	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("admincache", []rune{'/', '.'}, admincache))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("username", []rune{'/', '.'}, setUsername))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("verify", []rune{'/', '.'}, setVerify))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("profilepicture", []rune{'/', '.'}, setPicture))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("time", []rune{'/', '.'}, setTime))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("enforce", []rune{'/', '.'}, setEnforce))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("notif", []rune{'/', '.'}, setNotif))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("admincache", []rune{'/', '.'}, adminCache))
 }

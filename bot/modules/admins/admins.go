@@ -17,84 +17,86 @@ import (
 	"strings"
 )
 
-func gban(b ext.Bot, u *gotgbot.Update, args []string) error {
+func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
 		return nil
 	}
 
-	userid, reason := extraction.ExtractUserAndText(msg, args)
-	if userid == 0 {
+	userId, reason := extraction.ExtractUserAndText(msg, args)
+	if userId == 0 {
 		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
-		err_handler.HandleErr(err)
 		return err
 	}
 
 	if reason == "" {
-		reason = "None"
+		reason = "No Reason Has Been Specified"
 	}
 
-	ban := sql.GetUserSpam(userid)
+	ban := sql.GetUserSpam(userId)
 	if ban != nil {
 		if ban.Reason == reason {
 			_, err := b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:38"))
-			err_handler.HandleErr(err)
 			return err
 		}
 
 		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:43",
-			map[string]string{"1": strconv.Itoa(userid), "2": ban.Reason, "3": reason}))
+			map[string]string{"1": strconv.Itoa(userId), "2": ban.Reason, "3": reason}))
 		err_handler.HandleErr(err)
-		err = sql.UpdateUserSpam(userid, reason)
-		err_handler.HandleTgErr(b, u, err)
-		err = logger.SendBanLog(b, userid, reason, u)
-		err_handler.HandleErr(err)
+		dberr := make(chan error)
+		go func() {
+			dberr <- sql.UpdateUserSpam(userId, reason)
+		}()
+		err_handler.HandleTgErr(b, u, <-dberr)
+		err = logger.SendBanLog(b, userId, reason, u)
 		return err
 	}
 
 	_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
-		map[string]string{"1": strconv.Itoa(userid)}))
+		map[string]string{"1": strconv.Itoa(userId)}))
 	err_handler.HandleErr(err)
 
-	err = sql.UpdateUserSpam(userid, reason)
+	dberr := make(chan error)
+	go func() {
+		dberr <- sql.UpdateUserSpam(userId, reason)
+	}()
 	err_handler.HandleTgErr(b, u, err)
 
 	_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:62",
-		map[string]string{"1": strconv.Itoa(userid), "2": reason}))
+		map[string]string{"1": strconv.Itoa(userId), "2": reason}))
 	err_handler.HandleErr(err)
-	err = logger.SendBanLog(b, userid, reason, u)
-	err_handler.HandleErr(err)
+	err = logger.SendBanLog(b, userId, reason, u)
 	return err
 }
 
-func ungban(b ext.Bot, u *gotgbot.Update, args []string) error {
+func unGbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
 		return nil
 	}
 
-	userid, _ := extraction.ExtractUserAndText(msg, args)
-	if userid == 0 {
+	userId, _ := extraction.ExtractUserAndText(msg, args)
+	if userId == 0 {
 		_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
 		return err
 	}
 
-	ban := sql.GetUserSpam(userid)
+	ban := sql.GetUserSpam(userId)
 	if ban != nil {
 		_, err := msg.ReplyHTMLf(function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:88",
-			map[string]string{"1": strconv.Itoa(userid)}))
+			map[string]string{"1": strconv.Itoa(userId)}))
 		err_handler.HandleErr(err)
 
 		go func() {
 			group := sql.GetAllChat
 			banerr := []string{"Bad Request: USER_ID_INVALID", "Bad Request: USER_NOT_PARTICIPANT" +
 				"Bad Request: chat member status can't be changed in private chats"}
-			sql.DelUserSpam(userid)
+			sql.DelUserSpam(userId)
 			for _, a := range group() {
 				cid, _ := strconv.Atoi(a.ChatId)
-				_, err = b.UnbanChatMember(cid, userid)
+				_, err = b.UnbanChatMember(cid, userId)
 				if err != nil {
 					if function.Contains(banerr, err.Error()) == true {
 						return
@@ -107,12 +109,10 @@ func ungban(b ext.Bot, u *gotgbot.Update, args []string) error {
 		}()
 
 		_, err = msg.ReplyHTMLf(function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:111",
-			map[string]string{"1": strconv.Itoa(userid)}))
-		err_handler.HandleErr(err)
+			map[string]string{"1": strconv.Itoa(userId)}))
 		return err
 	}
 	_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:116"))
-	err_handler.HandleErr(err)
 	return err
 }
 
@@ -123,17 +123,17 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 		return nil
 	}
 
-	teks := fmt.Sprintf("<b>Statistics</b>\n"+
-		"Total Users: %v\nTotal Chats: %v\nTotal Spammers: %v", len(sql.GetAllUser()),
+	replyText := fmt.Sprintf("<b>Statistics</b>\n"+
+		"Total Users: %v\n"+
+		"Total Chats: %v\n"+
+		"Total Spammers: %v", len(sql.GetAllUser()),
 		len(sql.GetAllChat()), len(sql.GetAllSpamUser()))
 
-	_, err := msg.ReplyHTML(teks)
-	err_handler.HandleErr(err)
+	_, err := msg.ReplyHTML(replyText)
 	return err
 }
 
 func broadcast(b ext.Bot, u *gotgbot.Update) error {
-	var err error
 	msg := u.EffectiveMessage
 
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
@@ -141,31 +141,30 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 	}
 
 	group := sql.GetAllChat
-	errnum := 0
+	errNum := 0
 
 	for _, a := range group() {
 		cid, _ := strconv.Atoi(a.ChatId)
-		_, err = b.SendMessageHTML(cid, html.EscapeString(strings.Split(msg.Text, "/broadcast")[1]))
+		_, err := b.SendMessageHTML(cid, html.EscapeString(strings.Split(msg.Text, "/broadcast")[1]))
 		if err != nil {
 			if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
 				sql.DelChat(a.ChatId)
-				errnum++
+				errNum++
 			} else {
 				err_handler.HandleErr(err)
-				errnum++
+				errNum++
 			}
 		}
 	}
 
-	_, err = msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>, <code>%v</code> <b>Has Failed</b>\n", errnum)
-	err_handler.HandleErr(err)
+	_, err := msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>, <code>%v</code> <b>Has Failed</b>\n", errNum)
 	return err
 }
 
 func LoadAdmins(u *gotgbot.Updater) {
 	defer logrus.Info("Admins Module Loaded...")
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("gban", []rune{'/', '.'}, gban))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ungban", []rune{'/', '.'}, ungban))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("gban", []rune{'/', '.'}, gbanUser))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ungban", []rune{'/', '.'}, unGbanUser))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("stats", []rune{'/', '.'}, stats))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("broadcast", []rune{'/', '.'}, broadcast))
 }

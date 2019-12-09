@@ -2,6 +2,7 @@ package bot
 
 import (
 	"github.com/joho/godotenv"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"log"
 	"os"
 	"strconv"
@@ -29,11 +30,10 @@ var BotConfig Config
 
 func init() {
 	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error can't load .env file!")
-	}
+	err_handler.FatalError(err)
+
 	returnConfig := Config{}
-	var ok bool
+	var ok bool = false
 
 	returnConfig.ApiKey, ok = os.LookupEnv("BOT_API_KEY")
 	if !ok {
@@ -88,6 +88,5 @@ func init() {
 	if !ok {
 		returnConfig.RedisPassword = "false"
 	}
-
 	BotConfig = returnConfig
 }

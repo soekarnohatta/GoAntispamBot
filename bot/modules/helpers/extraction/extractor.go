@@ -16,10 +16,13 @@ func GetUserId(username string) int {
 	if len(username) <= 5 {
 		return 0
 	}
+
 	if username[0] == '@' {
 		username = username[1:]
 	}
+
 	users := sql.GetUserIdByName(username)
+
 	if users == nil {
 		return 0
 	}
@@ -29,14 +32,18 @@ func GetUserId(username string) int {
 
 func IdFromReply(m *ext.Message) (int, string) {
 	prevMessage := m.ReplyToMessage
+
 	if prevMessage == nil {
 		return 0, ""
 	}
+
 	userId := prevMessage.From.Id
 	res := strings.SplitN(m.Text, " ", 2)
+
 	if len(res) < 2 {
 		return userId, ""
 	}
+
 	return userId, res[1]
 }
 
@@ -52,14 +59,14 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 
 	text := ""
 
-	var userId int
+	var userId int = 0
 	accepted := make(map[string]struct{})
 	accepted["text_mention"] = struct{}{}
 
 	entities := m.ParseEntityTypes(accepted)
 
-	var ent *ext.ParsedMessageEntity
-	var isId = false
+	var ent *ext.ParsedMessageEntity = nil
+	var isId bool = false
 
 	if len(entities) > 0 {
 		ent = &entities[0]
@@ -134,10 +141,12 @@ func ExtractUser(message *ext.Message, args []string) int {
 func ExtractTime(b ext.Bot, m *ext.Message, timeVal string) int64 {
 	lastLetter := timeVal[len(timeVal)-1:]
 	lastLetter = strings.ToLower(lastLetter)
-	var ret int64
+	var ret int64 = 0
+
 	if strings.ContainsAny(lastLetter, "m & d & h") {
 		t := timeVal[:len(timeVal)-1]
 		timeNum, err := strconv.Atoi(t)
+
 		if err != nil {
 			_, err := b.SendMessage(m.Chat.Id, "Invalid time amount specified.")
 			err_handler.HandleErr(err)
@@ -153,6 +162,7 @@ func ExtractTime(b ext.Bot, m *ext.Message, timeVal string) int64 {
 		} else {
 			return -1
 		}
+
 		return ret
 	} else {
 		_, err := b.SendMessage(m.Chat.Id,

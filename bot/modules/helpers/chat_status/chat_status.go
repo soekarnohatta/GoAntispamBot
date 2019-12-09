@@ -24,22 +24,25 @@ func IsOwner(userId int) bool {
 	return false
 }
 
-func IsUserAdmin(chat *ext.Chat, user_id int) bool {
+func IsUserAdmin(chat *ext.Chat, userId int) bool {
 	if chat.Type == "private" {
 		return true
 	}
-	if IsOwner(user_id) {
+
+	if IsOwner(userId) {
 		return true
 	}
 
 	admins, err := caching.CACHE.Get(fmt.Sprintf("admin_%v", chat.Id))
+
 	if err != nil {
-		admincache(chat)
+		adminCache(chat)
 	}
 
 	var x Cache
 	_ = json.Unmarshal(admins, &x)
-	if function.Contains(x.Admin, strconv.Itoa(user_id)) {
+
+	if function.Contains(x.Admin, strconv.Itoa(userId)) {
 		return true
 	}
 
@@ -58,7 +61,6 @@ func IsBotAdmin(chat *ext.Chat, member *ext.ChatMember) bool {
 			return false
 		}
 		member = mem
-
 	}
 
 	if member.Status == "administrator" || member.Status == "creator" {
@@ -126,16 +128,16 @@ func CanDelete(bot ext.Bot, chat *ext.Chat) bool {
 	return true
 }
 
-func admincache(chat *ext.Chat) {
-	x, _ := chat.GetAdministrators()
+func adminCache(chat *ext.Chat) {
+	listAdmins, _ := chat.GetAdministrators()
 	admins := make([]string, 0)
 
-	for _, y := range x {
-		admins = append(admins, strconv.Itoa(y.User.Id))
+	for _, user := range listAdmins {
+		admins = append(admins, strconv.Itoa(user.User.Id))
 	}
 
-	w := &Cache{admins}
-	z, _ := json.Marshal(w)
-	err := caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), z)
+	cacheAdmin := &Cache{admins}
+	finalCache, _ := json.Marshal(cacheAdmin)
+	err := caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), finalCache)
 	err_handler.HandleErr(err)
 }

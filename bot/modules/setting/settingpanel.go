@@ -19,27 +19,26 @@ import (
 )
 
 func panel(b ext.Bot, u *gotgbot.Update) error {
-	var err error
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
 	if chat_status.RequireSupergroup(chat, msg) == true {
 		if chat_status.IsUserAdmin(chat, user.Id) == true {
-			teks, _, kn := mainMenu(chat.Id)
-			reply := b.NewSendableMessage(chat.Id, teks)
-			reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&kn}
+			replyText, _, replyButtons := mainMenu(chat.Id)
+			reply := b.NewSendableMessage(chat.Id, replyText)
+			reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&replyButtons}
 			reply.ParseMode = parsemode.Html
 			reply.ReplyToMessageId = msg.MessageId
-			_, err = reply.Send()
+			_, err := reply.Send()
 			return err
 		}
+		return nil
 	}
 	return nil
 }
 
 func backQuery(b ext.Bot, u *gotgbot.Update) error {
-	var err error
 	msg := u.CallbackQuery
 	user := msg.From
 	chat := msg.Message.Chat
@@ -47,21 +46,19 @@ func backQuery(b ext.Bot, u *gotgbot.Update) error {
 	if msg != nil {
 		if chat.Type == "supergroup" {
 			if chat_status.IsUserAdmin(chat, user.Id) == true {
-				teks, _, kn := mainMenu(chat.Id)
-				_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId, teks, parsemode.Html,
-					&ext.InlineKeyboardMarkup{&kn})
+				replyText, _, replyButtons := mainMenu(chat.Id)
+				_, err := b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId, replyText, parsemode.Html,
+					&ext.InlineKeyboardMarkup{&replyButtons})
 				return err
 			}
-		} else {
-			_, err = b.AnswerCallbackQuery(msg.Id)
-			return err
 		}
+		_, err := b.AnswerCallbackQuery(msg.Id)
+		return err
 	}
 	return gotgbot.ContinueGroups{}
 }
 
 func closeQuery(b ext.Bot, u *gotgbot.Update) error {
-	var err error
 	msg := u.CallbackQuery
 	user := msg.From
 	chat := msg.Message.Chat
@@ -69,11 +66,11 @@ func closeQuery(b ext.Bot, u *gotgbot.Update) error {
 	if msg != nil {
 		if chat.Type == "supergroup" {
 			if chat_status.IsUserAdmin(chat, user.Id) == true {
-				_, err = msg.Message.Delete()
+				_, err := msg.Message.Delete()
 				return err
 			}
 		} else {
-			_, err = b.AnswerCallbackQuery(msg.Id)
+			_, err := b.AnswerCallbackQuery(msg.Id)
 			return err
 		}
 	}
@@ -81,7 +78,6 @@ func closeQuery(b ext.Bot, u *gotgbot.Update) error {
 }
 
 func settingQuery(b ext.Bot, u *gotgbot.Update) error {
-	var err error
 	msg := u.CallbackQuery
 	user := msg.From
 	chat := msg.Message.Chat
@@ -90,35 +86,37 @@ func settingQuery(b ext.Bot, u *gotgbot.Update) error {
 		if chat.Type == "supergroup" {
 			if chat_status.IsUserAdmin(chat, user.Id) == true {
 				if msg.Data == "mk_utama" {
-					teks, _, kn := mainControlMenu(chat.Id)
-					_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
-						teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
+					replyText, _, kn := mainControlMenu(chat.Id)
+					_, err := b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
+						replyText, "HTML", &ext.InlineKeyboardMarkup{&kn})
 					return err
 				} else if msg.Data == "mk_reset" {
-					err = sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
-					err_handler.HandleCbErr(b, u, err)
-					err = sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
-					err_handler.HandleCbErr(b, u, err)
-					err = sql.UpdateEnforceGban(chat.Id, "true")
-					err_handler.HandleCbErr(b, u, err)
-					err = sql.UpdateVerify(chat.Id, "true", "-", "true")
-					err_handler.HandleCbErr(b, u, err)
-					err = sql.UpdateSetting(chat.Id, "5m", "true")
-					err_handler.HandleCbErr(b, u, err)
-					err = sql.UpdateLang(chat.Id, "id")
-					err_handler.HandleCbErr(b, u, err)
-					caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "en", 0)
-					caching.REDIS.BgSave()
+					dberr := make(chan error)
+					go func() { dberr <- sql.UpdatePicture(chat.Id, "true", "mute", "-", "true") }()
+					err_handler.HandleCbErr(b, u, <-dberr)
+					go func() { dberr <- sql.UpdateUsername(chat.Id, "true", "mute", "-", "true") }()
+					err_handler.HandleCbErr(b, u, <-dberr)
+					go func() { dberr <- sql.UpdateEnforceGban(chat.Id, "true") }()
+					err_handler.HandleCbErr(b, u, <-dberr)
+					go func() { dberr <- sql.UpdateVerify(chat.Id, "true", "-", "true") }()
+					err_handler.HandleCbErr(b, u, <-dberr)
+					go func() { dberr <- sql.UpdateSetting(chat.Id, "5m", "true") }()
+					err_handler.HandleCbErr(b, u, <-dberr)
+					go func() { dberr <- sql.UpdateLang(chat.Id, "id") }()
+					err_handler.HandleCbErr(b, u, <-dberr)
+					go caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "en", 0)
+					go caching.REDIS.BgSave()
 
-					err = updateUserControl(b, u)
+					err := updateUserControl(b, u)
 					return err
 				} else if msg.Data == "mk_spam" {
-					teks, _, kn := mainSpamMenu(chat.Id)
-					_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
-						teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
+					replyText, _, kn := mainSpamMenu(chat.Id)
+					_, err := b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
+						replyText, "HTML", &ext.InlineKeyboardMarkup{&kn})
 					return err
 				} else {
-					_, err = b.AnswerCallbackQuery(msg.Id)
+					_, err := b.AnswerCallbackQuery(msg.Id)
+					err_handler.HandleErr(err)
 				}
 			}
 		}
@@ -127,7 +125,7 @@ func settingQuery(b ext.Bot, u *gotgbot.Update) error {
 }
 
 func spamControlQuery(b ext.Bot, u *gotgbot.Update) error {
-	var err error
+	var err error = nil
 	msg := u.CallbackQuery
 	user := msg.From
 	chat := msg.Message.Chat
@@ -145,9 +143,9 @@ func spamControlQuery(b ext.Bot, u *gotgbot.Update) error {
 							err = sql.UpdateEnforceGban(chat.Id, "true")
 							err_handler.HandleCbErr(b, u, err)
 						}
-						teks, _, kn := mainSpamMenu(chat.Id)
+						replyText, _, replyButtons := mainSpamMenu(chat.Id)
 						_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
-							teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
+							replyText, "HTML", &ext.InlineKeyboardMarkup{&replyButtons})
 						return err
 					}
 				}
@@ -158,8 +156,8 @@ func spamControlQuery(b ext.Bot, u *gotgbot.Update) error {
 	return nil
 }
 
-func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
-	var err error
+func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
+	var err error = nil
 	msg := u.CallbackQuery
 	user := msg.From
 	chat := msg.Message.Chat
@@ -169,8 +167,8 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 			if chat_status.IsUserAdmin(chat, user.Id) == true {
 				// Grab Data From DB
 				username := sql.GetUsername(chat.Id)
-				fotoprofil := sql.GetPicture(chat.Id)
-				waktu := sql.GetSetting(chat.Id)
+				profilePicture := sql.GetPicture(chat.Id)
+				time := sql.GetSetting(chat.Id)
 				ver := sql.GetVerify(chat.Id)
 				warn := sql.GetWarnSetting(strconv.Itoa(chat.Id))
 
@@ -179,29 +177,29 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 				a, _ := regexp.MatchString("^mc_(kick|ban|mute|warn)$", msg.Data)
 				f, _ := regexp.MatchString("^md_(kick|ban|mute|warn)$", msg.Data)
 				g, _ := regexp.MatchString("^m[cdeo]_toggle$", msg.Data)
-				d, _ := regexp.MatchString("^mf_(plus|minus|duration|waktu)$", msg.Data)
+				d, _ := regexp.MatchString("^mf_(plus|minus|duration|time)$", msg.Data)
 				k, _ := regexp.MatchString("^mb_(plus|minus|warn)$", msg.Data)
 
-				// Username Control Panel
 				if a == true {
+					// Username Control Panel
 					err = sql.UpdateUsername(chat.Id, username.Option, strings.Split(msg.Data, "mc_")[1], "-", username.Deletion)
 					err_handler.HandleCbErr(b, u, err)
 					err = updateUserControl(b, u)
 					return err
 				} else if f == true {
 					// Profile Photo Control Panel
-					err = sql.UpdatePicture(chat.Id, fotoprofil.Option, strings.Split(msg.Data, "md_")[1], "-", fotoprofil.Deletion)
+					err = sql.UpdatePicture(chat.Id, profilePicture.Option, strings.Split(msg.Data, "md_")[1], "-", profilePicture.Deletion)
 					err_handler.HandleCbErr(b, u, err)
 					err = updateUserControl(b, u)
 					return err
 				} else if d == true {
 					// Time Control Panel
 					if strings.Split(msg.Data, "mf_")[1] == "duration" {
-						lastLetter := waktu.Time[len(waktu.Time)-1:]
+						lastLetter := time.Time[len(time.Time)-1:]
 						lastLetter = strings.ToLower(lastLetter)
 						re := regexp.MustCompile(`[mhd]`)
 
-						t := waktu.Time[:len(waktu.Time)-1]
+						t := time.Time[:len(time.Time)-1]
 						_, err := strconv.Atoi(t)
 						if err != nil {
 							_, err := b.AnswerCallbackQueryText(msg.Id,
@@ -210,68 +208,92 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 						}
 
 						if lastLetter == "m" {
-							err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%vh", re.Split(waktu.Time, -1)[0]), waktu.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							dberr := make(chan error)
+							go func() {
+								dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%vh", re.Split(time.Time, -1)[0]), time.Deletion)
+							}()
+							err_handler.HandleCbErr(b, u, <-dberr)
 						} else if lastLetter == "h" {
-							err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%vd", re.Split(waktu.Time, -1)[0]), waktu.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							dberr := make(chan error)
+							go func() {
+								dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%vd", re.Split(time.Time, -1)[0]), time.Deletion)
+							}()
+							err_handler.HandleCbErr(b, u, <-dberr)
 						} else if lastLetter == "d" {
-							err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%vm", re.Split(waktu.Time, -1)[0]), waktu.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							dberr := make(chan error)
+							go func() {
+								dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%vm", re.Split(time.Time, -1)[0]), time.Deletion)
+							}()
+							err_handler.HandleCbErr(b, u, <-dberr)
 						}
 
 						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mf_")[1] == "plus" {
-						lastLetter := waktu.Time[len(waktu.Time)-1:]
+						lastLetter := time.Time[len(time.Time)-1:]
 						lastLetter = strings.ToLower(lastLetter)
 
-						t := waktu.Time[:len(waktu.Time)-1]
+						t := time.Time[:len(time.Time)-1]
 						j, err := strconv.Atoi(t)
+
 						if err != nil {
 							_, err := b.AnswerCallbackQueryText(msg.Id,
 								"❌ Invalid time amount specified.", true)
 							return err
 						}
+
 						j++
 
-						err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), waktu.Deletion)
-						err_handler.HandleCbErr(b, u, err)
+						dberr := make(chan error)
+						go func() { dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), time.Deletion) }()
+						err_handler.HandleCbErr(b, u, <-dberr)
 						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mf_")[1] == "minus" {
-						lastLetter := waktu.Time[len(waktu.Time)-1:]
+						lastLetter := time.Time[len(time.Time)-1:]
 						lastLetter = strings.ToLower(lastLetter)
-						if strings.ContainsAny(lastLetter, "m & d & h") {
-							t := waktu.Time[:len(waktu.Time)-1]
-							j, err := strconv.Atoi(t)
-							err_handler.HandleCbErr(b, u, err)
-							j--
 
-							err = sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), waktu.Deletion)
-							err_handler.HandleCbErr(b, u, err)
-							err = updateUserControl(b, u)
+						t := time.Time[:len(time.Time)-1]
+						j, err := strconv.Atoi(t)
+
+						if err != nil {
+							_, err := b.AnswerCallbackQueryText(msg.Id,
+								"❌ Invalid time amount specified.", true)
 							return err
 						}
+
+						j--
+
+						dberr := make(chan error)
+						go func() { dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), time.Deletion) }()
+						err_handler.HandleCbErr(b, u, <-dberr)
+						err = updateUserControl(b, u)
+						return err
 					} else if strings.Split(msg.Data, "mf_")[1] == "waktu" {
-						_, err := b.AnswerCallbackQueryText(msg.Id,
-							"🔄 Mengatur tenggat waktu untuk semua aksi.", true)
+						replyCallback := b.NewSendableAnswerCallbackQuery(msg.Id)
+						replyCallback.Text = "Time settings for all actions."
+						replyCallback.ShowAlert = true
+						replyCallback.CacheTime = 200
+						replyCallback.Send()
 						return err
 					}
 				} else if k == true {
 					if strings.Split(msg.Data, "mb_")[1] == "plus" {
 						num := warn + 1
-						sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
+						go sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
 						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mb_")[1] == "minus" {
 						num := warn - 1
-						sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
+						go sql.SetWarnLimit(strconv.Itoa(chat.Id), num)
 						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mb_")[1] == "warn" {
-						_, err := b.AnswerCallbackQueryText(msg.Id,
-							"🔄 Mengatur hukuman untuk warn.", true)
+						replyCallback := b.NewSendableAnswerCallbackQuery(msg.Id)
+						replyCallback.Text = "Punishment settings for warn action."
+						replyCallback.ShowAlert = true
+						replyCallback.CacheTime = 200
+						replyCallback.Send()
 						return err
 					}
 				} else if g == true {
@@ -285,7 +307,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 							err_handler.HandleCbErr(b, u, err)
 						}
 					} else if strings.Split(msg.Data, "_toggle")[0] == "md" {
-						if fotoprofil.Option == "true" {
+						if profilePicture.Option == "true" {
 							err = sql.UpdatePicture(chat.Id, "false", username.Action, "-", username.Deletion)
 							err_handler.HandleCbErr(b, u, err)
 						} else {
@@ -315,11 +337,11 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 							err_handler.HandleCbErr(b, u, err)
 						}
 					} else if strings.Split(msg.Data, "_del")[0] == "md" {
-						if fotoprofil.Deletion == "true" {
-							err = sql.UpdatePicture(chat.Id, fotoprofil.Option, fotoprofil.Action, "-", "false")
+						if profilePicture.Deletion == "true" {
+							err = sql.UpdatePicture(chat.Id, profilePicture.Option, profilePicture.Action, "-", "false")
 							err_handler.HandleCbErr(b, u, err)
 						} else {
-							err = sql.UpdatePicture(chat.Id, fotoprofil.Option, fotoprofil.Action, "-", "true")
+							err = sql.UpdatePicture(chat.Id, profilePicture.Option, profilePicture.Action, "-", "true")
 							err_handler.HandleCbErr(b, u, err)
 						}
 					} else if strings.Split(msg.Data, "_del")[0] == "me" {
@@ -331,11 +353,11 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 							err_handler.HandleCbErr(b, u, err)
 						}
 					} else if strings.Split(msg.Data, "_del")[0] == "mf" {
-						if waktu.Deletion == "true" {
-							err = sql.UpdateSetting(chat.Id, waktu.Time, "false")
+						if time.Deletion == "true" {
+							err = sql.UpdateSetting(chat.Id, time.Time, "false")
 							err_handler.HandleCbErr(b, u, err)
 						} else {
-							err = sql.UpdateSetting(chat.Id, waktu.Time, "true")
+							err = sql.UpdateSetting(chat.Id, time.Time, "true")
 							err_handler.HandleCbErr(b, u, err)
 						}
 					}
@@ -350,7 +372,7 @@ func usercontrolquery(b ext.Bot, u *gotgbot.Update) error {
 }
 
 func updateUserControl(b ext.Bot, u *gotgbot.Update) error {
-	var err error
+	var err error = nil
 	msg := u.CallbackQuery
 	chat := msg.Message.Chat
 
@@ -361,12 +383,15 @@ func updateUserControl(b ext.Bot, u *gotgbot.Update) error {
 		"reply markup are exactly the same as a current " +
 		"content and reply markup of the message"
 
-	teks, _, kn := mainControlMenu(chat.Id)
+	replyText, _, replyButtons := mainControlMenu(chat.Id)
 	_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
-		teks, "HTML", &ext.InlineKeyboardMarkup{&kn})
+		replyText, "HTML", &ext.InlineKeyboardMarkup{&replyButtons})
 	if err != nil {
 		if err.Error() == opsiSama {
 			_, err := b.AnswerCallbackQuery(msg.Id)
+			replyCallback := b.NewSendableAnswerCallbackQuery(msg.Id)
+			replyCallback.CacheTime = 200
+			replyCallback.Send()
 			return err
 		}
 		_, err := b.AnswerCallbackQuery(msg.Id)
@@ -379,7 +404,7 @@ func updateUserControl(b ext.Bot, u *gotgbot.Update) error {
 func mainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
 	a := extraction.GetEmoji(chatId)
 	if a != nil {
-		teks := function.GetStringf(chatId, "modules/helpers/function.go:13",
+		replyText := function.GetStringf(chatId, "modules/helpers/function.go:13",
 			map[string]string{"1": a[0][0], "2": a[1][0], "3": a[2][0], "4": a[0][1], "5": a[1][1], "6": a[2][1], "7": a[0][2],
 				"8": a[2][3], "9": a[3][0], "10": strconv.Itoa(sql.GetWarnSetting(strconv.Itoa(chatId)))})
 
@@ -427,7 +452,7 @@ func mainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButt
 		kg[1] = ext.InlineKeyboardButton{Text: "✖", CallbackData: "close"}
 		kn = append(kn, kg)
 
-		return teks, a, kn
+		return replyText, a, kn
 	}
 	return "", nil, nil
 }
@@ -435,7 +460,7 @@ func mainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButt
 func mainSpamMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
 	a := extraction.GetEmoji(chatId)
 	if a != nil {
-		teks := function.GetStringf(chatId, "modules/helpers/function.go:66", map[string]string{"1": a[0][3]})
+		replyText := function.GetStringf(chatId, "modules/helpers/function.go:66", map[string]string{"1": a[0][3]})
 
 		var kn = make([][]ext.InlineKeyboardButton, 0)
 
@@ -448,7 +473,7 @@ func mainSpamMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton)
 		kg[1] = ext.InlineKeyboardButton{Text: "✖", CallbackData: "close"}
 		kn = append(kn, kg)
 
-		return teks, a, kn
+		return replyText, a, kn
 	}
 	return "", nil, nil
 }
@@ -456,7 +481,7 @@ func mainSpamMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton)
 func mainMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
 	a := extraction.GetEmoji(chatId)
 	if a != nil {
-		teks := function.GetString(chatId, "modules/helpers/function.go:85")
+		replyText := function.GetString(chatId, "modules/helpers/function.go:85")
 
 		var kn = make([][]ext.InlineKeyboardButton, 0)
 
@@ -478,7 +503,7 @@ func mainMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
 		kk[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:105"), CallbackData: "close"}
 		kn = append(kn, kk)
 
-		return teks, a, kn
+		return replyText, a, kn
 	}
 	return "", nil, nil
 }
@@ -488,7 +513,7 @@ func LoadSettingPanel(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("settings", []rune{'/', '.'}, panel))
 	u.Dispatcher.AddHandler(handlers.NewCallback(
 		"^m[cdefgb]_(toggle|warn|kick|ban|mute|reset|plus|minus|duration|waktu|del|warn)",
-		usercontrolquery))
+		userControlQuery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("mo_toggle", spamControlQuery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("mk_", settingQuery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("close", closeQuery))

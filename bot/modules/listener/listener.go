@@ -24,6 +24,7 @@ import (
 
 func username(b ext.Bot, u *gotgbot.Update) error {
 	db := sql.GetUsername(u.EffectiveChat.Id)
+
 	if db == nil {
 		return nil
 	}
@@ -39,16 +40,18 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 	if chat_status.IsUserAdmin(chat, user.Id) == true {
 		return nil
 	}
+
 	if chat.Type != "supergroup" {
 		return nil
 	}
+
 	if user.Username != "" {
 		return gotgbot.ContinueGroups{}
 	}
 
 	replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:45",
-		map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName), "3": db.Action,
-			"4": strconv.Itoa(user.Id)})
+		map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+			"3": db.Action, "4": strconv.Itoa(user.Id)})
 	markup := &ext.InlineKeyboardMarkup{}
 
 	if db.Action != "warn" {
@@ -61,12 +64,16 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 			restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 			_, err := restrictSend.Send()
+
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
 					return err
+				} else {
+					err_handler.HandleErr(err)
 				}
 			}
+
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:51"),
@@ -74,6 +81,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 		case "kick":
 			_, err := b.UnbanChatMember(chat.Id, user.Id)
+
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
@@ -85,12 +93,14 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 			restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = -1
 			_, err := restrictSend.Send()
+
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
 			}
+
 			kbk := make([][]ext.InlineKeyboardButton, 1)
 			kbk[0] = make([]ext.InlineKeyboardButton, 1)
 			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:56"),
@@ -109,6 +119,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 		}
 
 		notif := sql.GetNotification(user.Id)
+
 		if notif != nil && notif.Notification == "true" {
 			txt := function.GetStringf(user.Id, "unamep",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
@@ -130,6 +141,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 					"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)})
 
 			_, err := chat.UnbanMember(user.Id)
+
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
@@ -159,7 +171,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 		}
 
 		notif := sql.GetNotification(user.Id)
-		if notif != nil && notif.Notification == "true"  {
+		if notif != nil && notif.Notification == "true" {
 			reply.ReplyMarkup = nil
 			reply.ReplyToMessageId = 0
 			reply.ChatId = user.Id
@@ -178,12 +190,12 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 		}
 	}
 	err := logger.SendLog(b, u, "username", "")
-	err_handler.HandleErr(err)
 	return err
 }
 
 func picture(b ext.Bot, u *gotgbot.Update) error {
 	db := sql.GetPicture(u.EffectiveChat.Id)
+
 	if db == nil {
 		return nil
 	}
@@ -199,10 +211,13 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 	if chat_status.IsUserAdmin(chat, user.Id) == true {
 		return nil
 	}
+
 	if chat.Type != "supergroup" {
 		return nil
 	}
+
 	photo, _ := user.GetProfilePhotos(0, 0)
+
 	if photo != nil && photo.TotalCount != 0 {
 		return gotgbot.ContinueGroups{}
 	}
@@ -221,12 +236,14 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 			_, err := restrictSend.Send()
+
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
 			}
+
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:179"),
@@ -235,23 +252,27 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 		case "kick":
 			_, err := b.UnbanChatMember(chat.Id, user.Id)
+
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
 			}
+
 			markup = nil
 		case "ban":
 			restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = -1
 			_, err := restrictSend.Send()
+
 			if err != nil {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
 					return err
 				}
 			}
+
 			kbk := make([][]ext.InlineKeyboardButton, 1)
 			kbk[0] = make([]ext.InlineKeyboardButton, 1)
 			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:184"),
@@ -314,11 +335,13 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 		msgs.ReplyToMessageId = msg.MessageId
 		msgs.ReplyMarkup = markup
 		_, err := msgs.Send()
+
 		if err != nil {
 			msgs.ReplyToMessageId = 0
 			_, err := msgs.Send()
 			err_handler.HandleErr(err)
 		}
+
 		if sql.GetNotification(user.Id).Notification == "true" {
 			msgs.ReplyMarkup = nil
 			msgs.ReplyToMessageId = 0
@@ -338,7 +361,6 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 		}
 	}
 	err := logger.SendLog(b, u, "picture", "")
-	err_handler.HandleErr(err)
 	return err
 }
 
@@ -371,9 +393,11 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 	restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
 	restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 	_, err := restrictSend.Send()
+
 	if err != nil {
 		if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 			err_handler.HandleTgErr(b, u, err)
+			return err
 		}
 	}
 
@@ -382,6 +406,7 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 	reply.ParseMode = parsemode.Html
 	reply.ReplyToMessageId = msg.MessageId
 	_, err = reply.Send()
+
 	if err != nil {
 		if err.Error() == "Bad Request: reply message not found" {
 			reply := b.NewSendableMessage(chat.Id, replyText)
@@ -391,12 +416,13 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 			return err
 		}
 	}
+
 	if db.Deletion == "true" {
 		_, err = msg.Delete()
 		if err != nil {
 			if err.Error() == "Bad Request: message can't be deleted" {
 				_, err = msg.ReplyText(err.Error())
-				return err
+				err_handler.HandleErr(err)
 			}
 		}
 	}
@@ -413,23 +439,28 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
 		return gotgbot.ContinueGroups{}
 	}
+
 	if chat_status.IsBotAdmin(chat, nil) == false {
 		return gotgbot.ContinueGroups{}
 	}
+
 	if chat.Type != "supergroup" {
 		return gotgbot.ContinueGroups{}
 	}
+
 	if sql.GetEnforceGban(chat.Id).Option != "true" {
 		return gotgbot.ContinueGroups{}
 	}
 
 	ban := sql.GetUserSpam(user.Id)
+
 	if ban != nil {
 		err := spamFunc(b, u)
 		err_handler.HandleErr(err)
 		err = logger.SendLog(b, u, "spam", ban.Reason)
 		return gotgbot.EndGroups{}
 	}
+
 	return gotgbot.ContinueGroups{}
 }
 
@@ -465,9 +496,11 @@ func removelink(b ext.Bot, u *gotgbot.Update) error {
 		ent = nil
 	}
 
-	if entities != nil && ent != nil {}
+	if entities != nil && ent != nil {
+	}
 
-	if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {}
+	if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
+	}
 	return gotgbot.ContinueGroups{}
 }
 

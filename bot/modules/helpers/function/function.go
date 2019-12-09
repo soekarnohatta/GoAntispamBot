@@ -1,9 +1,9 @@
 package function
 
-func Contains(s []string, e string) bool {
-	if s != nil && e != "" {
-		for _, a := range s {
-			if a == e {
+func Contains(key []string, str string) bool {
+	if key != nil && str != "" {
+		for _, val := range key {
+			if val == str {
 				return true
 			}
 		}

@@ -18,6 +18,7 @@ func InitCache() {
 		OnRemove:           nil,
 		OnRemoveWithReason: nil,
 	}
+
 	cache, err := bigcache.NewBigCache(config)
 	err_handler.HandleErr(err)
 	CACHE = cache

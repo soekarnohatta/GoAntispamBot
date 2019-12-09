@@ -35,12 +35,14 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 	_, err := caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), args[0], 7200).Result()
 	if err != nil {
-		err = sql.UpdateLang(chat.Id, args[0])
-		err_handler.HandleTgErr(b, u, err)
+		dberr := make(chan error)
+		go func() { dberr <- sql.UpdateLang(chat.Id, args[0]) }()
+		err_handler.HandleTgErr(b, u, <-dberr)
 		_, err = msg.ReplyText(function.GetStringf(chat.Id, "modules/language/language.go:51",
 			map[string]string{"1": args[0]}))
 		return err
 	}
+
 	_, err = msg.ReplyText(function.GetStringf(chat.Id, "modules/language/language.go:51",
 		map[string]string{"1": args[0]}))
 	return err
@@ -48,5 +50,5 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 func LoadLang(u *gotgbot.Updater) {
 	defer logrus.Info("Lang Module Loaded...")
-	go u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setlang", []rune{'/', '.'}, setLang))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("setlang", []rune{'/', '.'}, setLang))
 }
