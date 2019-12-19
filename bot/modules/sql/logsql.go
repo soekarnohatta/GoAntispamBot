@@ -1,7 +1,6 @@
 package sql
 
 import (
-	"errors"
 	"strings"
 )
 
@@ -18,19 +17,18 @@ type Chat struct {
 	ChatLink  string
 }
 
-func UpdateUser(userid int, username string, name string) error {
+func UpdateUser(userid int, username string, name string) {
 	username = strings.ToLower(username)
 	tx := SESSION.Begin()
 
 	user := &User{UserId: userid, UserName: username, Name: name}
 	tx.Where(User{UserId: userid}).Assign(User{UserName: username, Name: name}).FirstOrCreate(user)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
 }
 
-func UpdateChat(chatid string, chattitle string, chattype string, clink string) error {
+func UpdateChat(chatid string, chattitle string, chattype string, clink string) {
 	if chatid == "" {
-		return errors.New("Chat Title Should Not Nil")
+		return 
 	}
 
 	tx := SESSION.Begin()
@@ -38,8 +36,7 @@ func UpdateChat(chatid string, chattitle string, chattype string, clink string) 
 	chat := &Chat{ChatId: chatid, ChatTitle: chattitle, ChatType: chattype, ChatLink: clink}
 	tx.Where(Chat{ChatId: chatid}).Assign(Chat{ChatTitle: chattitle, ChatType: chattype,
 		ChatLink: clink}).FirstOrCreate(chat)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
 }
 
 func DelUser(userid int) bool {

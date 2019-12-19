@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var SESSION *gorm.DB
+var SESSION *gorm.DB = nil
 
 func InitDb() {
 	conn, err := pq.ParseURL(bot.BotConfig.SqlUri)
@@ -19,6 +19,6 @@ func InitDb() {
 	SESSION = db
 
 	db.AutoMigrate(&User{}, &Chat{}, &UserSpam{}, &ChatSpam{}, &Setting{}, &Verify{}, &Picture{}, &Username{},
-		&EnforceGban{}, &Lang{}, &Warns{}, &WarnSettings{}, &Notification{}, &Antispam{}, &NewUser{})
+		&EnforceGban{}, &Lang{}, &Warns{}, &WarnSettings{}, &Notification{}, &Antispam{})
 	logrus.Info("Database has been connected & Auto-migrated database schema")
 }

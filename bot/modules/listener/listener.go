@@ -19,7 +19,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func username(b ext.Bot, u *gotgbot.Update) error {
@@ -69,8 +68,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 					err_handler.HandleTgErr(b, u, err)
 					return err
-				} else {
-					err_handler.HandleErr(err)
 				}
 			}
 
@@ -426,6 +423,7 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 			}
 		}
 	}
+
 	err = logger.SendLog(b, u, "welcome", "")
 	err_handler.HandleErr(err)
 	return err
@@ -437,10 +435,6 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if chat_status.IsUserAdmin(chat, msg.From.Id) == true {
-		return gotgbot.ContinueGroups{}
-	}
-
-	if chat_status.IsBotAdmin(chat, nil) == false {
 		return gotgbot.ContinueGroups{}
 	}
 
@@ -464,42 +458,49 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	return gotgbot.ContinueGroups{}
 }
 
-func get_join_date(_ ext.Bot, u *gotgbot.Update) error {
-	msg := u.EffectiveMessage
-	for _, user := range msg.NewChatMembers {
-		date := time.Now().Unix()
-		err := sql.UpdateNewUser(msg.Chat.Id, strconv.Itoa(user.Id), fmt.Sprint(date))
-		fmt.Print(date)
-		err_handler.HandleErr(err)
+func removeLink(b ext.Bot, u *gotgbot.Update) error {
+	db := sql.GetAntispam(u.Message.Chat.Id)
+	if db == nil {
+		return nil
 	}
-	return gotgbot.ContinueGroups{}
-}
 
-func removelink(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
+	user := u.EffectiveUser
 
 	if chat.Type != "supergroup" {
 		return nil
 	}
 
-	accepted := make(map[string]struct{})
-	accepted["url"] = struct{}{}
-	accepted["text_link"] = struct{}{}
+	if db.Link == "true" {
+		accepted := make(map[string]struct{})
+		accepted["url"] = struct{}{}
+		accepted["text_link"] = struct{}{}
 
-	entities := msg.ParseEntityTypes(accepted)
+		entities := msg.ParseEntityTypes(accepted)
 
-	var ent *ext.ParsedMessageEntity
-	if len(entities) > 0 {
-		ent = &entities[0]
-	} else {
-		ent = nil
-	}
+		var ent *ext.ParsedMessageEntity = nil
+		if len(entities) > 0 {
+			ent = &entities[0]
+		} else {
+			ent = nil
+		}
 
-	if entities != nil && ent != nil {
-	}
-
-	if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
+		if entities != nil && ent != nil {
+			_, err := msg.Delete()
+			err_handler.HandleErr(err)
+			replyText := fmt.Sprintf("Deleted message from %v\nReason: Link", user.FirstName)
+			reply := b.NewSendableMessage(chat.Id, replyText)
+			reply.Send()
+		}
+	} else if db.Forward == "true" {
+		if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
+			_, err := msg.Delete()
+			err_handler.HandleErr(err)
+			replyText := fmt.Sprintf("Deleted message from %v\nReason: Forwarded Message", user.FirstName)
+			reply := b.NewSendableMessage(chat.Id, replyText)
+			reply.Send()
+		}
 	}
 	return gotgbot.ContinueGroups{}
 }
@@ -510,56 +511,49 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if msg != nil {
-		db := make(chan error)
-		go func() { db <- sql.UpdateUser(user.Id, user.Username, user.FirstName) }()
-		err_handler.HandleErr(<-db)
-		db = make(chan error)
-		go func() { db <- sql.UpdateChat(strconv.Itoa(chat.Id), chat.Title, chat.Type, chat.InviteLink) }()
-		err_handler.HandleErr(<-db)
+		if chat.Type == "supergroup" {
+			go sql.UpdateChat(strconv.Itoa(chat.Id), chat.Title, chat.Type, chat.InviteLink)
+			go sql.UpdateUser(user.Id, user.Username, user.FirstName)
+			if msg.ForwardFrom != nil {
+				usr := msg.ForwardFrom
+				go sql.UpdateUser(usr.Id, usr.Username, usr.FirstName)
+			}
+			if sql.GetVerify(chat.Id) == nil {
+				go sql.UpdateVerify(chat.Id, "true", "-", "true")
+			}
+			if sql.GetUsername(chat.Id) == nil {
+				go sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
+			}
+			if sql.GetPicture(chat.Id) == nil {
+				go sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
+			}
+			if sql.GetSetting(chat.Id) == nil {
+				go sql.UpdateSetting(chat.Id, "5m", "true")
+			}
+			if sql.GetEnforceGban(chat.Id) == nil {
+				go sql.UpdateEnforceGban(chat.Id, "true")
+			}
+			if sql.GetLang(chat.Id) == nil {
+				caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 7200)
+				caching.REDIS.BgSave()
+				go sql.UpdateLang(chat.Id, "id")
+			}
+		}
 
+		go sql.UpdateUser(user.Id, user.Username, user.FirstName)
 		if msg.ForwardFrom != nil {
 			usr := msg.ForwardFrom
-			db := make(chan error)
-			go func() { db <- sql.UpdateUser(usr.Id, usr.Username, usr.FirstName) }()
-			err_handler.HandleErr(<-db)
-		}
-
-		if sql.GetVerify(chat.Id) == nil {
-			db := make(chan error)
-			go func() { db <- sql.UpdateVerify(chat.Id, "true", "-", "true") }()
-			err_handler.HandleErr(<-db)
-		}
-		if sql.GetUsername(chat.Id) == nil {
-			db := make(chan error)
-			go func() { db <- sql.UpdateUsername(chat.Id, "true", "mute", "-", "true") }()
-			err_handler.HandleErr(<-db)
-		}
-		if sql.GetPicture(chat.Id) == nil {
-			db := make(chan error)
-			go func() { db <- sql.UpdatePicture(chat.Id, "true", "mute", "-", "true") }()
-			err_handler.HandleErr(<-db)
-		}
-		if sql.GetSetting(chat.Id) == nil {
-			db := make(chan error)
-			go func() { db <- sql.UpdateSetting(chat.Id, "5m", "true") }()
-			err_handler.HandleErr(<-db)
-		}
-		if sql.GetEnforceGban(chat.Id) == nil {
-			db := make(chan error)
-			go func() { db <- sql.UpdateEnforceGban(chat.Id, "true") }()
-			err_handler.HandleErr(<-db)
+			go sql.UpdateUser(usr.Id, usr.Username, usr.FirstName)
 		}
 		if sql.GetLang(chat.Id) == nil {
-			caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 7200)
-			caching.REDIS.BgSave()
-			db := make(chan error)
-			go func() { db <- sql.UpdateLang(chat.Id, "id") }()
-			err_handler.HandleErr(<-db)
+			go caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 7200)
+			go caching.REDIS.BgSave()
+			go sql.UpdateLang(chat.Id, "id")
+
 		}
 		if sql.GetNotification(user.Id) == nil {
-			db := make(chan error)
-			go func() { db <- sql.UpdateNotification(user.Id, "true") }()
-			err_handler.HandleErr(<-db)
+			go sql.UpdateNotification(user.Id, "true")
+
 		}
 		return gotgbot.ContinueGroups{}
 	}
@@ -577,9 +571,11 @@ func usernameQuery(b ext.Bot, u *gotgbot.Update) error {
 		splt := strings.Split(msg.Data, "umute_")[1]
 		if strings.Split(splt, "_")[0] == strconv.Itoa(user.Id) {
 			if user.Username == "" {
-				_, err := b.AnswerCallbackQueryText(msg.Id,
-					function.GetString(chat.Id, "modules/listener/listener.go:454"), true)
-				return err
+				cb := b.NewSendableAnswerCallbackQuery(msg.Id)
+				cb.Text = function.GetString(chat.Id, "modules/listener/listener.go:454")
+				cb.ShowAlert = true
+				cb.CacheTime = 10
+				cb.Send()
 			}
 
 			if chat.Type == "supergroup" {
@@ -791,7 +787,6 @@ func spamFunc(b ext.Bot, u *gotgbot.Update) error {
 func LoadListeners(u *gotgbot.Updater) {
 	defer logrus.Info("Listeners Module Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
-	//go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, get_join_date))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
 	//go u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, removelink))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
