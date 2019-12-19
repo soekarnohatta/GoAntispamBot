@@ -15,7 +15,7 @@ func LoadAllLang() {
 	err_handler.FatalError(err)
 	for _, data := range files {
 		if data.IsDir() {
-			goloc.LoadAll(data.Name())
+			go goloc.LoadAll(data.Name())
 		}
 	}
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
@@ -35,9 +34,7 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 	_, err := caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), args[0], 7200).Result()
 	if err != nil {
-		dberr := make(chan error)
-		go func() { dberr <- sql.UpdateLang(chat.Id, args[0]) }()
-		err_handler.HandleTgErr(b, u, <-dberr)
+		go sql.UpdateLang(chat.Id, args[0])
 		_, err = msg.ReplyText(function.GetStringf(chat.Id, "modules/language/language.go:51",
 			map[string]string{"1": args[0]}))
 		return err

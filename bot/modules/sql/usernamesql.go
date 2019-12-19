@@ -12,15 +12,14 @@ type Username struct {
 	Text     string `gorm:"not null"`
 }
 
-func UpdateUsername(chatid int, option string, action string, text string, del string) error {
+func UpdateUsername(chatid int, option string, action string, text string, del string) {
 	tx := SESSION.Begin()
 
 	username := &Username{ChatId: strconv.Itoa(chatid), Option: option,
 		Action: action, Text: text, Deletion: del}
 	tx.Where(Username{ChatId: strconv.Itoa(chatid)}).Assign(Username{Option: option,
 		Action: action, Text: text, Deletion: del}).FirstOrCreate(username)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
 }
 
 func DelUsername(chatid int) bool {

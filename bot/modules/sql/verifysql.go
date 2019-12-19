@@ -11,14 +11,13 @@ type Verify struct {
 	Text     string `gorm:"not null"`
 }
 
-func UpdateVerify(chatId int, option string, text string, del string) error {
+func UpdateVerify(chatId int, option string, text string, del string) {
 	tx := SESSION.Begin()
 
 	set := &Verify{ChatId: strconv.Itoa(chatId), Option: option, Text: text, Deletion: del}
 	tx.Where(Verify{ChatId: strconv.Itoa(chatId)}).Assign(Verify{Option: option,
 		Text: text, Deletion: del}).FirstOrCreate(set)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
 }
 
 func DelVerify(chatid int) bool {

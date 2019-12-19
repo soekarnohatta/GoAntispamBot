@@ -44,11 +44,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:43",
 			map[string]string{"1": strconv.Itoa(userId), "2": ban.Reason, "3": reason}))
 		err_handler.HandleErr(err)
-		dberr := make(chan error)
-		go func() {
-			dberr <- sql.UpdateUserSpam(userId, reason)
-		}()
-		err_handler.HandleTgErr(b, u, <-dberr)
+		go sql.UpdateUserSpam(userId, reason)
 		err = logger.SendBanLog(b, userId, reason, u)
 		return err
 	}
@@ -56,13 +52,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
 		map[string]string{"1": strconv.Itoa(userId)}))
 	err_handler.HandleErr(err)
-
-	dberr := make(chan error)
-	go func() {
-		dberr <- sql.UpdateUserSpam(userId, reason)
-	}()
-	err_handler.HandleTgErr(b, u, err)
-
+	go sql.UpdateUserSpam(userId, reason)
 	_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:62",
 		map[string]string{"1": strconv.Itoa(userId), "2": reason}))
 	err_handler.HandleErr(err)
@@ -78,12 +68,14 @@ func unGbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 
 	userId, _ := extraction.ExtractUserAndText(msg, args)
+
 	if userId == 0 {
 		_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
 		return err
 	}
 
 	ban := sql.GetUserSpam(userId)
+
 	if ban != nil {
 		_, err := msg.ReplyHTMLf(function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:88",
 			map[string]string{"1": strconv.Itoa(userId)}))
@@ -93,16 +85,16 @@ func unGbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 			group := sql.GetAllChat
 			banerr := []string{"Bad Request: USER_ID_INVALID", "Bad Request: USER_NOT_PARTICIPANT" +
 				"Bad Request: chat member status can't be changed in private chats"}
-			sql.DelUserSpam(userId)
+			go sql.DelUserSpam(userId)
 			for _, a := range group() {
 				cid, _ := strconv.Atoi(a.ChatId)
 				_, err = b.UnbanChatMember(cid, userId)
 				if err != nil {
 					if function.Contains(banerr, err.Error()) == true {
-						return
+						continue
 					} else if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
 						sql.DelChat(a.ChatId)
-						return
+						continue
 					}
 				}
 			}
@@ -123,10 +115,11 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 		return nil
 	}
 
-	replyText := fmt.Sprintf("<b>Statistics</b>\n"+
-		"Total Users: %v\n"+
-		"Total Chats: %v\n"+
-		"Total Spammers: %v", len(sql.GetAllUser()),
+	replyText := fmt.Sprintf(
+		"<b>Statistics</b>\n"+
+			"Total User(s): %v\n"+
+			"Total Chat(s): %v\n"+
+			"Total Spammer(s): %v", len(sql.GetAllUser()),
 		len(sql.GetAllChat()), len(sql.GetAllSpamUser()))
 
 	_, err := msg.ReplyHTML(replyText)
@@ -150,14 +143,17 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 			if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
 				sql.DelChat(a.ChatId)
 				errNum++
+				continue
 			} else {
 				err_handler.HandleErr(err)
 				errNum++
+				continue
 			}
 		}
 	}
 
-	_, err := msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>, <code>%v</code> <b>Has Failed</b>\n", errNum)
+	_, err := msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>,"+
+		"<code>%v</code> <b>Has Failed</b>\n", errNum)
 	return err
 }
 

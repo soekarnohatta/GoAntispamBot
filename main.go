@@ -33,14 +33,15 @@ func main() {
 
 	if bot.BotConfig.WebhookUrl != "" {
 		logrus.Warn("Using Webhook...")
-		var web gotgbot.Webhook
-		web.URL = bot.BotConfig.WebhookUrl
-		web.MaxConnections = 30
-		web.ServePort = bot.BotConfig.WebhookPort
-		web.Serve = bot.BotConfig.WebhookServe
-		web.ServePath = bot.BotConfig.WebhookPath
-		updater.StartWebhook(web)
-		_, err = updater.SetWebhook(bot.BotConfig.WebhookPath, web)
+		webHook := gotgbot.Webhook{
+			URL:            bot.BotConfig.WebhookUrl,
+			MaxConnections: 20,
+			Serve:          bot.BotConfig.WebhookServe,
+			ServePort:      bot.BotConfig.WebhookPort,
+			ServePath:      bot.BotConfig.WebhookPath,
+		}
+		updater.StartWebhook(webHook)
+		_, err = updater.SetWebhook(webHook.ServePath, webHook)
 		err_handler.HandleErr(err)
 	} else if bot.BotConfig.CleanPolling == "true" {
 		logrus.Warn("Using Clean Polling...")

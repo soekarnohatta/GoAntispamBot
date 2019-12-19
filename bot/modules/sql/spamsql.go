@@ -19,13 +19,12 @@ type EnforceGban struct {
 	Option string `gorm:"not null"`
 }
 
-func UpdateUserSpam(userid int, reason string) error {
+func UpdateUserSpam(userid int, reason string) {
 	tx := SESSION.Begin()
 
 	user := &UserSpam{UserId: userid, Reason: reason}
 	tx.Where(UserSpam{UserId: userid}).Assign(UserSpam{Reason: reason}).FirstOrCreate(user)
 	tx.Commit()
-	return tx.Error
 }
 
 func DelUserSpam(userid int) bool {
@@ -52,13 +51,12 @@ func GetUserSpam(userid int) *UserSpam {
 	return spam
 }
 
-func UpdateChatSpam(chatid int, reason string) error {
+func UpdateChatSpam(chatid int, reason string) {
 	tx := SESSION.Begin()
 
 	cht := &ChatSpam{ChatId: strconv.Itoa(chatid), Reason: reason}
 	tx.Where(ChatSpam{ChatId: strconv.Itoa(chatid)}).Assign(ChatSpam{Reason: reason}).FirstOrCreate(cht)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
 }
 
 func DelChatSpam(chatid int) bool {
@@ -76,13 +74,13 @@ func DelChatSpam(chatid int) bool {
 	return true
 }
 
-func UpdateEnforceGban(chatid int, option string) error {
+func UpdateEnforceGban(chatid int, option string) {
 	tx := SESSION.Begin()
 
 	chat := &EnforceGban{ChatId: strconv.Itoa(chatid), Option: option}
 	tx.Where(EnforceGban{ChatId: strconv.Itoa(chatid)}).Assign(EnforceGban{Option: option}).FirstOrCreate(chat)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
+
 }
 
 func DelEnforceGban(chatid int) bool {

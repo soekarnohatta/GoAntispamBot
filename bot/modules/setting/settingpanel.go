@@ -91,19 +91,12 @@ func settingQuery(b ext.Bot, u *gotgbot.Update) error {
 						replyText, "HTML", &ext.InlineKeyboardMarkup{&kn})
 					return err
 				} else if msg.Data == "mk_reset" {
-					dberr := make(chan error)
-					go func() { dberr <- sql.UpdatePicture(chat.Id, "true", "mute", "-", "true") }()
-					err_handler.HandleCbErr(b, u, <-dberr)
-					go func() { dberr <- sql.UpdateUsername(chat.Id, "true", "mute", "-", "true") }()
-					err_handler.HandleCbErr(b, u, <-dberr)
-					go func() { dberr <- sql.UpdateEnforceGban(chat.Id, "true") }()
-					err_handler.HandleCbErr(b, u, <-dberr)
-					go func() { dberr <- sql.UpdateVerify(chat.Id, "true", "-", "true") }()
-					err_handler.HandleCbErr(b, u, <-dberr)
-					go func() { dberr <- sql.UpdateSetting(chat.Id, "5m", "true") }()
-					err_handler.HandleCbErr(b, u, <-dberr)
-					go func() { dberr <- sql.UpdateLang(chat.Id, "id") }()
-					err_handler.HandleCbErr(b, u, <-dberr)
+					go sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
+					go sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
+					go sql.UpdateEnforceGban(chat.Id, "true")
+					go sql.UpdateVerify(chat.Id, "true", "-", "true")
+					go sql.UpdateSetting(chat.Id, "5m", "true")
+					go sql.UpdateLang(chat.Id, "id")
 					go caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "en", 0)
 					go caching.REDIS.BgSave()
 
@@ -137,11 +130,9 @@ func spamControlQuery(b ext.Bot, u *gotgbot.Update) error {
 				if g {
 					if strings.Split(msg.Data, "_toggle")[0] == "mo" {
 						if sql.GetEnforceGban(chat.Id).Option == "true" {
-							err = sql.UpdateEnforceGban(chat.Id, "false")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateEnforceGban(chat.Id, "false")
 						} else {
-							err = sql.UpdateEnforceGban(chat.Id, "true")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateEnforceGban(chat.Id, "true")
 						}
 						replyText, _, replyButtons := mainSpamMenu(chat.Id)
 						_, err = b.EditMessageTextMarkup(chat.Id, msg.Message.MessageId,
@@ -182,14 +173,12 @@ func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
 
 				if a == true {
 					// Username Control Panel
-					err = sql.UpdateUsername(chat.Id, username.Option, strings.Split(msg.Data, "mc_")[1], "-", username.Deletion)
-					err_handler.HandleCbErr(b, u, err)
+					go sql.UpdateUsername(chat.Id, username.Option, strings.Split(msg.Data, "mc_")[1], "-", username.Deletion)
 					err = updateUserControl(b, u)
 					return err
 				} else if f == true {
 					// Profile Photo Control Panel
-					err = sql.UpdatePicture(chat.Id, profilePicture.Option, strings.Split(msg.Data, "md_")[1], "-", profilePicture.Deletion)
-					err_handler.HandleCbErr(b, u, err)
+					go sql.UpdatePicture(chat.Id, profilePicture.Option, strings.Split(msg.Data, "md_")[1], "-", profilePicture.Deletion)
 					err = updateUserControl(b, u)
 					return err
 				} else if d == true {
@@ -208,23 +197,11 @@ func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
 						}
 
 						if lastLetter == "m" {
-							dberr := make(chan error)
-							go func() {
-								dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%vh", re.Split(time.Time, -1)[0]), time.Deletion)
-							}()
-							err_handler.HandleCbErr(b, u, <-dberr)
+							go sql.UpdateSetting(chat.Id, fmt.Sprintf("%vh", re.Split(time.Time, -1)[0]), time.Deletion)
 						} else if lastLetter == "h" {
-							dberr := make(chan error)
-							go func() {
-								dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%vd", re.Split(time.Time, -1)[0]), time.Deletion)
-							}()
-							err_handler.HandleCbErr(b, u, <-dberr)
+							go sql.UpdateSetting(chat.Id, fmt.Sprintf("%vd", re.Split(time.Time, -1)[0]), time.Deletion)
 						} else if lastLetter == "d" {
-							dberr := make(chan error)
-							go func() {
-								dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%vm", re.Split(time.Time, -1)[0]), time.Deletion)
-							}()
-							err_handler.HandleCbErr(b, u, <-dberr)
+							go sql.UpdateSetting(chat.Id, fmt.Sprintf("%vm", re.Split(time.Time, -1)[0]), time.Deletion)
 						}
 
 						err = updateUserControl(b, u)
@@ -234,19 +211,9 @@ func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
 						lastLetter = strings.ToLower(lastLetter)
 
 						t := time.Time[:len(time.Time)-1]
-						j, err := strconv.Atoi(t)
-
-						if err != nil {
-							_, err := b.AnswerCallbackQueryText(msg.Id,
-								"❌ Invalid time amount specified.", true)
-							return err
-						}
-
+						j, _ := strconv.Atoi(t)
 						j++
-
-						dberr := make(chan error)
-						go func() { dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), time.Deletion) }()
-						err_handler.HandleCbErr(b, u, <-dberr)
+						go sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), time.Deletion)
 						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mf_")[1] == "minus" {
@@ -261,12 +228,8 @@ func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
 								"❌ Invalid time amount specified.", true)
 							return err
 						}
-
 						j--
-
-						dberr := make(chan error)
-						go func() { dberr <- sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), time.Deletion) }()
-						err_handler.HandleCbErr(b, u, <-dberr)
+						go sql.UpdateSetting(chat.Id, fmt.Sprintf("%v%v", j, lastLetter), time.Deletion)
 						err = updateUserControl(b, u)
 						return err
 					} else if strings.Split(msg.Data, "mf_")[1] == "waktu" {
@@ -300,27 +263,21 @@ func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
 					// On/Off Toggles
 					if strings.Split(msg.Data, "_toggle")[0] == "mc" {
 						if username.Option == "true" {
-							err = sql.UpdateUsername(chat.Id, "false", username.Action, "-", username.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateUsername(chat.Id, "false", username.Action, "-", username.Deletion)
 						} else {
-							err = sql.UpdateUsername(chat.Id, "true", username.Action, "-", username.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateUsername(chat.Id, "true", username.Action, "-", username.Deletion)
 						}
 					} else if strings.Split(msg.Data, "_toggle")[0] == "md" {
 						if profilePicture.Option == "true" {
-							err = sql.UpdatePicture(chat.Id, "false", username.Action, "-", username.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdatePicture(chat.Id, "false", username.Action, "-", username.Deletion)
 						} else {
-							err = sql.UpdatePicture(chat.Id, "true", username.Action, "-", username.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdatePicture(chat.Id, "true", username.Action, "-", username.Deletion)
 						}
 					} else if strings.Split(msg.Data, "_toggle")[0] == "me" {
 						if ver.Option == "true" {
-							err = sql.UpdateVerify(chat.Id, "false", "-", ver.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateVerify(chat.Id, "false", "-", ver.Deletion)
 						} else {
-							err = sql.UpdateVerify(chat.Id, "true", "-", ver.Deletion)
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateVerify(chat.Id, "true", "-", ver.Deletion)
 						}
 					}
 
@@ -330,35 +287,27 @@ func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
 					// On/Off Deletion
 					if strings.Split(msg.Data, "_del")[0] == "mc" {
 						if username.Deletion == "true" {
-							err = sql.UpdateUsername(chat.Id, username.Option, username.Action, "-", "false")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateUsername(chat.Id, username.Option, username.Action, "-", "false")
 						} else {
-							err = sql.UpdateUsername(chat.Id, username.Option, username.Action, "-", "true")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateUsername(chat.Id, username.Option, username.Action, "-", "true")
 						}
 					} else if strings.Split(msg.Data, "_del")[0] == "md" {
 						if profilePicture.Deletion == "true" {
-							err = sql.UpdatePicture(chat.Id, profilePicture.Option, profilePicture.Action, "-", "false")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdatePicture(chat.Id, profilePicture.Option, profilePicture.Action, "-", "false")
 						} else {
-							err = sql.UpdatePicture(chat.Id, profilePicture.Option, profilePicture.Action, "-", "true")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdatePicture(chat.Id, profilePicture.Option, profilePicture.Action, "-", "true")
 						}
 					} else if strings.Split(msg.Data, "_del")[0] == "me" {
 						if ver.Deletion == "true" {
-							err = sql.UpdateVerify(chat.Id, ver.Option, "-", "false")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateVerify(chat.Id, ver.Option, "-", "false")
 						} else {
-							err = sql.UpdateVerify(chat.Id, ver.Option, "-", "true")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateVerify(chat.Id, ver.Option, "-", "true")
 						}
 					} else if strings.Split(msg.Data, "_del")[0] == "mf" {
 						if time.Deletion == "true" {
-							err = sql.UpdateSetting(chat.Id, time.Time, "false")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateSetting(chat.Id, time.Time, "false")
 						} else {
-							err = sql.UpdateSetting(chat.Id, time.Time, "true")
-							err_handler.HandleCbErr(b, u, err)
+							go sql.UpdateSetting(chat.Id, time.Time, "true")
 						}
 					}
 

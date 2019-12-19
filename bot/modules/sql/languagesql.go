@@ -9,13 +9,12 @@ type Lang struct {
 	Lang   string `gorm:"not null"`
 }
 
-func UpdateLang(chatid int, lang string) error {
+func UpdateLang(chatid int, lang string) {
 	tx := SESSION.Begin()
 
 	set := &Lang{ChatId: strconv.Itoa(chatid), Lang: lang}
 	tx.Where(Lang{ChatId: strconv.Itoa(chatid)}).Assign(Lang{Lang: lang}).FirstOrCreate(set)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
 }
 
 func DelLang(chatid int) bool {

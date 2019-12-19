@@ -126,8 +126,6 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 
 	_, err := m.Bot.GetChat(userId)
 	if err != nil {
-		_, err := m.ReplyText("Saya perlu melihat dia terlebih dahulu.")
-		err_handler.HandleErr(err)
 		return userId, text
 	}
 	return userId, text

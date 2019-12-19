@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var CACHE *bigcache.BigCache
+var CACHE *bigcache.BigCache = nil
 
 func InitCache() {
 	config := bigcache.Config{Shards: 1024,

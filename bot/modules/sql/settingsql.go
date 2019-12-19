@@ -10,13 +10,13 @@ type Setting struct {
 	Deletion string `gorm:"not null"`
 }
 
-func UpdateSetting(chatid int, time string, delete string) error {
+func UpdateSetting(chatid int, time string, delete string) {
 	tx := SESSION.Begin()
 
 	set := &Setting{Time: time, Deletion: delete}
 	tx.Where(Setting{ChatId: strconv.Itoa(chatid)}).Assign(Setting{Time: time, Deletion: delete}).FirstOrCreate(set)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
+
 }
 
 func DelSetting(ChatId int) bool {

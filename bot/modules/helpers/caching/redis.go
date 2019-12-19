@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var REDIS *redis.Client
+var REDIS *redis.Client = nil
 
 func InitRedis() {
 	client := redis.NewClient(&redis.Options{

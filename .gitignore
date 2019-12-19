@@ -77,6 +77,5 @@ fabric.properties
 
 # Misc
 .pgpass
-antispambot
 db_backups/
 build/

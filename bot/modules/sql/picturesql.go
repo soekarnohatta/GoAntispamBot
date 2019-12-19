@@ -12,14 +12,13 @@ type Picture struct {
 	Text     string `gorm:"not null"`
 }
 
-func UpdatePicture(chatid int, option string, action string, text string, del string) error {
+func UpdatePicture(chatid int, option string, action string, text string, del string) {
 	tx := SESSION.Begin()
 
 	pic := &Picture{Option: option, Action: action, Text: text, Deletion: del}
 	tx.Where(Picture{ChatId: strconv.Itoa(chatid)}).Assign(Picture{Option: option, Action: action,
 		Text: text, Deletion: del}).FirstOrCreate(pic)
-	ret := tx.Commit().Error
-	return ret
+	tx.Commit()
 }
 
 func DelPicture(chatid int) bool {

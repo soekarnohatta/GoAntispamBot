@@ -138,6 +138,5 @@ func adminCache(chat *ext.Chat) {
 
 	cacheAdmin := &Cache{admins}
 	finalCache, _ := json.Marshal(cacheAdmin)
-	err := caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), finalCache)
-	err_handler.HandleErr(err)
+	go caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), finalCache)
 }

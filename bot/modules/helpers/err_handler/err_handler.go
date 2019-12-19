@@ -20,7 +20,7 @@ func FatalError(err error) {
 
 func HandleTgErr(b ext.Bot, u *gotgbot.Update, err error) {
 	if err != nil {
-		var msg = u.EffectiveMessage
+		var msg *ext.Message = u.EffectiveMessage
 		_, err = msg.ReplyText(err.Error())
 		HandleErr(err)
 	}

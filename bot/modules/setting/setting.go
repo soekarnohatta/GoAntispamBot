@@ -24,14 +24,12 @@ func setUsername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
-					err := sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
-					err_handler.HandleErr(err)
-					_, err = msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
+					go sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
+					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
-					err := sql.UpdateUsername(chat.Id, "false", "mute", "-", "true")
-					err_handler.HandleErr(err)
-					_, err = msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
+					go sql.UpdateUsername(chat.Id, "false", "mute", "-", "true")
+					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else {
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
@@ -56,14 +54,12 @@ func setVerify(_ ext.Bot, u *gotgbot.Update, args []string) error {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
-					err := sql.UpdateVerify(chat.Id, "true", "-", "true")
-					err_handler.HandleErr(err)
-					_, err = msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
+					go sql.UpdateVerify(chat.Id, "true", "-", "true")
+					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
-					err := sql.UpdateVerify(chat.Id, "false", "-", "true")
-					err_handler.HandleErr(err)
-					_, err = msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
+					go sql.UpdateVerify(chat.Id, "false", "-", "true")
+					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else {
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
@@ -88,15 +84,11 @@ func setEnforce(_ ext.Bot, u *gotgbot.Update, args []string) error {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
-					db := make(chan error)
-					go func() { db <- sql.UpdateEnforceGban(chat.Id, "true") }()
-					err_handler.HandleErr(<-db)
+					go sql.UpdateEnforceGban(chat.Id, "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
-					db := make(chan error)
-					go func() { db <- sql.UpdateEnforceGban(chat.Id, "false") }()
-					err_handler.HandleErr(<-db)
+					go sql.UpdateEnforceGban(chat.Id, "false")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else {
@@ -122,15 +114,11 @@ func setPicture(_ ext.Bot, u *gotgbot.Update, args []string) error {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
 				if strings.ToLower(args[0]) == "true" {
-					db := make(chan error)
-					go func() { db <- sql.UpdatePicture(chat.Id, "true", "mute", "-", "true") }()
-					err_handler.HandleErr(<-db)
+					go sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else if strings.ToLower(args[0]) == "false" {
-					db := make(chan error)
-					go func() { db <- sql.UpdatePicture(chat.Id, "false", "mute", "-", "true") }()
-					err_handler.HandleErr(<-db)
+					go sql.UpdatePicture(chat.Id, "false", "mute", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				} else {
@@ -157,9 +145,7 @@ func setTime(_ ext.Bot, u *gotgbot.Update, args []string) error {
 			if len(args) != 0 {
 				match, err := regexp.MatchString("^\\d+[mhd]", strings.ToLower(args[0]))
 				if match == true {
-					db := make(chan error)
-					go func() { db <- sql.UpdateSetting(chat.Id, args[0], "true") }()
-					err_handler.HandleErr(<-db)
+					go sql.UpdateSetting(chat.Id, args[0], "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
 				}
@@ -182,15 +168,11 @@ func setNotif(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	if chat_status.RequirePrivate(chat, msg) == true {
 		if len(args) != 0 {
 			if strings.ToLower(args[0]) == "true" {
-				db := make(chan error)
-				go func() { db <- sql.UpdateNotification(user.Id, "true") }()
-				err_handler.HandleErr(<-db)
+				go sql.UpdateNotification(user.Id, "true")
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 				return err
 			} else if strings.ToLower(args[0]) == "false" {
-				db := make(chan error)
-				go func() { db <- sql.UpdateNotification(user.Id, "false") }()
-				err_handler.HandleErr(<-db)
+				go sql.UpdateNotification(user.Id, "false")
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 				return err
 			} else {
