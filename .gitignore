@@ -79,3 +79,4 @@ fabric.properties
 .pgpass
 db_backups/
 build/
+antispambot*

@@ -2,12 +2,14 @@ package sql
 
 import (
 	"strings"
+	"strconv"
 )
 
 type User struct {
 	UserId   int `gorm:"primary_key"`
 	UserName string
-	Name     string `gorm:"not null"`
+	FirstName     string `gorm:"not null"`
+	LastName string
 }
 
 type Chat struct {
@@ -17,12 +19,12 @@ type Chat struct {
 	ChatLink  string
 }
 
-func UpdateUser(userid int, username string, name string) {
-	username = strings.ToLower(username)
+func UpdateUser(userId int, userName string, firstName string, lastName string) {
+	username := strings.ToLower(userName)
 	tx := SESSION.Begin()
 
-	user := &User{UserId: userid, UserName: username, Name: name}
-	tx.Where(User{UserId: userid}).Assign(User{UserName: username, Name: name}).FirstOrCreate(user)
+	user := &User{UserId: userId, UserName: username, FirstName: firstName, LastName: lastName}
+	tx.Where(User{UserId: userId}).Assign(User{UserName: username, FirstName: firstName, LastName: lastName}).FirstOrCreate(user)
 	tx.Commit()
 }
 
@@ -86,4 +88,22 @@ func GetAllUser() []User {
 	var list []User
 	SESSION.Find(&list)
 	return list
+}
+
+func GetUser(userId int) *User {
+	ver := &User{UserId: userId}
+
+	if SESSION.First(ver).RowsAffected == 0 {
+		return nil
+	}
+	return ver
+}
+
+func GetChat(chatId int) *Chat{
+	ver := &Chat{ChatId: strconv.Itoa(chatId)}
+
+	if SESSION.First(ver).RowsAffected == 0 {
+		return nil
+	}
+	return ver
 }

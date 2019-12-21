@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/setting/setting.go:1">
-        <value>Pengaturan telah disimpan!</value>
+        <value>✅ Pengaturan telah disimpan!</value>
         <!--modules/setting.go:51-->
     </Rows>
     <Rows id="2" name="modules/setting/setting.go:2">
-        <value>&lt;b&gt;Mohon masukan diantara true/false! &lt;/b&gt;</value>
+        <value>ℹ️ &lt;b&gt;Mohon masukan diantara true/false! &lt;/b&gt;</value>
         <!--modules/setting.go:58-->
     </Rows>
     <Rows id="3" name="modules/setting/setting.go:3">
-        <value>&lt;b&gt;Mohon masukkan waktu yang valid! &lt;/b&gt;</value>
+        <value>ℹ️ &lt;b&gt;Mohon masukkan waktu yang valid! &lt;/b&gt;</value>
         <!--modules/setting.go:58-->
     </Rows>
     <Counter>3</Counter>

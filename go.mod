@@ -24,6 +24,7 @@ require (
 	github.com/pwaller/goupx v0.0.0-20160623083017-1d58e01d5ce2 // indirect
 	github.com/robfig/cron v1.2.0
 	github.com/robfig/cron/v3 v3.0.0 // indirect
+	github.com/shirou/gopsutil v2.19.11+incompatible
 	github.com/sirupsen/logrus v1.4.2
 	golang.org/x/lint v0.0.0-20190930215403-16217165b5de // indirect
 	golang.org/x/sys v0.0.0-20191025090151-53bf42e6b339 // indirect

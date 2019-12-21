@@ -11,16 +11,15 @@ type Antispam struct {
 	Deletion string `gorm:"not null"`
 	Forward  string `gorm:"not null"`
 	Link     string `gorm:"not null"`
-	NonLatin string `gorm:"not null"`
 }
 
-func UpdateAntispam(chatid int, option string, arabs string, del string, fwd string, link string, nonlatin string) error {
+func UpdateAntispam(chatid int, option string, arabs string, del string, fwd string, link string) error {
 	tx := SESSION.Begin()
 
 	antispam := &Antispam{ChatId: strconv.Itoa(chatid), Option: option,
-		Arabs: arabs, Deletion: del, Forward: fwd, Link: link, NonLatin: nonlatin}
+		Arabs: arabs, Deletion: del, Forward: fwd, Link: link}
 	tx.Where(Antispam{ChatId: strconv.Itoa(chatid)}).Assign(Antispam{Option: option,
-		Arabs: arabs, Deletion: del, Forward: fwd, Link: link, NonLatin: nonlatin}).FirstOrCreate(antispam)
+		Arabs: arabs, Deletion: del, Forward: fwd, Link: link}).FirstOrCreate(antispam)
 	ret := tx.Commit().Error
 	return ret
 }

@@ -10,7 +10,7 @@
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="3" name="modules/listener/listener.go:56">
-        <value>Lepas Blokir (Admin Saja)</value>
+        <value>✅ Lepas Blokir (Admin Saja)</value>
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="4" name="modules/listener/listener.go:173">
@@ -23,7 +23,7 @@
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="6" name="modules/listener/listener.go:184">
-        <value>Lepas Blokir (Admin Saja)</value>
+        <value>✅ Lepas Blokir (Admin Saja)</value>
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="7" name="modules/listener/listener.go:298">
@@ -92,7 +92,7 @@
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="22" name="rmwarn">
-        <value>Hapus Peringatan (Hanya Admin)</value>
+        <value>✅ Hapus Peringatan (Hanya Admin)</value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="23" name="picturep">

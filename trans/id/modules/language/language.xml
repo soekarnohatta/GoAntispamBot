@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/language/language.go:51">
-        <value>Bahasa telah diubah ke {1}.</value>
+        <value>✅ Bahasa telah diubah ke &lt;b&gt;{1}&lt;/b&gt;.</value>
         <!--modules/language.go:51-->
     </Rows>
     <Rows id="2" name="modules/language/language.go:58">
-        <value>&lt;b&gt;Bahasa itu belum didukung!&lt;/b&gt;</value>
+        <value>❌ &lt;b&gt;Bahasa itu belum didukung!&lt;/b&gt;</value>
         <!--modules/language.go:58-->
     </Rows>
     <Counter>2</Counter>

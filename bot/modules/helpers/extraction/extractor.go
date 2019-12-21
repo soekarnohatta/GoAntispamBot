@@ -85,8 +85,6 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 		user := args[0]
 		userId = GetUserId(user)
 		if userId == 0 {
-			_, err := m.ReplyText("Saya belum memiliki data dia di database saya.")
-			err_handler.HandleErr(err)
 			return 0, ""
 		} else {
 			res := strings.SplitN(m.Text, " ", 3)
@@ -126,7 +124,7 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 
 	_, err := m.Bot.GetChat(userId)
 	if err != nil {
-		return userId, text
+		return 0, text
 	}
 	return userId, text
 }
@@ -213,6 +211,8 @@ func GetEmoji(chatId int) [][]string {
 		opt[0] = chat.Option
 		act[0] = chat.Action
 		del[0] = chat.Deletion
+	} else {
+		go sql.UpdateUsername(chatId, "true", "mute", "-", "true")
 	}
 
 	if pic != nil {
@@ -243,6 +243,8 @@ func GetEmoji(chatId int) [][]string {
 		opt[1] = pic.Option
 		act[1] = pic.Action
 		del[1] = pic.Deletion
+	} else {
+		go sql.UpdatePicture(chatId, "true", "mute", "-", "true")
 	}
 
 	if ver != nil {
@@ -260,6 +262,8 @@ func GetEmoji(chatId int) [][]string {
 
 		opt[2] = ver.Option
 		del[3] = ver.Deletion
+	} else {
+		go sql.UpdateVerify(chatId, "true", "-", "true")
 	}
 
 	if spm != nil {
@@ -270,6 +274,8 @@ func GetEmoji(chatId int) [][]string {
 		}
 
 		opt[3] = spm.Option
+	} else {
+		go sql.UpdateEnforceGban(chatId, "true")
 	}
 
 	if tim != nil {
@@ -281,6 +287,8 @@ func GetEmoji(chatId int) [][]string {
 
 		ti[0] = tim.Time
 		del[2] = tim.Deletion
+	} else {
+		go sql.UpdateSetting(chatId, "5m", "true")
 	}
 
 	gu[0] = lastLetter

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/admins/admins.go:27">
-        <value>👤 &lt;b&gt;No user was designated.&lt;/b&gt;</value>
+        <value>👤 &lt;b&gt;I Can't Find That User.&lt;/b&gt;</value>
         <!--modules/admins/admins.go:27-->
     </Rows>
     <Rows id="2" name="modules/admins/admins.go:38">

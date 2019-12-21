@@ -7,6 +7,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
+	"github.com/jumatberkah/antispambot/bot/modules/info"
 	"github.com/jumatberkah/antispambot/bot/modules/language"
 	"github.com/jumatberkah/antispambot/bot/modules/listener"
 	"github.com/jumatberkah/antispambot/bot/modules/private"
@@ -16,6 +17,8 @@ import (
 )
 
 func main() {
+	logrus.Info("Starting Bot...")
+
 	updater, err := gotgbot.NewUpdater(bot.BotConfig.ApiKey)
 	err_handler.FatalError(err)
 
@@ -29,10 +32,11 @@ func main() {
 	setting.LoadSetting(updater)
 	setting.LoadSettingPanel(updater)
 	private.LoadPm(updater)
+	info.LoadInfo(updater)
 	listener.LoadListeners(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {
-		logrus.Warn("Using Webhook...")
+		logrus.Info("Using Webhook...")
 		webHook := gotgbot.Webhook{
 			URL:            bot.BotConfig.WebhookUrl,
 			MaxConnections: 20,
@@ -44,10 +48,10 @@ func main() {
 		_, err = updater.SetWebhook(webHook.ServePath, webHook)
 		err_handler.HandleErr(err)
 	} else if bot.BotConfig.CleanPolling == "true" {
-		logrus.Warn("Using Clean Polling...")
+		logrus.Info("Using Clean Polling...")
 		_ = updater.StartCleanPolling()
 	} else {
-		logrus.Warn("Using Long Polling...")
+		logrus.Info("Using Long Polling...")
 		_ = updater.StartPolling()
 	}
 	updater.Idle()

@@ -157,10 +157,22 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 	return err
 }
 
+func dbg(b ext.Bot, u *gotgbot.Update) error {
+	msg := u.EffectiveMessage
+
+	if chat_status.RequireOwner(msg, msg.From.Id) == false {
+		return nil
+	}
+
+	msg.ReplyText(fmt.Sprint(u.Message))
+	return nil
+}
+
 func LoadAdmins(u *gotgbot.Updater) {
 	defer logrus.Info("Admins Module Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("gban", []rune{'/', '.'}, gbanUser))
 	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ungban", []rune{'/', '.'}, unGbanUser))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("stats", []rune{'/', '.'}, stats))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("broadcast", []rune{'/', '.'}, broadcast))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("dbg", []rune{'/', '.'}, dbg))
 }
