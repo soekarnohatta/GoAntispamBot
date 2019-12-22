@@ -1,15 +1,15 @@
 package sql
 
 import (
-	"strings"
 	"strconv"
+	"strings"
 )
 
 type User struct {
-	UserId   int `gorm:"primary_key"`
-	UserName string
-	FirstName     string `gorm:"not null"`
-	LastName string
+	UserId    int `gorm:"primary_key"`
+	UserName  string
+	FirstName string `gorm:"not null"`
+	LastName  string
 }
 
 type Chat struct {
@@ -30,7 +30,7 @@ func UpdateUser(userId int, userName string, firstName string, lastName string) 
 
 func UpdateChat(chatid string, chattitle string, chattype string, clink string) {
 	if chatid == "" {
-		return 
+		return
 	}
 
 	tx := SESSION.Begin()
@@ -99,7 +99,7 @@ func GetUser(userId int) *User {
 	return ver
 }
 
-func GetChat(chatId int) *Chat{
+func GetChat(chatId int) *Chat {
 	ver := &Chat{ChatId: strconv.Itoa(chatId)}
 
 	if SESSION.First(ver).RowsAffected == 0 {

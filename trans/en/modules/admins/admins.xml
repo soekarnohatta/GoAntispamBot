@@ -41,5 +41,9 @@
         <value>⚠ &lt;b&gt;User has not been banned!&lt;/b&gt;</value>
         <!--modules/admins/admins.go:116-->
     </Rows>
-    <Counter>8</Counter>
+    <Rows id="9" name="modules/admins/admins.go:33">
+        <value>⚠ &lt;b&gt;I can't do anything to admin(s)!&lt;/b&gt;</value>
+        <!--modules/admins/admins.go:33-->
+    </Rows>
+    <Counter>9</Counter>
 </translation>

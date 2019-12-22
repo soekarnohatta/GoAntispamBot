@@ -27,7 +27,6 @@
 ✍ &lt;b&gt;Alasan:&lt;/b&gt; &lt;code&gt;{2}&lt;/code&gt; </value>
         <!--modules/admins/admins.go:62-->
     </Rows>
-
     <Rows id="6" name="modules/admins/admins.go:88">
         <value>⚠ &lt;b&gt;Memulai Un-Gban Dari&lt;/b&gt;
 👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;</value>
@@ -42,5 +41,9 @@
         <value>⚠ &lt;b&gt;Pengguna belum di blokir!&lt;/b&gt;</value>
         <!--modules/admins/admins.go:116-->
     </Rows>
-    <Counter>8</Counter>
+    <Rows id="9" name="modules/admins/admins.go:33">
+        <value>⚠ &lt;b&gt;I can't do anything to admin(s)!&lt;/b&gt;</value>
+        <!--modules/admins/admins.go:33-->
+    </Rows>
+    <Counter>9</Counter>
 </translation>

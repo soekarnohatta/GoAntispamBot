@@ -59,14 +59,14 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 
 	text := ""
 
-	var userId int = 0
+	var userId = 0
 	accepted := make(map[string]struct{})
 	accepted["text_mention"] = struct{}{}
 
 	entities := m.ParseEntityTypes(accepted)
 
 	var ent *ext.ParsedMessageEntity = nil
-	var isId bool = false
+	var isId = false
 
 	if len(entities) > 0 {
 		ent = &entities[0]

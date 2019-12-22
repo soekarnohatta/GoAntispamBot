@@ -12,5 +12,13 @@ If you need help please go to @polybotsupport. Please donate for further develop
         </value>
         <!--modules/private/pm.go:15-->
     </Rows>
-    <Counter>1</Counter>
+    <Rows id="2" name="modules/private/pm.go:start">
+        <value>🤖 Poly Bot *Version 22.12.2019* by PolyBot Team.
+Adalah bot multiguna, manajemen grup yang di lengkapi dengan alat keamanan.
+Agar fungsi saya bekerja dengan fitur penuh, jadikan saya admin dengan level standard.
+Saran, fitur, dan keluhan bisa di konsultasikan di @PolyBotSupport.
+        </value>
+        <!--modules/private/pm.go:15-->
+    </Rows>
+    <Counter>2</Counter>
 </translation>

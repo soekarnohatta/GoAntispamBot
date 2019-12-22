@@ -5,13 +5,17 @@ import (
 )
 
 type UserSpam struct {
-	UserId int    `gorm:"primary_key"`
-	Reason string `gorm:"not null"`
+	UserId    int    `gorm:"primary_key"`
+	Reason    string `gorm:"not null"`
+	Banner    string
+	TimeAdded int
 }
 
 type ChatSpam struct {
-	ChatId string `gorm:"primary_key"`
-	Reason string `gorm:"not null"`
+	ChatId    string `gorm:"primary_key"`
+	Reason    string `gorm:"not null"`
+	Banner    string
+	TimeAdded int
 }
 
 type EnforceGban struct {
@@ -19,11 +23,10 @@ type EnforceGban struct {
 	Option string `gorm:"not null"`
 }
 
-func UpdateUserSpam(userid int, reason string) {
+func UpdateUserSpam(userid int, reason string, banner string, time int) {
 	tx := SESSION.Begin()
-
-	user := &UserSpam{UserId: userid, Reason: reason}
-	tx.Where(UserSpam{UserId: userid}).Assign(UserSpam{Reason: reason}).FirstOrCreate(user)
+	user := &UserSpam{UserId: userid, Reason: reason, Banner: banner, TimeAdded: time}
+	tx.Where(UserSpam{UserId: userid}).Assign(UserSpam{Reason: reason, Banner: banner, TimeAdded: time}).FirstOrCreate(user)
 	tx.Commit()
 }
 
@@ -44,25 +47,22 @@ func DelUserSpam(userid int) bool {
 
 func GetUserSpam(userid int) *UserSpam {
 	spam := &UserSpam{UserId: userid}
-
 	if SESSION.First(spam).RowsAffected == 0 {
 		return nil
 	}
 	return spam
 }
 
-func UpdateChatSpam(chatid int, reason string) {
+func UpdateChatSpam(chatid int, reason string, banner string, time int) {
 	tx := SESSION.Begin()
-
-	cht := &ChatSpam{ChatId: strconv.Itoa(chatid), Reason: reason}
-	tx.Where(ChatSpam{ChatId: strconv.Itoa(chatid)}).Assign(ChatSpam{Reason: reason}).FirstOrCreate(cht)
+	cht := &ChatSpam{ChatId: strconv.Itoa(chatid), Reason: reason, Banner: banner, TimeAdded: time}
+	tx.Where(ChatSpam{ChatId: strconv.Itoa(chatid)}).Assign(ChatSpam{Reason: reason, Banner: banner, TimeAdded: time}).FirstOrCreate(cht)
 	tx.Commit()
 }
 
 func DelChatSpam(chatid int) bool {
 	tx := SESSION.Begin()
 	filter := &ChatSpam{ChatId: strconv.Itoa(chatid)}
-
 	if tx.First(filter).RowsAffected == 0 {
 		tx.Rollback()
 		return false
@@ -76,7 +76,6 @@ func DelChatSpam(chatid int) bool {
 
 func UpdateEnforceGban(chatid int, option string) {
 	tx := SESSION.Begin()
-
 	chat := &EnforceGban{ChatId: strconv.Itoa(chatid), Option: option}
 	tx.Where(EnforceGban{ChatId: strconv.Itoa(chatid)}).Assign(EnforceGban{Option: option}).FirstOrCreate(chat)
 	tx.Commit()

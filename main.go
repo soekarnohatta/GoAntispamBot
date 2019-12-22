@@ -3,15 +3,15 @@ package main
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/jumatberkah/antispambot/bot"
-	"github.com/jumatberkah/antispambot/bot/modules/admins"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/admins"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/help"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/info"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/private"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/setting"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/jumatberkah/antispambot/bot/modules/info"
-	"github.com/jumatberkah/antispambot/bot/modules/language"
 	"github.com/jumatberkah/antispambot/bot/modules/listener"
-	"github.com/jumatberkah/antispambot/bot/modules/private"
-	"github.com/jumatberkah/antispambot/bot/modules/setting"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
 )
@@ -27,13 +27,14 @@ func main() {
 	caching.InitCache()
 	sql.InitDb()
 
-	language.LoadLang(updater)
 	admins.LoadAdmins(updater)
 	setting.LoadSetting(updater)
-	setting.LoadSettingPanel(updater)
 	private.LoadPm(updater)
 	info.LoadInfo(updater)
-	listener.LoadListeners(updater)
+	help.LoadHelp(updater)
+	listener.LoadSettingListener(updater)
+	listener.LoadHelpListener(updater)
+	listener.LoadUserListener(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {
 		logrus.Info("Using Webhook...")

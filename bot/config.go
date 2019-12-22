@@ -33,7 +33,7 @@ func init() {
 	err_handler.FatalError(err)
 
 	returnConfig := Config{}
-	var ok bool = false
+	var ok = false
 
 	returnConfig.ApiKey, ok = os.LookupEnv("BOT_API_KEY")
 	if !ok {

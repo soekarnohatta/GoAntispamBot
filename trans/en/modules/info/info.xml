@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/info/info.go:29">
-        <value>
-*User ID     :* `{1}`
-*First Name	 :* {2}
-*Last Name	 :* {3}
-*UserName	 :* {4}
+        <value>🆔*User ID :* `{1}`
+📕*First Name :* {2}
+📕*Last Name :* {3}
+🌐*UserName :* {4}
         </value>
         <!--modules/private/pm.go:29-->
     </Rows>
     <Rows id="2" name="modules/info/info.go:35">
-        <value>
-*Is Spam     :* `True`
-*Reason      :* `{1}`
+        <value>🛂*Is Spam :* `True`
+📝*Reason :* `{1}`
         </value>
         <!--modules/private/pm.go:35-->
     </Rows>
