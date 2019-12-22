@@ -96,6 +96,9 @@ func convertseconds(seconds uint64) string {
 		days := seconds / 86400
 		hours := seconds / 3600
 		minutes := (seconds / 60) - (hours * 60)
+		if hours > 24 {
+			hours = hours - 24
+		}
 		return fmt.Sprintf("`%v Day(s), %v Hour(s), %v Minute(s)`", days, hours, minutes)
 	}
 	return ""
