@@ -4,10 +4,10 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/commands/admins"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/help"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/info"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/private"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/setting"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/user/help"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/user/info"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/user/private"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/user/setting"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
@@ -32,9 +32,11 @@ func main() {
 	private.LoadPm(updater)
 	info.LoadInfo(updater)
 	help.LoadHelp(updater)
+
+	listener.LoadUserListener(updater)
 	listener.LoadSettingListener(updater)
 	listener.LoadHelpListener(updater)
-	listener.LoadUserListener(updater)
+	listener.LoadStartListener(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {
 		logrus.Info("Using Webhook...")

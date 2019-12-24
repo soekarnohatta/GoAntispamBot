@@ -108,5 +108,10 @@ because you haven't set &lt;b&gt;profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;
 in order to be accepted in &lt;b&gt;{3}&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]</value>
         <!--modules/listener/listener.go:26-->
     </Rows>
-    <Counter>24</Counter>
+    <Rows id="25" name="modules/listener/listener.go:warnspam">
+        <value>⚠️User &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; is a spammer, actions &lt;b&gt;required&lt;/b&gt;. [&lt;code&gt;{3}&lt;/code&gt;]
+        </value>
+        <!--modules/listener/listener.go:26-->
+    </Rows>
+    <Counter>25</Counter>
 </translation>

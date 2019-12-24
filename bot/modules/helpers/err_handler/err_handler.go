@@ -21,8 +21,15 @@ func FatalError(err error) {
 func HandleTgErr(b ext.Bot, u *gotgbot.Update, err error) {
 	if err != nil {
 		var msg = u.EffectiveMessage
-		_, err = msg.ReplyText(err.Error())
-		HandleErr(err)
+		rep := b.NewSendableMessage(msg.Chat.Id, err.Error())
+		rep.ReplyToMessageId = msg.MessageId
+		_, err := rep.Send()
+		if err != nil {
+			if err.Error() == "Bad Request: reply message not found" {
+				rep.ReplyToMessageId = 0
+				_, _ = rep.Send()
+			}
+		}
 	}
 }
 

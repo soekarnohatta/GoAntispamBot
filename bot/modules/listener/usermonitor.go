@@ -449,7 +449,7 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	} else {
 		ret, _ := casListener(b, u)
 		if ret {
-			return nil
+			return gotgbot.EndGroups{}
 		}
 	}
 
@@ -489,7 +489,7 @@ func removeLink(b ext.Bot, u *gotgbot.Update) error {
 			err_handler.HandleErr(err)
 			replyText := fmt.Sprintf("Deleted message from %v\nReason: Link", user.FirstName)
 			reply := b.NewSendableMessage(chat.Id, replyText)
-			reply.Send()
+			_, _ = reply.Send()
 		}
 	} else if db.Forward == "true" {
 		if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
@@ -497,7 +497,7 @@ func removeLink(b ext.Bot, u *gotgbot.Update) error {
 			err_handler.HandleErr(err)
 			replyText := fmt.Sprintf("Deleted message from %v\nReason: Forwarded Message", user.FirstName)
 			reply := b.NewSendableMessage(chat.Id, replyText)
-			reply.Send()
+			_, _ = reply.Send()
 		}
 	}
 	return gotgbot.ContinueGroups{}
@@ -568,8 +568,8 @@ func usernameQuery(b ext.Bot, u *gotgbot.Update) error {
 				cb.Text = function.GetString(chat.Id, "modules/listener/listener.go:454")
 				cb.ShowAlert = true
 				cb.CacheTime = 10
-				cb.Send()
-				return nil
+				_, err := cb.Send()
+				return err
 			}
 
 			if chat.Type == "supergroup" {
@@ -750,10 +750,19 @@ func spamFunc(b ext.Bot, u *gotgbot.Update) error {
 			return err
 		}
 	}
-	_, err = b.KickChatMember(chat.Id, user.Id)
+	restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
+	restrictSend.UntilDate = -1
+	_, err = restrictSend.Send()
 	if err != nil {
 		if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-			err_handler.HandleTgErr(b, u, err)
+			txtBan = function.GetStringf(chat.Id, "modules/listener/listener.go:warnspam", val)
+			_, err := msg.ReplyHTML(txtBan)
+			if err != nil {
+				if err.Error() == "Bad Request: reply message not found" {
+					_, err = b.SendMessageHTML(chat.Id, txtBan)
+					return err
+				}
+			}
 			return err
 		}
 	}

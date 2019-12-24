@@ -6,15 +6,16 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/sirupsen/logrus"
 	"regexp"
 )
 
-func initHelpButtons() ext.InlineKeyboardMarkup {
+func InitHelpButtons() ext.InlineKeyboardMarkup {
 	helpButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 2), make([]ext.InlineKeyboardButton, 2),
-		make([]ext.InlineKeyboardButton, 2), make([]ext.InlineKeyboardButton, 1)}
+		make([]ext.InlineKeyboardButton, 2), make([]ext.InlineKeyboardButton, 2)}
 
 	// First column
 	helpButtons[0][0] = ext.InlineKeyboardButton{
@@ -47,6 +48,10 @@ func initHelpButtons() ext.InlineKeyboardMarkup {
 		Text:         "Privacy Policy",
 		CallbackData: fmt.Sprintf("help(%v)", "ppolicy"),
 	}
+	helpButtons[3][1] = ext.InlineKeyboardButton{
+		Text:         "Misc",
+		CallbackData: fmt.Sprintf("help(%v)", "misc"),
+	}
 	markup := ext.InlineKeyboardMarkup{InlineKeyboard: &helpButtons}
 	return markup
 }
@@ -58,9 +63,12 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 	if pattern.MatchString(query.Data) {
 		module := pattern.FindStringSubmatch(query.Data)[1]
 		chat := u.EffectiveChat
-		dummy := function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
-		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, dummy)
-		msg.ParseMode = parsemode.Html
+		replyText := fmt.Sprintf("*%v Version* `3.191223.Stable`\n"+
+			"by *Cruzer\n\n*", b.FirstName)
+
+		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
+		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, replyText)
+		msg.ParseMode = parsemode.Markdown
 		backButton := [][]ext.InlineKeyboardButton{{ext.InlineKeyboardButton{
 			Text:         "Back",
 			CallbackData: "help(back)",
@@ -68,11 +76,13 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 		backKeyboard := ext.InlineKeyboardMarkup{InlineKeyboard: &backButton}
 		msg.ReplyMarkup = &backKeyboard
 		if module != "back" {
-			msg.Text = function.GetString(chat.Id, "modules/helpers/help.go:"+module)
+			replyTxt := fmt.Sprintf("*%v Version* `%v`\n"+
+				"by *Cruzer\n\n*", b.FirstName, bot.BotConfig.BotVer)
+			replyTxt += function.GetString(chat.Id, "modules/helpers/help.go:"+module)
+			msg.Text = replyTxt
 		} else if module == "back" {
-			markup := initHelpButtons()
+			markup := InitHelpButtons()
 			msg.ReplyMarkup = &markup
-			msg.Text = function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 		}
 
 		_, err := msg.Send()

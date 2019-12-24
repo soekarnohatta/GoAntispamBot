@@ -24,6 +24,7 @@ type Config struct {
 	RedisAddress  string
 	RedisPassword string
 	CleanPolling  string
+	BotVer        string
 }
 
 var BotConfig Config
@@ -87,6 +88,10 @@ func init() {
 	returnConfig.CleanPolling, ok = os.LookupEnv("CLEAN_POLLING")
 	if !ok {
 		returnConfig.RedisPassword = "false"
+	}
+	returnConfig.BotVer, ok = os.LookupEnv("BOT_VERSION")
+	if !ok {
+		returnConfig.BotVer = "Stable"
 	}
 	BotConfig = returnConfig
 }

@@ -16,6 +16,7 @@ import (
 	"html"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
@@ -38,6 +39,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 		reason = "No Reason Has Been Specified"
 	}
 
+	timeAdd, _ := strconv.Atoi(fmt.Sprint(time.Now().Unix()))
 	ban := sql.GetUserSpam(userId)
 	if ban != nil {
 		if ban.Reason == reason {
@@ -48,7 +50,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:43",
 			map[string]string{"1": strconv.Itoa(userId), "2": ban.Reason, "3": reason}))
 		err_handler.HandleErr(err)
-		go sql.UpdateUserSpam(userId, reason, fmt.Sprint(msg.From.Id), 0)
+		go sql.UpdateUserSpam(userId, reason, fmt.Sprint(msg.From.Id), timeAdd)
 		err = logger.SendBanLog(b, userId, reason, u)
 		return err
 	}
@@ -56,7 +58,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
 		map[string]string{"1": strconv.Itoa(userId)}))
 	err_handler.HandleErr(err)
-	go sql.UpdateUserSpam(userId, reason, fmt.Sprint(msg.From.Id), 0)
+	go sql.UpdateUserSpam(userId, reason, fmt.Sprint(msg.From.Id), timeAdd)
 	_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:62",
 		map[string]string{"1": strconv.Itoa(userId), "2": reason}))
 	err_handler.HandleErr(err)
@@ -169,8 +171,6 @@ func dbg(b ext.Bot, u *gotgbot.Update) error {
 	if chat_status.RequireOwner(msg, msg.From.Id) == false {
 		return nil
 	}
-
-	_, _ = msg.ReplyText(fmt.Sprint(gotgbot.Updater{}.Updates))
 	return nil
 }
 

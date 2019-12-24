@@ -11,6 +11,8 @@
     <Rows id="2" name="modules/info/info.go:35">
         <value>🛂*Is Spam :* `True`
 📝*Reason :* `{1}`
+👮‍♂*Banned By :* `{2}`
+🕰*Time Added :* `{3}`
         </value>
         <!--modules/private/pm.go:35-->
     </Rows>

@@ -11,6 +11,7 @@ import (
 	"github.com/shirou/gopsutil/host"
 	"github.com/sirupsen/logrus"
 	"strconv"
+	"time"
 )
 
 func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
@@ -29,7 +30,8 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 		spamStatus := sql.GetUserSpam(userId)
 		if spamStatus != nil {
-			val := map[string]string{"1": spamStatus.Reason}
+			timeBanned, _ := strconv.ParseInt(fmt.Sprint(spamStatus.TimeAdded), 10, 64)
+			val := map[string]string{"1": spamStatus.Reason, "2": spamStatus.Banner, "3": fmt.Sprint(time.Unix(timeBanned, 0))}
 			replyText += function.GetStringf(chat.Id, "modules/info/info.go:35", val)
 		}
 
@@ -74,13 +76,13 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 
 	info, _ := host.Info()
 	replyTxt := fmt.Sprintf("🤖*Bot Info*\n"+
-		"👤Bot Name : %v\n"+
-		"🤖Bot Username : @%v\n"+
-		"🖥Host OS : %v\n"+
-		"⚙Host Name : %v\n"+
-		"⏱Host Uptime : %v\n"+
-		"💽Kernel Version : %v\n"+
-		"💾Platform : %v\n", b.FirstName, b.UserName, info.OS,
+		"👤*Bot Name :* %v\n"+
+		"🤖*Bot Username :* @%v\n"+
+		"🖥*Host OS :* %v\n"+
+		"⚙*Host Name :* %v\n"+
+		"⏱*Host Uptime :* %v\n"+
+		"💽*Kernel Version :* %v\n"+
+		"💾*Platform :* %v\n", b.FirstName, b.UserName, info.OS,
 		info.Hostname, convertseconds(info.Uptime), info.KernelVersion, info.Platform)
 
 	replyMsg := b.NewSendableMessage(chat.Id, replyTxt)
