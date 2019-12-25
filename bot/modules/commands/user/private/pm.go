@@ -41,7 +41,7 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 					Url:  "https://t.me/PolyesterBot?startgroup=new",
 				}
 
-				txtStart := function.GetString(chat.Id, "modules/private/pm.go:start")
+				txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start", map[string]string{"1": bot.BotConfig.BotVer})
 				replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 				replyMsg.ParseMode = "Markdown"
 				replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}
@@ -76,7 +76,7 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 			Url:  "https://t.me/PolyesterBot?startgroup=new",
 		}
 
-		txtStart := function.GetString(chat.Id, "modules/private/pm.go:start")
+		txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start", map[string]string{"1": bot.BotConfig.BotVer})
 		replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 		replyMsg.ParseMode = "Markdown"
 		replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}

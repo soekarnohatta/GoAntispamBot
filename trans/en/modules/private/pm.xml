@@ -13,10 +13,8 @@ If you need help please go to @polybotsupport. Please donate for further develop
         <!--modules/private/pm.go:15-->
     </Rows>
     <Rows id="2" name="modules/private/pm.go:start">
-        <value>🤖 Poly Bot *Version 22.12.2019* by PolyBot Team.
-Adalah bot multiguna, manajemen grup yang di lengkapi dengan alat keamanan.
-Agar fungsi saya bekerja dengan fitur penuh, jadikan saya admin dengan level standard.
-Saran, fitur, dan keluhan bisa di konsultasikan di @PolyBotSupport.
+        <value>🤖 *Poly Bot Version {1}* by *PolyBot Team.*
+Is a group management bot, packed with security features. You have to make me as an admin with all admin permissions in order to use my full power. Suggestions, complains, or anything else can be proposed at @PolyBotSuppport
         </value>
         <!--modules/private/pm.go:15-->
     </Rows>
