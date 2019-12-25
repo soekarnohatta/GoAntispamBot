@@ -16,10 +16,8 @@ type cache struct {
 }
 
 func IsOwner(userId int) bool {
-	for _, user := range bot.BotConfig.SudoUsers {
-		if user == strconv.Itoa(userId) {
-			return true
-		}
+	if function.Contains(bot.BotConfig.SudoUsers, strconv.Itoa(userId)) {
+		return true
 	}
 	return false
 }
@@ -36,7 +34,7 @@ func IsUserAdmin(chat *ext.Chat, userId int) bool {
 	admins, err := caching.CACHE.Get(fmt.Sprintf("admin_%v", chat.Id))
 
 	if err != nil {
-		adminCache(chat)
+		AdminCache(chat)
 	}
 
 	var x cache
@@ -128,7 +126,7 @@ func CanDelete(bot ext.Bot, chat *ext.Chat) bool {
 	return true
 }
 
-func adminCache(chat *ext.Chat) {
+func AdminCache(chat *ext.Chat) {
 	listAdmins, _ := chat.GetAdministrators()
 	admins := make([]string, 0)
 

@@ -7,6 +7,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/commands/user/help"
 	"github.com/jumatberkah/antispambot/bot/modules/commands/user/info"
 	"github.com/jumatberkah/antispambot/bot/modules/commands/user/private"
+	"github.com/jumatberkah/antispambot/bot/modules/commands/user/reporting"
 	"github.com/jumatberkah/antispambot/bot/modules/commands/user/setting"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
@@ -32,6 +33,7 @@ func main() {
 	private.LoadPm(updater)
 	info.LoadInfo(updater)
 	help.LoadHelp(updater)
+	reporting.LoadReport(updater)
 
 	listener.LoadUserListener(updater)
 	listener.LoadSettingListener(updater)

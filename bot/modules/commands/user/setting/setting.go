@@ -228,11 +228,13 @@ func adminCache(b ext.Bot, u *gotgbot.Update) error {
 	err := caching.CACHE.Delete(fmt.Sprintf("admin_%v", chat.Id))
 
 	if err != nil {
-		_, err = msg.ReplyText("Admin cache is empty!")
+		_, err = msg.ReplyText("Admin cache was refreshed!")
+		go chat_status.AdminCache(chat)
 		return err
 	}
 
-	_, err = msg.ReplyText("Admin cache has been cleaned")
+	_, err = msg.ReplyText("Admin cache has been updated")
+	go chat_status.AdminCache(chat)
 	return err
 }
 
