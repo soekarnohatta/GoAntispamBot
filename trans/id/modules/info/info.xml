@@ -2,18 +2,16 @@
 <translation>
     <Rows id="1" name="modules/info/info.go:29">
         <value>🆔*User ID :* `{1}`
-📕*First Name :* {2}
-📕*Last Name :* {3}
-🌐*UserName :* {4}
-        </value>
+📕*Nama Depan:* {2}
+📕*Nama Belakang :* {3}
+🌐*UserName :* {4}</value>
         <!--modules/private/pm.go:29-->
     </Rows>
     <Rows id="2" name="modules/info/info.go:35">
         <value>🛂*Is Spam :* `True`
-📝*Reason :* `{1}`
-👮‍♂*Banned By : `{2}`
-🕰*Time Added :* `{3}`
-        </value>
+📝*Alasan :* `{1}`
+👮‍♂*Diban oleh : `{2}`
+🕰*Waktu Ban :* `{3}`</value>
         <!--modules/private/pm.go:35-->
     </Rows>
     <Rows id="3" name="modules/info/info.go:51">

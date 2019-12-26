@@ -12,8 +12,7 @@
         <value>&lt;b&gt;Pembaruan Alasan Blokir&lt;/b&gt;
 👤 &lt;b&gt;User ID:&lt;/b&gt; &lt;code&gt;{1}&lt;/code&gt;
 📝 &lt;b&gt;Alasan Sblmnya:&lt;/b&gt; &lt;code&gt;{2}&lt;/code&gt;
-✍ &lt;b&gt;Alasan Terbaru:&lt;/b&gt; &lt;code&gt;{3}&lt;/code&gt;
-        </value>
+✍ &lt;b&gt;Alasan Terbaru:&lt;/b&gt; &lt;code&gt;{3}&lt;/code&gt;</value>
         <!--modules/admins/admins.go:43-->
     </Rows>
     <Rows id="4" name="modules/admins/admins.go:54">
