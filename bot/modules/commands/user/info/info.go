@@ -83,7 +83,7 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 		"⏱*Host Uptime :* %v\n"+
 		"💽*Kernel Version :* %v\n"+
 		"💾*Platform :* %v\n", b.FirstName, b.UserName, info.OS,
-		info.Hostname, convertseconds(info.Uptime), info.KernelVersion, info.Platform)
+		info.Hostname, convertSeconds(info.Uptime), info.KernelVersion, info.Platform)
 
 	replyMsg := b.NewSendableMessage(chat.Id, replyTxt)
 	replyMsg.ParseMode = "Markdown"
@@ -93,7 +93,7 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 	return err
 }
 
-func convertseconds(seconds uint64) string {
+func convertSeconds(seconds uint64) string {
 	if seconds != 0 {
 		days := seconds / 86400
 		hours := seconds / 3600

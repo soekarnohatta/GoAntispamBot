@@ -26,9 +26,11 @@ func report(b ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 
 	reason := "No reason has been specified"
-	splitReason := strings.Split(msg.Text, "report")[1]
-	if splitReason != "" {
-		reason = splitReason
+	if len(msg.Text) > 7 {
+		splitReason := strings.Split(msg.Text, "report")[1]
+		if splitReason != "" {
+			reason = splitReason
+		}
 	}
 
 	if msg.ReplyToMessage != nil {
@@ -59,8 +61,8 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		"Message Link : [Here](https://t.me/%v/%v)\n"+
 		"Reporter : [%v](tg://user?id=%v) \\[`%v`] \n"+
 		"Reason : `%v` \n"+
-		"Time Reported : `%v` \n", rep.From.FirstName, rep.From.Id, rep.From.Id, msg.Chat.Username, rep.MessageId, msg.From.FirstName,
-		msg.From.Id, msg.From.Id, reason, time.Now())
+		"Time Reported : `%v` \n", rep.From.FirstName, rep.From.Id, rep.From.Id, msg.Chat.Username, rep.MessageId,
+		msg.From.FirstName, msg.From.Id, msg.From.Id, reason, time.Now())
 
 	reportButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 1), make([]ext.InlineKeyboardButton, 2),
 		make([]ext.InlineKeyboardButton, 1)}
@@ -70,15 +72,15 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 	}
 	reportButtons[1][0] = ext.InlineKeyboardButton{
 		Text:         "🚷 Kick",
-		CallbackData: fmt.Sprintf("report(kick)_%v", rep.From.Id),
+		CallbackData: fmt.Sprintf("report(kick)_%v_%v", rep.From.Id, rep.Chat.Id),
 	}
 	reportButtons[1][1] = ext.InlineKeyboardButton{
 		Text:         "🚫 Ban",
-		CallbackData: fmt.Sprintf("report(ban)_%v", rep.From.Id),
+		CallbackData: fmt.Sprintf("report(ban)_%v_%v", rep.From.Id, rep.Chat.Id),
 	}
 	reportButtons[2][0] = ext.InlineKeyboardButton{
 		Text:         "❌ Delete Message",
-		CallbackData: fmt.Sprintf("report(del)_%v", rep.MessageId),
+		CallbackData: fmt.Sprintf("report(del)_%v_%v", rep.MessageId, rep.Chat.Id),
 	}
 
 	for _, adm := range x.Admin {
