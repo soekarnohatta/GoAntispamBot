@@ -10,7 +10,7 @@ var CACHE *bigcache.BigCache = nil
 
 func InitCache() {
 	config := bigcache.Config{Shards: 1024,
-		LifeWindow:         2 * time.Hour,
+		LifeWindow:         30 * 24 * time.Hour, // one month,
 		CleanWindow:        5 * time.Minute,
 		MaxEntriesInWindow: 1000 * 10 * 60,
 		MaxEntrySize:       500,
