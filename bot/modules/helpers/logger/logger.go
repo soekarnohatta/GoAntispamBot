@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
+	"github.com/PaulSonOfLars/gotgbot/parsemode"
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"strconv"
@@ -23,7 +24,7 @@ func SendBanLog(b ext.Bot, uid int, rson string, u *gotgbot.Update) error {
 		"<b>Reason:</b> <code>%v</code>", user.Id, user.FirstName, strconv.Itoa(uid), formatted, rson)
 
 	sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
-	sendLog.ParseMode = "HTML"
+	sendLog.ParseMode = parsemode.Html
 	_, err := sendLog.Send()
 	err_handler.HandleErr(err)
 	return err
@@ -48,7 +49,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 			"<b>Message:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, msg.Text)
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
-		sendLog.ParseMode = "HTML"
+		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
 		err_handler.HandleErr(err)
 		return err
@@ -61,7 +62,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 			"<b>Message:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, msg.Text)
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
-		sendLog.ParseMode = "HTML"
+		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
 		err_handler.HandleErr(err)
 		return err
@@ -74,7 +75,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 			"<b>Event:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, "NewChatMembers")
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
-		sendLog.ParseMode = "HTML"
+		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
 		err_handler.HandleErr(err)
 		return err
@@ -83,7 +84,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 			"<b>Time:</b> <code>%v</code>\n"+
 			"<b>Error Message:</b>\n%v", formatted, args)
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
-		sendLog.ParseMode = "HTML"
+		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
 		err_handler.HandleErr(err)
 		return err
@@ -97,7 +98,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 			"<b>Message:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, args, msg.Text)
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
-		sendLog.ParseMode = "HTML"
+		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
 		err_handler.HandleErr(err)
 		return err

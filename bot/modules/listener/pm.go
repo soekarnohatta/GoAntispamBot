@@ -38,6 +38,6 @@ func handleStart(b ext.Bot, u *gotgbot.Update) error {
 }
 
 func LoadStartListener(u *gotgbot.Updater) {
-	defer logrus.Info("Help Listener Loaded...")
+	defer logrus.Info("PM Listener Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewCallback("start", handleStart))
 }

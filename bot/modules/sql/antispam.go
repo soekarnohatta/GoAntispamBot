@@ -6,22 +6,19 @@ import (
 
 type Antispam struct {
 	ChatId   string `gorm:"primary_key"`
-	Option   string `gorm:"not null"`
 	Arabs    string `gorm:"not null"`
 	Deletion string `gorm:"not null"`
 	Forward  string `gorm:"not null"`
 	Link     string `gorm:"not null"`
 }
 
-func UpdateAntispam(chatid int, option string, arabs string, del string, fwd string, link string) error {
+func UpdateAntispam(chatid int, arabs string, del string, fwd string, link string) {
 	tx := SESSION.Begin()
 
-	antispam := &Antispam{ChatId: strconv.Itoa(chatid), Option: option,
-		Arabs: arabs, Deletion: del, Forward: fwd, Link: link}
-	tx.Where(Antispam{ChatId: strconv.Itoa(chatid)}).Assign(Antispam{Option: option,
-		Arabs: arabs, Deletion: del, Forward: fwd, Link: link}).FirstOrCreate(antispam)
-	ret := tx.Commit().Error
-	return ret
+	antispam := &Antispam{ChatId: strconv.Itoa(chatid), Arabs: arabs, Deletion: del, Forward: fwd, Link: link}
+	tx.Where(Antispam{ChatId: strconv.Itoa(chatid)}).Assign(Antispam{Arabs: arabs,
+		Deletion: del, Forward: fwd, Link: link}).FirstOrCreate(antispam)
+	tx.Commit()
 }
 
 func DelAntispam(chatid int) bool {

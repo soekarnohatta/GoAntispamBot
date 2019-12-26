@@ -22,6 +22,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 type casban struct {
@@ -456,7 +457,7 @@ func spam(b ext.Bot, u *gotgbot.Update) error {
 	return gotgbot.ContinueGroups{}
 }
 
-func removeLink(b ext.Bot, u *gotgbot.Update) error {
+func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 	db := sql.GetAntispam(u.Message.Chat.Id)
 	if db == nil {
 		return gotgbot.ContinueGroups{}
@@ -468,6 +469,15 @@ func removeLink(b ext.Bot, u *gotgbot.Update) error {
 
 	if chat.Type != "supergroup" {
 		return nil
+	}
+	if chat_status.IsUserAdmin(chat, user.Id) == true {
+		return nil
+	}
+	if db.Deletion != "true" {
+		return gotgbot.ContinueGroups{}
+	}
+	if len(msg.Text) > 5000 {
+		return gotgbot.ContinueGroups{}
 	}
 
 	if db.Link == "true" {
@@ -489,16 +499,38 @@ func removeLink(b ext.Bot, u *gotgbot.Update) error {
 			err_handler.HandleErr(err)
 			replyText := fmt.Sprintf("Deleted message from %v\nReason: Link", user.FirstName)
 			reply := b.NewSendableMessage(chat.Id, replyText)
-			_, _ = reply.Send()
+			_, err = reply.Send()
+			return err
 		}
-	} else if db.Forward == "true" {
+	}
+	if db.Forward == "true" {
 		if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
 			replyText := fmt.Sprintf("Deleted message from %v\nReason: Forwarded Message", user.FirstName)
 			reply := b.NewSendableMessage(chat.Id, replyText)
-			_, _ = reply.Send()
+			_, err = reply.Send()
+			return err
 		}
+	}
+	if db.Arabs == "true" {
+		pattern, _ := regexp.Compile(`[\p{Arabic}]+`)
+		if pattern.MatchString(msg.Text) == true {
+			_, err := msg.Delete()
+			err_handler.HandleErr(err)
+			replyText := fmt.Sprintf("Deleted message from %v\nReason: Arabic/Chinese Text", user.FirstName)
+			reply := b.NewSendableMessage(chat.Id, replyText)
+			_, err = reply.Send()
+		}
+
+		if checkChinese(msg.Text) == true {
+			_, err := msg.Delete()
+			err_handler.HandleErr(err)
+			replyText := fmt.Sprintf("Deleted message from %v\nReason: Arabic/Chinese Text", user.FirstName)
+			reply := b.NewSendableMessage(chat.Id, replyText)
+			_, err = reply.Send()
+		}
+
 	}
 	return gotgbot.ContinueGroups{}
 }
@@ -541,6 +573,9 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 			}
 			if sql.GetEnforceGban(chat.Id) == nil {
 				go sql.UpdateEnforceGban(chat.Id, "true")
+			}
+			if sql.GetAntispam(chat.Id) == nil {
+				go sql.UpdateAntispam(chat.Id, "false", "true", "false", "false")
 			}
 		}
 
@@ -685,7 +720,6 @@ func verifyQuery(b ext.Bot, u *gotgbot.Update) error {
 	chat := msg.Message.Chat
 
 	if chat.Type == "supergroup" {
-
 		if strings.Split(msg.Data, "wlcm_")[1] == strconv.Itoa(user.Id) {
 			_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "modules/listener/listener.go:552"), true)
 			err_handler.HandleErr(err)
@@ -693,7 +727,6 @@ func verifyQuery(b ext.Bot, u *gotgbot.Update) error {
 			err_handler.HandleErr(err)
 			_, err = b.UnRestrictChatMember(chat.Id, user.Id)
 			return err
-
 		}
 		_, err := b.AnswerCallbackQueryText(msg.Id,
 			function.GetString(chat.Id, "modules/listener/listener.go:566"), true)
@@ -799,15 +832,26 @@ func casListener(b ext.Bot, u *gotgbot.Update) (bool, error) {
 	return false, gotgbot.ContinueGroups{}
 }
 
+func checkChinese(val string) bool {
+	for _, rangeTxt := range val {
+		if unicode.Is(unicode.Han, rangeTxt) {
+			return true
+		}
+		return false
+	}
+	return false
+}
+
 func LoadUserListener(u *gotgbot.Updater) {
-	defer logrus.Info("Listeners Module Loaded...")
+	defer logrus.Info("Usermonitor listener Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spam))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, antispamProcessor))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, username))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, picture))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), verify))
 	u.Dispatcher.AddHandler(handlers.NewCallback("^(umute|uba)_", usernameQuery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("^(pmute|pban)_", pictureQuery))
-	u.Dispatcher.AddHandler(handlers.NewCallback("wlcm_", verifyQuery))
+	u.Dispatcher.AddHandler(handlers.NewCallback("wlcm", verifyQuery))
 	u.Dispatcher.AddHandler(handlers.NewCallback("rmWarn", warnQuery))
 }

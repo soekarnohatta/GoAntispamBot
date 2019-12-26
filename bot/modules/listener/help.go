@@ -63,8 +63,8 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 	if pattern.MatchString(query.Data) {
 		module := pattern.FindStringSubmatch(query.Data)[1]
 		chat := u.EffectiveChat
-		replyText := fmt.Sprintf("*%v Version* `3.191223.Stable`\n"+
-			"by *Cruzer\n\n*", b.FirstName)
+		replyText := fmt.Sprintf("*%v Version* `%v`\n"+
+			"by *Cruzer\n\n*", b.FirstName, bot.BotConfig.BotVer)
 
 		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, replyText)

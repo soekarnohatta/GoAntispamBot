@@ -35,10 +35,10 @@ func main() {
 	help.LoadHelp(updater)
 	reporting.LoadReport(updater)
 
-	listener.LoadUserListener(updater)
 	listener.LoadSettingListener(updater)
 	listener.LoadHelpListener(updater)
 	listener.LoadStartListener(updater)
+	listener.LoadUserListener(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {
 		logrus.Info("Using Webhook...")
@@ -59,5 +59,6 @@ func main() {
 		logrus.Info("Using Long Polling...")
 		_ = updater.StartPolling()
 	}
+	logrus.Info("Bot Running On Version: " + bot.BotConfig.BotVer)
 	updater.Idle()
 }
