@@ -8,9 +8,10 @@
         <!--modules/private/pm.go:29-->
     </Rows>
     <Rows id="2" name="modules/info/info.go:35">
-        <value>🛂*Is Spam :* `True`
+        <value>
+🛂*Is Spam :* `True`
 📝*Alasan :* `{1}`
-👮‍♂*Diban oleh : `{2}`
+👮‍♂*Diban oleh :* `{2}`
 🕰*Waktu Ban :* `{3}`</value>
         <!--modules/private/pm.go:35-->
     </Rows>

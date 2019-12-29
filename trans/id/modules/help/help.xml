@@ -2,42 +2,75 @@
 <translation>
     <Rows id="1" name="modules/helpers/help.go:sudo">
         <value>*Sudo*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.</value>
+Sebagai seorang 'SUDO', Anda tentunya memerlukan daftar perintah agar Anda bisa menggunakan layanan ini dengan maksimal. Berikut adalah daftar perintah yang dikhususkan untuk para 'SUDO':
+
+1. /gban `(User ID/Username/User Mention) (Reason)` - Perintah ini digunakan untuk memblokir seseorang secara global! Kesalahan sedikitpun akan menyebabkan Anda dicopot status 'SUDO' Anda!
+2. /ungban `(User ID/Username/User Mention) (Reason)` - Sama dengan perintah sebelumnya, perintah ini digunakan untuk membuka blokir seseorang yang sudah di blok.
+3. /broadcast `(Pesan/Balas ke suatu pesan)` - Perintah ini digunakan untuk menyebar luaskan pesan yang ingin Anda kirim.
+4. /stats - Perintah ini digunakan untuk memberikan statistik layanan bot ini. Hati-hati, penggunaan berlebih bisa menyebabkan layanan ini beku!
+
+Semua kegiatan para 'SUDO' akan ditampilkan disebuah kanal yang sudah ditentukan oleh pemilik layanan ini! Gunakanlah semua perintah ini dengan bijak. *Pengguna biasa tidak akan bisa menggunakan semua perintah ini*.</value>
         <!--modules/helpers/help.go:73-->
     </Rows>
     <Rows id="2" name="modules/helpers/help.go:username">
         <value>*Username*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</value>
+Tentunya apabila Anda menemukan seseorang tanpa Username, Anda akan kesulitan untuk memanggil/me_mention_ dia. Oleh karena itu, beberapa grup menetapkan peraturan kewajiban menggunakan Username. Layanan kami menyediakan fitur untuk menindak seseorang yang belum menggunakan username untuk memberi tahu dia agar segera menggunakannya. Berikut adalah perintah yang digunakan untuk mengatur kewajiban menggunakan username:
+
+1. /username (on/off/yes/no/true/false) - Perintah ini digunakan untuk menyalakan dan/atau mematikan fitur kewajiban menggunakan username.
+2. /time (int + m/h/d) -> Contoh: /time 5m - Perintah ini digunakan untuk mengatur tenggat waktu hukuman apabila seseorang belum menggunakan username.
+
+Untuk pengaturan lebih lanjut gunakan perintah /settings</value>
         <!--modules/helpers/help.go:82-->
     </Rows>
     <Rows id="3" name="modules/helpers/help.go:picture">
-        <value>*Picture*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui.</value>
+        <value>*Foto Profil*
+Tentunya apabila Anda menemukan seseorang tanpa foto profil, Anda akan kesulitan untuk memilih/melihat dia. Oleh karena itu, beberapa grup menetapkan peraturan kewajiban menggunakan Foto Profil. Layanan kami menyediakan fitur untuk menindak seseorang yang belum menggunakan foto profil untuk memberi tahu dia agar segera menggunakannya. Berikut adalah perintah yang digunakan untuk mengatur kewajiban menggunakan foto profil:
+
+1. /profilepicture (on/off/yes/no/true/false) - Perintah ini digunakan untuk menyalakan dan/atau mematikan fitur kewajiban menggunakan fotoprofil.
+2. /time (int + m/h/d) -> Contoh: /time 5m - Perintah ini digunakan untuk mengatur tenggat waktu hukuman apabila seseorang belum menggunakan fotoprofil.
+
+Untuk pengaturan lebih lanjut gunakan perintah /settings</value>
         <!--modules/helpers/help.go:91-->
     </Rows>
     <Rows id="4" name="modules/helpers/help.go:notif">
-        <value>*Notifications*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in .</value>
+        <value>*Notifikasi*
+Anda pasti akan selalu mendapatkan notifikasi apabila Anda belum menggunakan username/foto/belum verifikasi melalui pesan privat. Anda dapat mematikan atau menyalakan fitur notifikasi dengan perintah /notify (true/false).</value>
         <!--modules/helpers/help.go:100-->
     </Rows>
     <Rows id="5" name="modules/helpers/help.go:aspam">
         <value>*AntiSpam*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sunt in culpa qui officia deserunt mollit anim id est laborum.</value>
+Polybot dilengkapi fitur keamanan berlapis seperti: Integrasi CAS, Integrasi @Spamwatch, Pengawasan manual, dll. Terkadang para spammmer datang dan kami akan selalu memblokir mereka. Tetapi, kami dan sistem juga merupakan manusia yang selalu mempunyai kesalahan, oleh karena itu apabila ada kesalahan dalam pemblokiran harap segera lapor ke @Polybotsupport.
+
+Anda juga bisa menonaktifkan dan/atau mengaktifkan pemblokiran apabila anda merasa terganggu dengan perintah /enforce (true/false)</value>
         <!--modules/helpers/help.go:111-->
     </Rows>
     <Rows id="6" name="modules/helpers/help.go:verify">
-        <value>*Verify*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.</value>
+        <value>*Verifikasi*
+Tentunya apabila Anda menemukan seseorang masuk ke suatu obrolan, Anda akan bingung apakah dia robot atau bukan. Oleh karena itu, beberapa grup menetapkan peraturan kewajiban untuk verifikasi. Layanan kami menyediakan fitur untuk menindak seseorang yang belum verifikasi untuk memastikan dia bukan robot. Berikut adalah perintah yang digunakan untuk mengatur kewajiban verifikasi:
+
+1. /verify (on/off/yes/no/true/false) - Perintah ini digunakan untuk menyalakan dan/atau mematikan fitur kewajiban verifikasi.
+2. /time (int + m/h/d) -> Contoh: /time 5m - Perintah ini digunakan untuk mengatur tenggat waktu hukuman apabila seseorang belum menggunakan username.
+
+Untuk pengaturan lebih lanjut gunakan perintah /settings  </value>
         <!--modules/helpers/help.go:122-->
     </Rows>
     <Rows id="7" name="modules/helpers/help.go:ppolicy">
-        <value>*Privacy Policy*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</value>
+        <value>*Kebijakan Privasi*
+Dengan menggunakan layanan kami (@Polyesterbot) yang dibuat oleh Tim PolyesterBot, Anda setuju apabila kami mengumpulkan beberapa data umum Anda untuk kepentingan layanan ini *Saja*. Kami tidak akan pernah menyebar dan/atau memberikan data tersebut kepada orang lain tanpa persetujuan Anda. Kami menyimpan data Anda di sebuah server yang diproteksi keamanan berlapis untuk menjamin keamanan data Anda. Berikut data yang akan kami kumpulkan :
+
+1. Nama Pengguna
+2. ID Pengguna
+3. Username
+4. ID Obrolan
+5. Nama Obrolan
+6. Tautan Obrolan
+
+Semua ini kami lakukan agar Anda dapat menikmati layanan ini dengan lancar tanpa mengumbar data Anda. Untuk penghapusan data, Anda bisa menggunakan perintah /deldata</value>
         <!--modules/helpers/help.go:122-->
     </Rows>
     <Rows id="8" name="modules/helpers/help.go:helptxt">
-        <value>*Main*
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint.</value>
+        <value>*Utama*
+Polybot Adalah bot multiguna, manajemen grup yang di lengkapi dengan alat keamanan. Agar fungsi saya bekerja dengan fitur penuh, jadikan saya admin dengan level standard. Saran, fitur, dan keluhan bisa di konsultasikan di @PolyBotSupport. Berikut dibawah ini adalah beberapa modul bantuan yang bisa Anda tekan.</value>
         <!--modules/helpers/help.go:122-->
     </Rows>
     <Rows id="9" name="modules/helpers/help.go:noprivate">
