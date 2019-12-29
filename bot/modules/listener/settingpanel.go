@@ -500,8 +500,7 @@ func getEmoji(chatId int) [][]string {
 	spm := sql.GetEnforceGban(chatId)
 	aspm := sql.GetAntispam(chatId)
 
-	lastLetter := tim.Time[len(tim.Time)-1:]
-	lastLetter = strings.ToLower(lastLetter)
+	lastLetter := "m"
 
 	lst := make([][]string, 0)
 	opt := make([]string, 5)
@@ -510,6 +509,11 @@ func getEmoji(chatId int) [][]string {
 	ti := make([]string, 1)
 	gu := make([]string, 1)
 	hrr := make([]string, 3)
+
+	if tim != nil {
+		lastLetter = tim.Time[len(tim.Time)-1:]
+		lastLetter = strings.ToLower(lastLetter)
+	}
 
 	if chat != nil {
 		if chat.Option == "true" {
