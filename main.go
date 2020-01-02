@@ -17,7 +17,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func main() {
+func polyBot() {
 	logrus.Info("Starting Bot...")
 
 	updater, err := gotgbot.NewUpdater(bot.BotConfig.ApiKey)
@@ -61,4 +61,8 @@ func main() {
 	}
 	logrus.Info("Bot Running On Version: " + bot.BotConfig.BotVer)
 	updater.Idle()
+}
+
+func main() {
+	polyBot()
 }
