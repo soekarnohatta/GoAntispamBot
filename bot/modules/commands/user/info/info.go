@@ -24,14 +24,16 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if userId != 0 {
 		userInfo := sql.GetUser(userId)
 		if userInfo != nil {
-			val := map[string]string{"1": strconv.Itoa(userId), "2": userInfo.FirstName, "3": userInfo.LastName, "4": userInfo.UserName}
+			val := map[string]string{"1": strconv.Itoa(userId), "2": userInfo.FirstName, "3": userInfo.LastName, "4":
+				userInfo.UserName}
 			replyText += function.GetStringf(chat.Id, "modules/info/info.go:29", val)
 		}
 
 		spamStatus := sql.GetUserSpam(userId)
 		if spamStatus != nil {
 			timeBanned, _ := strconv.ParseInt(fmt.Sprint(spamStatus.TimeAdded), 10, 64)
-			val := map[string]string{"1": spamStatus.Reason, "2": spamStatus.Banner, "3": fmt.Sprint(time.Unix(timeBanned, 0))}
+			val := map[string]string{"1": spamStatus.Reason, "2": spamStatus.Banner,
+				"3": fmt.Sprint(time.Unix(timeBanned, 0))}
 			replyText += function.GetStringf(chat.Id, "modules/info/info.go:35", val)
 		}
 

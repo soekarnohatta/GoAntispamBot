@@ -32,7 +32,7 @@ func help(b ext.Bot, u *gotgbot.Update) error {
 	} else {
 		markup := listener.InitHelpButtons()
 		replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-			"by *Cruzer\n\n*", b.FirstName, bot.BotConfig.BotVer)
+			"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 		reply := b.NewSendableMessage(chat.Id, replyText)
 		reply.ReplyMarkup = &markup

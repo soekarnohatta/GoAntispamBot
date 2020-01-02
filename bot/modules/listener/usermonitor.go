@@ -476,9 +476,6 @@ func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 	if db.Deletion != "true" {
 		return gotgbot.ContinueGroups{}
 	}
-	if len(msg.Text) > 5000 {
-		return gotgbot.ContinueGroups{}
-	}
 
 	if db.Link == "true" {
 		accepted := make(map[string]struct{})
@@ -497,9 +494,12 @@ func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 		if entities != nil && ent != nil {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
-			replyText := fmt.Sprintf("Deleted message from %v\nReason: Link", user.FirstName)
+			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName), "3": fmt.Sprint(user.Id), "4": "Link"}
+			replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
+			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
+			err = logger.SendLog(b, u, "link", "")
 			return err
 		}
 	}
@@ -507,9 +507,12 @@ func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 		if msg.ForwardFrom != nil || msg.ForwardFromChat != nil {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
-			replyText := fmt.Sprintf("Deleted message from %v\nReason: Forwarded Message", user.FirstName)
+			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName), "3": fmt.Sprint(user.Id), "4": "Forwarded Message"}
+			replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
+			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
+			err = logger.SendLog(b, u, "link", "")
 			return err
 		}
 	}
@@ -518,19 +521,26 @@ func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 		if pattern.MatchString(msg.Text) == true {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
-			replyText := fmt.Sprintf("Deleted message from %v\nReason: Arabic/Chinese Text", user.FirstName)
+			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName), "3": fmt.Sprint(user.Id), "4": "Arabic Text"}
+			replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
+			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
+			err = logger.SendLog(b, u, "link", "")
+			return err
 		}
 
 		if checkChinese(msg.Text) == true {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
-			replyText := fmt.Sprintf("Deleted message from %v\nReason: Arabic/Chinese Text", user.FirstName)
+			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName), "3": fmt.Sprint(user.Id), "4": "Chinese Text"}
+			replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
+			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
+			err = logger.SendLog(b, u, "link", "")
+			return err
 		}
-
 	}
 	return gotgbot.ContinueGroups{}
 }
@@ -758,7 +768,7 @@ func warnQuery(bot ext.Bot, u *gotgbot.Update) error {
 			_, err := msg.Send()
 			return err
 		}
-		_, err := u.EffectiveMessage.EditText("User already has no warns.")
+		_, err := u.EffectiveMessage.Delete()
 		return err
 	}
 	return gotgbot.ContinueGroups{}
@@ -776,16 +786,9 @@ func spamFunc(b ext.Bot, u *gotgbot.Update) error {
 	val := map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(user.Id)}
 	txtBan := function.GetStringf(chat.Id, "modules/listener/listener.go:580", val)
 
-	_, err := msg.ReplyHTML(txtBan)
-	if err != nil {
-		if err.Error() == "Bad Request: reply message not found" {
-			_, err = b.SendMessageHTML(chat.Id, txtBan)
-			return err
-		}
-	}
 	restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
 	restrictSend.UntilDate = -1
-	_, err = restrictSend.Send()
+	_, err := restrictSend.Send()
 	if err != nil {
 		if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
 			txtBan = function.GetStringf(chat.Id, "modules/listener/listener.go:warnspam", val)
@@ -796,6 +799,14 @@ func spamFunc(b ext.Bot, u *gotgbot.Update) error {
 					return err
 				}
 			}
+			return err
+		}
+	}
+
+	_, err = msg.ReplyHTML(txtBan)
+	if err != nil {
+		if err.Error() == "Bad Request: reply message not found" {
+			_, err = b.SendMessageHTML(chat.Id, txtBan)
 			return err
 		}
 	}

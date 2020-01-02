@@ -21,7 +21,7 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 		case "help":
 			markup := listener.InitHelpButtons()
 			replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-				"by *Cruzer\n\n*", b.FirstName, bot.BotConfig.BotVer)
+				"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 			replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ReplyMarkup = &markup
@@ -41,7 +41,8 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 					Url:  "https://t.me/PolyesterBot?startgroup=new",
 				}
 
-				txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start", map[string]string{"1": bot.BotConfig.BotVer})
+				txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start",
+					map[string]string{"1": bot.BotConfig.BotVer})
 				replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 				replyMsg.ParseMode = "Markdown"
 				replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}
@@ -76,7 +77,8 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 			Url:  "https://t.me/PolyesterBot?startgroup=new",
 		}
 
-		txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start", map[string]string{"1": bot.BotConfig.BotVer})
+		txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start",
+			map[string]string{"1": bot.BotConfig.BotVer})
 		replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 		replyMsg.ParseMode = "Markdown"
 		replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}

@@ -64,7 +64,7 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 		module := pattern.FindStringSubmatch(query.Data)[1]
 		chat := u.EffectiveChat
 		replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-			"by *Cruzer\n\n*", b.FirstName, bot.BotConfig.BotVer)
+			"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 
 		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, replyText)
@@ -77,7 +77,7 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 		msg.ReplyMarkup = &backKeyboard
 		if module != "back" {
 			replyTxt := fmt.Sprintf("*%v Version* `%v`\n"+
-				"by *Cruzer\n\n*", b.FirstName, bot.BotConfig.BotVer)
+				"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 			replyTxt += function.GetString(chat.Id, "modules/helpers/help.go:"+module)
 			msg.Text = replyTxt
 		} else if module == "back" {

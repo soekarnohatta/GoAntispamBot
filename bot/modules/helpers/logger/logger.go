@@ -6,7 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
 	"github.com/jumatberkah/antispambot/bot"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
+	"html"
 	"strconv"
 	"time"
 )
@@ -21,16 +21,15 @@ func SendBanLog(b ext.Bot, uid int, rson string, u *gotgbot.Update) error {
 		"<b>Sudo:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
 		"<b>User ID:</b> <code>%v</code>\n"+
 		"<b>Time:</b> <code>%v</code>\n"+
-		"<b>Reason:</b> <code>%v</code>", user.Id, user.FirstName, strconv.Itoa(uid), formatted, rson)
+		"<b>Reason:</b> <code>%v</code>", user.Id, html.EscapeString(user.FirstName), strconv.Itoa(uid), formatted, rson)
 
 	sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
 	sendLog.ParseMode = parsemode.Html
 	_, err := sendLog.Send()
-	err_handler.HandleErr(err)
 	return err
 }
 
-func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
+func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 	user := u.EffectiveUser
 	chat := u.EffectiveChat
 	msg := u.EffectiveMessage
@@ -40,67 +39,75 @@ func SendLog(b ext.Bot, u *gotgbot.Update, t string, args string) error {
 		waktu.Year(), waktu.Month(), waktu.Day(),
 		waktu.Hour(), waktu.Minute(), waktu.Second())
 
-	if t == "username" {
+	switch param {
+	case "username":
 		txtLog := fmt.Sprintf("#NOUSERNAME\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Message:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, msg.Text)
+			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, msg.Text)
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
-		err_handler.HandleErr(err)
 		return err
-	} else if t == "picture" {
+	case "picture":
 		txtLog := fmt.Sprintf("#NOPROFILEPICTURE\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Message:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, msg.Text)
+			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, msg.Text)
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
-		err_handler.HandleErr(err)
 		return err
-	} else if t == "welcome" {
+	case "welcome":
 		txtLog := fmt.Sprintf("#NEWMEMBER\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Event:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, "NewChatMembers")
+			"<b>Event:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, "NewChatMembers")
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
-		err_handler.HandleErr(err)
 		return err
-	} else if t == "error" {
+	case "error":
 		txtLog := fmt.Sprintf("#ERROR\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
 			"<b>Error Message:</b>\n%v", formatted, args)
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
-		err_handler.HandleErr(err)
 		return err
-	} else if t == "spam" {
+	case "spam":
 		txtLog := fmt.Sprintf("#SPAMMER\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
 			"<b>Reason:</b> <code>%v</code>\n"+
-			"<b>Message:</b>\n%v", user.Id, user.Id, chat.Id, chat.Title, formatted, args, msg.Text)
+			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, args, msg.Text)
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
 		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
-		err_handler.HandleErr(err)
+		return err
+	case "link":
+		txtLog := fmt.Sprintf("#LINK/AR/CH\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
+			"<b>Chat ID:</b> <code>%v</code>\n"+
+			"<b>Chat Title:</b> <code>%v</code>\n"+
+			"<b>Time:</b> <code>%v</code>\n"+
+			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, msg.Text)
+
+		sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
+		sendLog.ParseMode = parsemode.Html
+		_, err := sendLog.Send()
 		return err
 	}
 	return nil

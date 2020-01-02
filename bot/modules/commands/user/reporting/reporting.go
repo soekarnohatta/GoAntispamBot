@@ -12,6 +12,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/sirupsen/logrus"
+	"html"
 	"strconv"
 	"strings"
 	"time"
@@ -61,8 +62,8 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		"Message Link : [Here](https://t.me/%v/%v)\n"+
 		"Reporter : [%v](tg://user?id=%v) \\[`%v`] \n"+
 		"Reason : `%v` \n"+
-		"Time Reported : `%v` \n", rep.From.FirstName, rep.From.Id, rep.From.Id, msg.Chat.Username, rep.MessageId,
-		msg.From.FirstName, msg.From.Id, msg.From.Id, reason, time.Now())
+		"Time Reported : `%v` \n", html.EscapeString(rep.From.FirstName), rep.From.Id, rep.From.Id, msg.Chat.Username,
+		rep.MessageId, msg.From.FirstName, msg.From.Id, msg.From.Id, reason, time.Now())
 
 	reportButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 1), make([]ext.InlineKeyboardButton, 2),
 		make([]ext.InlineKeyboardButton, 1)}
