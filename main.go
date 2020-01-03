@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/commands/admins"
@@ -17,52 +18,58 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func polyBot() {
-	logrus.Info("Starting Bot...")
-
-	updater, err := gotgbot.NewUpdater(bot.BotConfig.ApiKey)
-	err_handler.FatalError(err)
-
-	function.LoadAllLang()
+func main() {
+	sql.InitDb()
 	caching.InitRedis()
 	caching.InitCache()
-	sql.InitDb()
+	function.LoadAllLang()
 
-	admins.LoadAdmins(updater)
-	setting.LoadSetting(updater)
-	private.LoadPm(updater)
-	info.LoadInfo(updater)
-	help.LoadHelp(updater)
-	reporting.LoadReport(updater)
+	for _, botToken := range bot.BotConfig.ApiKey {
+		logrus.Info("Starting Bot...")
 
-	listener.LoadSettingListener(updater)
-	listener.LoadHelpListener(updater)
-	listener.LoadStartListener(updater)
-	listener.LoadUserListener(updater)
+		updater, err := gotgbot.NewUpdater(botToken)
+		err_handler.FatalError(err)
 
-	if bot.BotConfig.WebhookUrl != "" {
-		logrus.Info("Using Webhook...")
-		webHook := gotgbot.Webhook{
-			URL:            bot.BotConfig.WebhookUrl,
-			MaxConnections: 20,
-			Serve:          bot.BotConfig.WebhookServe,
-			ServePort:      bot.BotConfig.WebhookPort,
-			ServePath:      bot.BotConfig.WebhookPath,
+		admins.LoadAdmins(updater)
+		setting.LoadSetting(updater)
+		private.LoadPm(updater)
+		info.LoadInfo(updater)
+		help.LoadHelp(updater)
+		reporting.LoadReport(updater)
+
+		listener.LoadSettingListener(updater)
+		listener.LoadHelpListener(updater)
+		listener.LoadStartListener(updater)
+		listener.LoadUserListener(updater)
+
+		if bot.BotConfig.WebhookUrl != "" {
+			logrus.Info("Using Webhook...")
+			webHook := gotgbot.Webhook{
+				URL:            bot.BotConfig.WebhookUrl,
+				MaxConnections: 20,
+				Serve:          bot.BotConfig.WebhookServe,
+				ServePort:      bot.BotConfig.WebhookPort,
+				ServePath:      bot.BotConfig.WebhookPath,
+			}
+			updater.StartWebhook(webHook)
+			_, err = updater.SetWebhook(webHook.ServePath, webHook)
+			err_handler.HandleErr(err)
+		} else if bot.BotConfig.CleanPolling == "true" {
+			logrus.Info("Using Clean Polling...")
+			_ = updater.StartCleanPolling()
+		} else {
+			logrus.Info("Using Long Polling...")
+			_ = updater.StartPolling()
 		}
-		updater.StartWebhook(webHook)
-		_, err = updater.SetWebhook(webHook.ServePath, webHook)
-		err_handler.HandleErr(err)
-	} else if bot.BotConfig.CleanPolling == "true" {
-		logrus.Info("Using Clean Polling...")
-		_ = updater.StartCleanPolling()
-	} else {
-		logrus.Info("Using Long Polling...")
-		_ = updater.StartPolling()
-	}
-	logrus.Info("Bot Running On Version: " + bot.BotConfig.BotVer)
-	updater.Idle()
-}
 
-func main() {
-	polyBot()
+		if bot.BotConfig.ApiKey[len(bot.BotConfig.ApiKey)-1] == botToken {
+			logrus.Info(fmt.Sprintf("Bot Running On Version: %v - %v", bot.BotConfig.BotVer,
+				updater.Bot.UserName))
+			updater.Idle()
+		} else {
+			logrus.Info(fmt.Sprintf("Bot Running On Version: %v - %v", bot.BotConfig.BotVer,
+				updater.Bot.UserName))
+			go updater.Idle()
+		}
+	}
 }

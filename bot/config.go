@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	ApiKey        string
+	ApiKey        []string
 	OwnerId       int
 	LogEvent      int
 	LogBan        int
@@ -36,8 +36,8 @@ func init() {
 	returnConfig := Config{}
 	var ok = false
 
-	returnConfig.ApiKey, ok = os.LookupEnv("BOT_API_KEY")
-	if !ok {
+	returnConfig.ApiKey = strings.Split(os.Getenv("BOT_API_KEY"), " ")
+	if len(returnConfig.ApiKey) == 0 {
 		log.Fatal("Missing API Key")
 	}
 	returnConfig.OwnerId, err = strconv.Atoi(os.Getenv("OWNER_ID"))
