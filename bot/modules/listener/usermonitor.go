@@ -552,45 +552,45 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 
 	if msg != nil {
 		if sql.GetChat(chat.Id) == nil {
-			go sql.UpdateChat(strconv.Itoa(chat.Id), chat.Title, chat.Type, chat.InviteLink)
+			sql.UpdateChat(strconv.Itoa(chat.Id), chat.Title, chat.Type, chat.InviteLink)
 		}
 		if sql.GetUser(user.Id) == nil {
-			go sql.UpdateUser(user.Id, user.Username, user.FirstName, user.LastName)
+			sql.UpdateUser(user.Id, user.Username, user.FirstName, user.LastName)
 		}
 		if sql.GetLang(chat.Id) == nil {
-			go caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 7200)
-			go sql.UpdateLang(chat.Id, "id")
+			caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 7200)
+			sql.UpdateLang(chat.Id, "id")
 		}
 		if msg.ForwardFrom != nil {
 			usr := msg.ForwardFrom
 			if sql.GetUser(usr.Id) == nil {
-				go sql.UpdateUser(usr.Id, usr.Username, usr.FirstName, usr.LastName)
+				sql.UpdateUser(usr.Id, usr.Username, usr.FirstName, usr.LastName)
 			}
 		}
 
 		if chat.Type == "supergroup" {
 			if sql.GetVerify(chat.Id) == nil {
-				go sql.UpdateVerify(chat.Id, "true", "-", "true")
+				sql.UpdateVerify(chat.Id, "true", "-", "true")
 			}
 			if sql.GetUsername(chat.Id) == nil {
 				go sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
 			}
 			if sql.GetPicture(chat.Id) == nil {
-				go sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
+				sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
 			}
 			if sql.GetSetting(chat.Id) == nil {
-				go sql.UpdateSetting(chat.Id, "5m", "true")
+				sql.UpdateSetting(chat.Id, "5m", "true")
 			}
 			if sql.GetEnforceGban(chat.Id) == nil {
-				go sql.UpdateEnforceGban(chat.Id, "true")
+				sql.UpdateEnforceGban(chat.Id, "true")
 			}
 			if sql.GetAntispam(chat.Id) == nil {
-				go sql.UpdateAntispam(chat.Id, "false", "true", "false", "false")
+				sql.UpdateAntispam(chat.Id, "false", "true", "false", "false")
 			}
 		}
 
 		if sql.GetNotification(user.Id) == nil {
-			go sql.UpdateNotification(user.Id, "true")
+			sql.UpdateNotification(user.Id, "true")
 
 		}
 		return gotgbot.ContinueGroups{}

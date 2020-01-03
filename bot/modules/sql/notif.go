@@ -13,7 +13,7 @@ func UpdateNotification(chatid int, notification string) {
 	tx := SESSION.Begin()
 
 	set := &Notification{ChatId: strconv.Itoa(chatid), Notification: notification}
-	tx.Where(Notification{ChatId: strconv.Itoa(chatid)}).Assign(Notification{Notification: notification}).FirstOrCreate(set)
+	tx.Save(set)
 	tx.Commit()
 
 }

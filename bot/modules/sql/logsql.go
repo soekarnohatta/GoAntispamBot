@@ -24,7 +24,7 @@ func UpdateUser(userId int, userName string, firstName string, lastName string) 
 	tx := SESSION.Begin()
 
 	user := &User{UserId: userId, UserName: username, FirstName: firstName, LastName: lastName}
-	tx.Where(User{UserId: userId}).Assign(User{UserName: username, FirstName: firstName, LastName: lastName}).FirstOrCreate(user)
+	tx.Save(user)
 	tx.Commit()
 }
 
@@ -36,8 +36,7 @@ func UpdateChat(chatid string, chattitle string, chattype string, clink string) 
 	tx := SESSION.Begin()
 
 	chat := &Chat{ChatId: chatid, ChatTitle: chattitle, ChatType: chattype, ChatLink: clink}
-	tx.Where(Chat{ChatId: chatid}).Assign(Chat{ChatTitle: chattitle, ChatType: chattype,
-		ChatLink: clink}).FirstOrCreate(chat)
+	tx.Save(chat)
 	tx.Commit()
 }
 

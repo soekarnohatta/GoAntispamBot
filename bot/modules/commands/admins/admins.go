@@ -13,7 +13,10 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
-	"html"
+	"github.com/tcnksm/go-httpstat"
+	"io"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -144,9 +147,17 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 	group := sql.GetAllChat
 	errNum := 0
 
+	txtToSend := ""
+
+	if msg.ReplyToMessage != nil {
+		txtToSend = msg.ReplyToMessage.Text
+	} else {
+		txtToSend = strings.Split(msg.OriginalHTML(), "/broadcast")[1]
+	}
+
 	for _, a := range group() {
 		cid, _ := strconv.Atoi(a.ChatId)
-		_, err := b.SendMessageHTML(cid, html.EscapeString(strings.Split(msg.Text, "/broadcast")[1]))
+		_, err := b.SendMessageHTML(cid, txtToSend)
 		if err != nil {
 			if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
 				sql.DelChat(a.ChatId)
@@ -165,13 +176,28 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 	return err
 }
 
-func dbg(b ext.Bot, u *gotgbot.Update) error {
-	msg := u.EffectiveMessage
+func ping(_ ext.Bot, u *gotgbot.Update) error {
+	req, err := http.NewRequest("GET", "https://api.telegram.org", nil)
+	err_handler.HandleErr(err)
 
-	if chat_status.RequireOwner(msg, msg.From.Id) == false {
-		return nil
+	var result httpstat.Result
+	ctx := httpstat.WithHTTPStat(req.Context(), &result)
+	req = req.WithContext(ctx)
+
+	client := http.DefaultClient
+	res, err := client.Do(req)
+	err_handler.HandleErr(err)
+
+	if _, err := io.Copy(ioutil.Discard, res.Body); err != nil {
+		logrus.Println(err)
 	}
-	return nil
+
+	_ = res.Body.Close()
+
+	text := fmt.Sprintf("Ping: <b>%d</b> ms", result.ServerProcessing/time.Millisecond)
+
+	_, err = u.EffectiveMessage.ReplyHTML(text)
+	return err
 }
 
 func LoadAdmins(u *gotgbot.Updater) {
@@ -180,5 +206,5 @@ func LoadAdmins(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ungban", []rune{'/', '.'}, unGbanUser))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("stats", []rune{'/', '.'}, stats))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("broadcast", []rune{'/', '.'}, broadcast))
-	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("dbg", []rune{'/', '.'}, dbg))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("ping", []rune{'/', '!'}, ping))
 }

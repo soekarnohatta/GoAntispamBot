@@ -18,7 +18,7 @@ type Config struct {
 	SudoUsers     []string
 	SqlUri        string
 	WebhookUrl    string
-	WebhookPath   string
+	WebhookPath   []string
 	WebhookServe  string
 	WebhookPort   int
 	RedisAddress  string
@@ -65,9 +65,9 @@ func init() {
 	if !ok {
 		returnConfig.WebhookUrl = ""
 	}
-	returnConfig.WebhookPath, ok = os.LookupEnv("WEBHOOK_PATH")
-	if !ok {
-		returnConfig.WebhookPath = "api/bot"
+	returnConfig.WebhookPath = strings.Split(os.Getenv("WEBHOOK_PATH"), " ")
+	if len(returnConfig.WebhookPath) == 0 {
+		returnConfig.WebhookPath = []string{returnConfig.ApiKey[0]}
 	}
 	returnConfig.WebhookServe, ok = os.LookupEnv("WEBHOOK_SERVE")
 	if !ok {
