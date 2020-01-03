@@ -105,7 +105,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 			"<b>Time:</b> <code>%v</code>\n"+
 			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, msg.Text)
 
-		sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
+		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
 		return err
