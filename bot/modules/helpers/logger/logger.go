@@ -42,7 +42,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 	switch param {
 	case "username":
 		txtLog := fmt.Sprintf("#NOUSERNAME\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a> [<code>%v</code>]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
@@ -54,7 +54,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 		return err
 	case "picture":
 		txtLog := fmt.Sprintf("#NOPROFILEPICTURE\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a> [<code>%v</code>]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
@@ -66,7 +66,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 		return err
 	case "welcome":
 		txtLog := fmt.Sprintf("#NEWMEMBER\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a> [<code>%v</code>]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
@@ -86,7 +86,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 		return err
 	case "spam":
 		txtLog := fmt.Sprintf("#SPAMMER\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a> [<code>%v</code>]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
@@ -99,7 +99,7 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 		return err
 	case "link":
 		txtLog := fmt.Sprintf("#LINK/AR/CH\n"+
-			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a>[%v]\n"+
+			"<b>User ID:</b> <a href=\"tg://user?id=%v\">%v</a> [<code>%v</code>]\n"+
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+

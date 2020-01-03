@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="modules/private/pm.go:start">
-        <value>🤖 *Poly Bot Version* `{1}` by *PolyBot Team.*
+        <value>🤖 *{2} Bot Version* `{1}` by *PolyDev.*
 Is a group management bot, packed with security features. You have to make me as an admin with all admin permissions in order to use my full power. Suggestions, complains, or anything else can be proposed at @PolyBotSuppport
         </value>
         <!--modules/private/pm.go:15-->

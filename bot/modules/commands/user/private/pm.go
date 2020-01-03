@@ -78,7 +78,7 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 		}
 
 		txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start",
-			map[string]string{"1": bot.BotConfig.BotVer})
+			map[string]string{"1": bot.BotConfig.BotVer, "2": b.FirstName})
 		replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 		replyMsg.ParseMode = "Markdown"
 		replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}
