@@ -125,7 +125,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 
 		if notif != nil && notif.Notification == "true" {
 			txt := function.GetStringf(user.Id, "unamep",
-				map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action,
+				map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName), "3": db.Action,
 					"4": strconv.Itoa(user.Id), "5": chat.Title})
 			reply.Text = txt
 			reply.ReplyToMessageId = 0
@@ -139,7 +139,8 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 
 		if warns >= limit {
 			go sql.ResetWarns(strconv.Itoa(user.Id), strconv.Itoa(chat.Id))
-			val := map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
+			val := map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+				"3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
 			replyText = function.GetStringf(msg.Chat.Id, "modules/warn2", val)
 			_, err := chat.UnbanMember(user.Id)
 
@@ -155,7 +156,8 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "rmwarn"),
 				CallbackData: fmt.Sprintf("rmWarn(%v)", user.Id)}
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
-			val := map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
+			val := map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+				"3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
 			replyText = function.GetStringf(msg.Chat.Id, "modules/warn", val)
 		}
 
@@ -221,7 +223,8 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 		return gotgbot.ContinueGroups{}
 	}
 
-	val := map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action, "4": strconv.Itoa(user.Id)}
+	val := map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+		"3": db.Action, "4": strconv.Itoa(user.Id)}
 	replyText := function.GetStringf(msg.Chat.Id, "modules/listener/listener.go:173", val)
 	markup := &ext.InlineKeyboardMarkup{}
 	reply := b.NewSendableMessage(chat.Id, replyText)
@@ -273,7 +276,8 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 
 			kbk := make([][]ext.InlineKeyboardButton, 1)
 			kbk[0] = make([]ext.InlineKeyboardButton, 1)
-			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:184"), CallbackData: fmt.Sprintf("pban_%v_%v", user.Id, chat.Id)}
+			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:184"),
+				CallbackData: fmt.Sprintf("pban_%v_%v", user.Id, chat.Id)}
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kbk}
 		}
 
@@ -289,7 +293,8 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 
 		notif := sql.GetNotification(user.Id)
 		if notif != nil && notif.Notification == "true" {
-			txtVal := map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": db.Action, "4": strconv.Itoa(user.Id), "5": chat.Title}
+			txtVal := map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+				"3": db.Action, "4": strconv.Itoa(user.Id), "5": chat.Title}
 			txt := function.GetStringf(user.Id, "picturep", txtVal)
 			reply.Text = txt
 			reply.ReplyToMessageId = 0
@@ -304,7 +309,8 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 		var reply = ""
 		if warns >= limit {
 			go sql.ResetWarns(strconv.Itoa(user.Id), strconv.Itoa(chat.Id))
-			val = map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
+			val = map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName), "3": strconv.Itoa(warns),
+				"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
 			reply = function.GetStringf(msg.Chat.Id, "modules/warn2", val)
 			_, err := chat.UnbanMember(user.Id)
 			if err != nil {
@@ -319,7 +325,8 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "rmwarn"),
 				CallbackData: fmt.Sprintf("rmWarn(%v)", user.Id)}
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
-			val = map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
+			val = map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+				"3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
 			reply = function.GetStringf(msg.Chat.Id, "modules/warn3", val)
 		}
 
@@ -375,7 +382,8 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 	}
 
 	replyText := function.GetStringf(msg.Chat.Id, "modules/listener/listener.go:298",
-		map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": chat.Title, "4": strconv.Itoa(user.Id)})
+		map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+			"3": chat.Title, "4": strconv.Itoa(user.Id)})
 
 	kb := make([][]ext.InlineKeyboardButton, 1)
 	kb[0] = make([]ext.InlineKeyboardButton, 1)
@@ -494,7 +502,8 @@ func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 		if entities != nil && ent != nil {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
-			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName), "3": fmt.Sprint(user.Id), "4": "Link"}
+			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName),
+				"3": fmt.Sprint(user.Id), "4": "Link"}
 			replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
@@ -521,7 +530,8 @@ func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 		if pattern.MatchString(msg.Text) == true {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
-			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName), "3": fmt.Sprint(user.Id), "4": "Arabic Text"}
+			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName),
+				"3": fmt.Sprint(user.Id), "4": "Arabic Text"}
 			replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
@@ -533,7 +543,8 @@ func antispamProcessor(b ext.Bot, u *gotgbot.Update) error {
 		if checkChinese(msg.Text) == true {
 			_, err := msg.Delete()
 			err_handler.HandleErr(err)
-			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName), "3": fmt.Sprint(user.Id), "4": "Chinese Text"}
+			val := map[string]string{"1": fmt.Sprint(user.Id), "2": html.EscapeString(user.FirstName),
+				"3": fmt.Sprint(user.Id), "4": "Chinese Text"}
 			replyText := function.GetStringf(chat.Id, "modules/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
@@ -573,7 +584,7 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 				sql.UpdateVerify(chat.Id, "true", "-", "true")
 			}
 			if sql.GetUsername(chat.Id) == nil {
-				go sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
+				sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
 			}
 			if sql.GetPicture(chat.Id) == nil {
 				sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
@@ -783,7 +794,8 @@ func spamFunc(b ext.Bot, u *gotgbot.Update) error {
 		return nil
 	}
 
-	val := map[string]string{"1": strconv.Itoa(user.Id), "2": user.FirstName, "3": strconv.Itoa(user.Id)}
+	val := map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName),
+		"3": strconv.Itoa(user.Id)}
 	txtBan := function.GetStringf(chat.Id, "modules/listener/listener.go:580", val)
 
 	restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)

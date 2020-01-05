@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/PaulSonOfLars/goloc v0.0.0-20190928104011-41745139b91a
-	github.com/PaulSonOfLars/gotgbot v0.0.0-20191117224821-883066135bc6
+	github.com/PaulSonOfLars/gotgbot v0.0.0-20200103184348-7ae29654e65a
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/allegro/bigcache v1.2.1
 	github.com/go-ole/go-ole v1.2.4 // indirect
@@ -23,6 +23,6 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/tcnksm/go-httpstat v0.2.0
-	golang.org/x/sys v0.0.0-20200102141924-c96a22e43c9c // indirect
+	golang.org/x/sys v0.0.0-20200103143344-a1369afcdac7 // indirect
 	golang.org/x/tools v0.0.0-20191026034945-b2104f82a97d // indirect
 )

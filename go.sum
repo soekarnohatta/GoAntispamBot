@@ -7,6 +7,8 @@ github.com/PaulSonOfLars/goloc v0.0.0-20190928104011-41745139b91a h1:B86x/Q1e8FA
 github.com/PaulSonOfLars/goloc v0.0.0-20190928104011-41745139b91a/go.mod h1:XQ1IlekoyGh4LNcdqDN0EXB7JRZIzutt9gpFU+RhUWc=
 github.com/PaulSonOfLars/gotgbot v0.0.0-20191117224821-883066135bc6 h1:9HIsuRU2MRd3Q87SfGtmiJbYPoLycj0BcvjI4O9qTVY=
 github.com/PaulSonOfLars/gotgbot v0.0.0-20191117224821-883066135bc6/go.mod h1:HJ3VsiIwK21ZsJai6/W/iCzkkjne0Xb+bJTw+gw2OF4=
+github.com/PaulSonOfLars/gotgbot v0.0.0-20200103184348-7ae29654e65a h1:VxkzOOml9xIG+56BQ3i/CwXEOsHMW8xny2+K4kJlLSw=
+github.com/PaulSonOfLars/gotgbot v0.0.0-20200103184348-7ae29654e65a/go.mod h1:HJ3VsiIwK21ZsJai6/W/iCzkkjne0Xb+bJTw+gw2OF4=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
 github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d h1:G0m3OIz70MZUWq3EgK3CesDbo8upS2Vm9/P3FtgI+Jk=
@@ -176,6 +178,8 @@ golang.org/x/sys v0.0.0-20191228213918-04cbcbbfeed8 h1:JA8d3MPx/IToSyXZG/RhwYEtf
 golang.org/x/sys v0.0.0-20191228213918-04cbcbbfeed8/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200102141924-c96a22e43c9c h1:OYFUffxXPezb7BVTx9AaD4Vl0qtxmklBIkwCKH1YwDY=
 golang.org/x/sys v0.0.0-20200102141924-c96a22e43c9c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200103143344-a1369afcdac7 h1:/W9OPMnnpmFXHYkcp2rQsbFUbRlRzfECQjmAFiOyHE8=
+golang.org/x/sys v0.0.0-20200103143344-a1369afcdac7/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2 h1:z99zHgr7hKfrUcX/KsoJk5FJfjTceCKIp96+biqP4To=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
