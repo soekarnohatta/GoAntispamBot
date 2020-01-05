@@ -36,7 +36,7 @@ func report(b ext.Bot, u *gotgbot.Update) error {
 
 	if msg.ReplyToMessage != nil {
 		go reportUser(b, msg, reason)
-		replyMsg := b.NewSendableMessage(chat.Id, function.GetString(chat.Id, "a"))
+		replyMsg := b.NewSendableMessage(chat.Id, function.GetString(chat.Id, "modules/reporting/report.go:start"))
 		replyMsg.ParseMode = parsemode.Markdown
 		replyMsg.ReplyToMessageId = msg.ReplyToMessage.MessageId
 		_, err := replyMsg.Send()
@@ -73,15 +73,15 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 	}
 	reportButtons[1][0] = ext.InlineKeyboardButton{
 		Text:         "🚷 Kick",
-		CallbackData: fmt.Sprintf("report(kick)_%v_%v", rep.From.Id, rep.Chat.Id),
+		CallbackData: fmt.Sprintf("report(kick)(%v)(%v)", rep.From.Id, rep.Chat.Id),
 	}
 	reportButtons[1][1] = ext.InlineKeyboardButton{
 		Text:         "🚫 Ban",
-		CallbackData: fmt.Sprintf("report(ban)_%v_%v", rep.From.Id, rep.Chat.Id),
+		CallbackData: fmt.Sprintf("report(ban)(%v)(%v)", rep.From.Id, rep.Chat.Id),
 	}
 	reportButtons[2][0] = ext.InlineKeyboardButton{
 		Text:         "❌ Delete Message",
-		CallbackData: fmt.Sprintf("report(del)_%v_%v", rep.MessageId, rep.Chat.Id),
+		CallbackData: fmt.Sprintf("report(del)(%v)(%v)", rep.Chat.Id, rep.MessageId),
 	}
 
 	for _, adm := range x.Admin {
