@@ -77,10 +77,8 @@ func ExtractUserAndText(m *ext.Message, args []string) (int, string) {
 	if entities != nil && ent != nil && ent.Offset == (len(m.Text)-len(textToParse)) {
 		ent = &entities[0]
 		userId = ent.User.Id
-		res := strings.SplitN(m.Text, " ", 3)
-		if len(res) >= 3 {
-			text = res[2]
-		}
+		res := strings.SplitN(m.Text, ent.Text, 2)
+		text = res[1]
 	} else if len(args) >= 1 && args[0][0] == '@' {
 		user := args[0]
 		userId = GetUserId(user)
