@@ -21,7 +21,12 @@ func SendBanLog(b ext.Bot, uid int, rson string, u *gotgbot.Update) error {
 		"<b>Sudo:</b> <a href=\"tg://user?id=%v\">%v</a>\n"+
 		"<b>User ID:</b> <code>%v</code>\n"+
 		"<b>Time:</b> <code>%v</code>\n"+
-		"<b>Reason:</b> <code>%v</code>", user.Id, html.EscapeString(user.FirstName), strconv.Itoa(uid), formatted, rson)
+		"<b>Reason:</b> <code>%v</code>",
+		user.Id,
+		html.EscapeString(user.FirstName),
+		strconv.Itoa(uid),
+		formatted,
+		html.EscapeString(rson))
 
 	sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
 	sendLog.ParseMode = parsemode.Html
@@ -46,7 +51,14 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, msg.Text)
+			"<b>Message:</b>\n%v",
+			user.Id,
+			html.EscapeString(user.FirstName),
+			user.Id,
+			chat.Id,
+			html.EscapeString(chat.Title),
+			formatted,
+			html.EscapeString(msg.Text))
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
@@ -58,7 +70,14 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, msg.Text)
+			"<b>Message:</b>\n%v",
+			user.Id,
+			html.EscapeString(user.FirstName),
+			user.Id,
+			chat.Id,
+			html.EscapeString(chat.Title),
+			formatted,
+			html.EscapeString(msg.Text))
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
@@ -70,7 +89,14 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Event:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, "NewChatMembers")
+			"<b>Event:</b>\n%v",
+			user.Id,
+			html.EscapeString(user.FirstName),
+			user.Id,
+			chat.Id,
+			html.EscapeString(chat.Title),
+			formatted,
+			"NewChatMembers")
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
@@ -79,7 +105,10 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 	case "error":
 		txtLog := fmt.Sprintf("#ERROR\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Error Message:</b>\n%v", formatted, args)
+			"<b>Error Message:</b>\n%v",
+			formatted,
+			args)
+
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html
 		_, err := sendLog.Send()
@@ -91,7 +120,15 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
 			"<b>Reason:</b> <code>%v</code>\n"+
-			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, args, msg.Text)
+			"<b>Message:</b>\n%v",
+			user.Id,
+			html.EscapeString(user.FirstName),
+			user.Id,
+			chat.Id,
+			html.EscapeString(chat.Title),
+			formatted,
+			html.EscapeString(args),
+			html.EscapeString(html.EscapeString(msg.Text)))
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogBan, txtLog)
 		sendLog.ParseMode = parsemode.Html
@@ -103,7 +140,14 @@ func SendLog(b ext.Bot, u *gotgbot.Update, param string, args string) error {
 			"<b>Chat ID:</b> <code>%v</code>\n"+
 			"<b>Chat Title:</b> <code>%v</code>\n"+
 			"<b>Time:</b> <code>%v</code>\n"+
-			"<b>Message:</b>\n%v", user.Id, html.EscapeString(user.FirstName), user.Id, chat.Id, chat.Title, formatted, msg.Text)
+			"<b>Message:</b>\n%v",
+			user.Id,
+			html.EscapeString(user.FirstName),
+			user.Id,
+			chat.Id,
+			html.EscapeString(chat.Title),
+			formatted,
+			html.EscapeString(msg.Text))
 
 		sendLog := b.NewSendableMessage(bot.BotConfig.LogEvent, txtLog)
 		sendLog.ParseMode = parsemode.Html

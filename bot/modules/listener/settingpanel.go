@@ -22,8 +22,8 @@ func panel(b ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequireSupergroup(chat, msg) == true {
-		if chat_status.IsUserAdmin(chat, user.Id) == true {
+	if chat_status.RequireSupergroup(chat, msg) {
+		if chat_status.IsUserAdmin(chat, user.Id) {
 			replyText, replyButtons := mainMenu(chat.Id)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&replyButtons}
@@ -133,9 +133,9 @@ func spamControlQuery(b ext.Bot, u *gotgbot.Update) error {
 				if pattern {
 					if strings.Split(msg.Data, "_toggle")[0] == "mo" {
 						if sql.GetEnforceGban(chat.Id).Option == "true" {
-							go sql.UpdateEnforceGban(chat.Id, "false")
+							sql.UpdateEnforceGban(chat.Id, "false")
 						} else {
-							go sql.UpdateEnforceGban(chat.Id, "true")
+							sql.UpdateEnforceGban(chat.Id, "true")
 						}
 
 						replyText, replyButtons := mainSpamMenu(chat.Id)
@@ -146,7 +146,6 @@ func spamControlQuery(b ext.Bot, u *gotgbot.Update) error {
 				}
 			}
 		}
-		return nil
 	}
 	return nil
 }
@@ -158,7 +157,7 @@ func userControlQuery(b ext.Bot, u *gotgbot.Update) error {
 
 	if msg != nil {
 		if chat.Type == "supergroup" {
-			if chat_status.IsUserAdmin(chat, user.Id) == true {
+			if chat_status.IsUserAdmin(chat, user.Id) {
 				// Grab Data From DB
 				username := sql.GetUsername(chat.Id)
 				profilePicture := sql.GetPicture(chat.Id)
@@ -448,7 +447,7 @@ func mainSpamMenu(chatId int) (string, [][]ext.InlineKeyboardButton) {
 	if emoji != nil {
 		replyText := function.GetStringf(chatId, "modules/helpers/function.go:66", map[string]string{"1": emoji[0][3]})
 
-		var kn = make([][]ext.InlineKeyboardButton, 0)
+		kn := make([][]ext.InlineKeyboardButton, 0)
 
 		ki := make([]ext.InlineKeyboardButton, 1)
 		ki[0] = ext.InlineKeyboardButton{Text: emoji[0][3], CallbackData: "mo_toggle"}
@@ -468,7 +467,7 @@ func mainMenu(chatId int) (string, [][]ext.InlineKeyboardButton) {
 
 	replyText := function.GetString(chatId, "modules/helpers/function.go:85")
 
-	var kn = make([][]ext.InlineKeyboardButton, 0)
+	kn := make([][]ext.InlineKeyboardButton, 0)
 
 	ki := make([]ext.InlineKeyboardButton, 2)
 	ki[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "modules/helpers/function.go:91"), CallbackData: "mk_utama"}
@@ -489,7 +488,6 @@ func mainMenu(chatId int) (string, [][]ext.InlineKeyboardButton) {
 	kn = append(kn, kk)
 
 	return replyText, kn
-
 }
 
 func getEmoji(chatId int) [][]string {

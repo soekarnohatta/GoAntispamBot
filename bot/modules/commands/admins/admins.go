@@ -155,18 +155,20 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 		txtToSend = strings.Split(msg.OriginalHTML(), "/broadcast")[1]
 	}
 
-	for _, a := range group() {
-		cid, _ := strconv.Atoi(a.ChatId)
-		_, err := b.SendMessageHTML(cid, txtToSend)
-		if err != nil {
-			if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
-				sql.DelChat(a.ChatId)
-				errNum++
-				continue
-			} else {
-				err_handler.HandleErr(err)
-				errNum++
-				continue
+	if txtToSend != "" {
+		for _, a := range group() {
+			cid, _ := strconv.Atoi(a.ChatId)
+			_, err := b.SendMessageHTML(cid, txtToSend)
+			if err != nil {
+				if err.Error() == "Forbidden: bot was kicked from the supergroup chat" {
+					sql.DelChat(a.ChatId)
+					errNum++
+					continue
+				} else {
+					err_handler.HandleErr(err)
+					errNum++
+					continue
+				}
 			}
 		}
 	}

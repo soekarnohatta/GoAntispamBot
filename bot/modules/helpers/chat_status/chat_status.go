@@ -11,8 +11,16 @@ import (
 	"strconv"
 )
 
-type cache struct {
+type adminCache struct {
 	Admin []string `json:"admin"`
+}
+
+type restrictCache struct {
+	Restrict bool
+}
+
+type deleteCache struct {
+	Delete bool
 }
 
 func IsOwner(userId int) bool {
@@ -35,15 +43,20 @@ func IsUserAdmin(chat *ext.Chat, userId int) bool {
 
 	if err != nil {
 		AdminCache(chat)
+		admins, err = caching.CACHE.Get(fmt.Sprintf("admin_%v", chat.Id))
+		var aCache adminCache
+		_ = json.Unmarshal(admins, &aCache)
+		if function.Contains(aCache.Admin, strconv.Itoa(userId)) {
+			return true
+		}
+		return false
 	}
 
-	var x cache
-	_ = json.Unmarshal(admins, &x)
-
-	if function.Contains(x.Admin, strconv.Itoa(userId)) {
+	var aCache adminCache
+	_ = json.Unmarshal(admins, &aCache)
+	if function.Contains(aCache.Admin, strconv.Itoa(userId)) {
 		return true
 	}
-
 	return false
 }
 
@@ -105,25 +118,43 @@ func RequireSupergroup(chat *ext.Chat, msg *ext.Message) bool {
 }
 
 func CanRestrict(bot ext.Bot, chat *ext.Chat) bool {
-	botChatMember, err := chat.GetMember(bot.Id)
-	err_handler.HandleErr(err)
-	if !botChatMember.CanRestrictMembers {
-		_, err := bot.SendMessage(chat.Id, function.GetString(chat.Id, "modules/helpers/chat_status.go:111"))
+	restrict, err := caching.CACHE.Get(fmt.Sprintf("restrict_%v", chat.Id))
+
+	if err != nil {
+		go doRestrictCache(chat, bot)
+		botChatMember, err := chat.GetMember(bot.Id)
 		err_handler.HandleErr(err)
-		return false
+		if !botChatMember.CanRestrictMembers {
+			_, err := bot.SendMessage(chat.Id, function.GetString(chat.Id, "modules/helpers/chat_status.go:111"))
+			err_handler.HandleErr(err)
+			return false
+		}
+		return true
 	}
-	return true
+
+	var rCache restrictCache
+	_ = json.Unmarshal(restrict, &rCache)
+	return rCache.Restrict
 }
 
 func CanDelete(bot ext.Bot, chat *ext.Chat) bool {
-	botChatMember, err := chat.GetMember(bot.Id)
-	err_handler.HandleErr(err)
-	if !botChatMember.CanDeleteMessages {
-		_, err := bot.SendMessage(chat.Id, function.GetString(chat.Id, "modules/helpers/chat_status.go:122"))
+	restrict, err := caching.CACHE.Get(fmt.Sprintf("delete_%v", chat.Id))
+
+	if err != nil {
+		go doDeleteCache(chat, bot)
+		botChatMember, err := chat.GetMember(bot.Id)
 		err_handler.HandleErr(err)
-		return false
+		if !botChatMember.CanDeleteMessages {
+			_, err := bot.SendMessage(chat.Id, function.GetString(chat.Id, "modules/helpers/chat_status.go:122"))
+			err_handler.HandleErr(err)
+			return false
+		}
+		return true
 	}
-	return true
+
+	var rCache deleteCache
+	_ = json.Unmarshal(restrict, &rCache)
+	return rCache.Delete
 }
 
 func AdminCache(chat *ext.Chat) {
@@ -134,7 +165,35 @@ func AdminCache(chat *ext.Chat) {
 		admins = append(admins, strconv.Itoa(user.User.Id))
 	}
 
-	cacheAdmin := &cache{admins}
+	cacheAdmin := &adminCache{admins}
 	finalCache, _ := json.Marshal(cacheAdmin)
-	go caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), finalCache)
+	_ = caching.CACHE.Set(fmt.Sprintf("admin_%v", chat.Id), finalCache)
+}
+
+func doDeleteCache(chat *ext.Chat, bot ext.Bot) {
+	botChatMember, err := chat.GetMember(bot.Id)
+	err_handler.HandleErr(err)
+	deleteCaches := false
+	if !botChatMember.CanDeleteMessages {
+		deleteCaches = false
+	}
+	deleteCaches = true
+
+	cacheDelete := &deleteCache{deleteCaches}
+	finalCache, _ := json.Marshal(cacheDelete)
+	_ = caching.CACHE.Set(fmt.Sprintf("delete_%v", chat.Id), finalCache)
+}
+
+func doRestrictCache(chat *ext.Chat, bot ext.Bot) {
+	botChatMember, err := chat.GetMember(bot.Id)
+	err_handler.HandleErr(err)
+	deleteRestrict := false
+	if !botChatMember.CanRestrictMembers {
+		deleteRestrict = false
+	}
+	deleteRestrict = true
+
+	cacheDelete := &restrictCache{deleteRestrict}
+	finalCache, _ := json.Marshal(cacheDelete)
+	_ = caching.CACHE.Set(fmt.Sprintf("restrict_%v", chat.Id), finalCache)
 }

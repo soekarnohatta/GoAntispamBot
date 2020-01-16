@@ -66,7 +66,6 @@ func DelChat(chatid string) bool {
 
 	tx.Delete(chat)
 	tx.Commit()
-
 	return true
 }
 

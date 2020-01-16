@@ -20,7 +20,7 @@ func FatalError(err error) {
 
 func HandleTgErr(b ext.Bot, u *gotgbot.Update, err error) {
 	if err != nil {
-		var msg = u.EffectiveMessage
+		msg := u.EffectiveMessage
 		rep := b.NewSendableMessage(msg.Chat.Id, err.Error())
 		rep.ReplyToMessageId = msg.MessageId
 		_, err := rep.Send()
@@ -30,13 +30,5 @@ func HandleTgErr(b ext.Bot, u *gotgbot.Update, err error) {
 				_, _ = rep.Send()
 			}
 		}
-	}
-}
-
-func HandleCbErr(b ext.Bot, u *gotgbot.Update, err error) {
-	if err != nil {
-		var msg = u.CallbackQuery
-		_, err = b.AnswerCallbackQueryText(msg.Id, err.Error(), true)
-		HandleErr(err)
 	}
 }

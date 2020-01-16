@@ -365,6 +365,7 @@ var mdV2Map = map[string]string{
 	"bold":          "*",
 	"italic":        "_",
 	"code":          "`",
+	"pre":           "```",
 	"underline":     "__",
 	"strikethrough": "~",
 }
@@ -373,12 +374,17 @@ var htmlMap = map[string]string{
 	"bold":          "b",
 	"italic":        "i",
 	"code":          "code",
+	"pre":           "pre",
 	"underline":     "u",
 	"strikethrough": "s",
 }
 
 func (m *Message) OriginalText() string {
 	return m.originalMD()
+}
+
+func (m *Message) OriginalTextV2() string {
+	return m.originalMDV2()
 }
 
 func (m *Message) OriginalHTML() string {
@@ -423,6 +429,10 @@ func (m *Message) originalMDV2() string {
 
 func (m *Message) OriginalCaption() string {
 	return m.originalCaptionTextMD()
+}
+
+func (m *Message) OriginalCaptionV2() string {
+	return m.originalCaptionTextMDV2()
 }
 
 func (m *Message) OriginalCaptionHTML() string {
@@ -508,7 +518,7 @@ func getOrigMsgHTML(utf16Data []uint16, ents []MessageEntity) string {
 
 func getOrigMsgMDV2(utf16Data []uint16, ents []MessageEntity) string {
 	if len(ents) == 0 {
-		return escapeMarkdownV2String(string(utf16.Decode(utf16Data)))
+		return string(utf16.Decode(utf16Data))
 	}
 
 	bd := strings.Builder{}
@@ -519,7 +529,7 @@ func getOrigMsgMDV2(utf16Data []uint16, ents []MessageEntity) string {
 		prev = end
 	}
 
-	bd.WriteString(escapeMarkdownV2String(string(utf16.Decode(utf16Data[prev:]))))
+	bd.WriteString(string(utf16.Decode(utf16Data[prev:])))
 	return bd.String()
 }
 
@@ -544,7 +554,7 @@ func fillNestedHTML(data []uint16, ent MessageEntity, start int, entities []Mess
 	subPrev := ent.Offset
 	subEnd := ent.Offset
 	bd := strings.Builder{}
-	for _, e := range entities {
+	for _, e := range getUpperEntities(entities) {
 		if e.Offset < subEnd || e == ent {
 			continue
 		}
@@ -559,19 +569,19 @@ func fillNestedHTML(data []uint16, ent MessageEntity, start int, entities []Mess
 
 	bd.WriteString(html.EscapeString(string(utf16.Decode(data[subPrev:entEnd]))))
 
-	return writeFinalHTML(data, ent, 0, bd.String()), entEnd
+	return writeFinalHTML(data, ent, start, bd.String()), entEnd
 }
 
 func fillNestedMarkdownV2(data []uint16, ent MessageEntity, start int, entities []MessageEntity) (string, int) {
 	entEnd := ent.Offset + ent.Length
 	if len(entities) == 0 || entEnd < entities[0].Offset {
 		// no nesting; just return straight away and move to next.
-		return writeFinalMarkdownV2(data, ent, start, escapeMarkdownV2String(string(utf16.Decode(data[ent.Offset:entEnd])))), entEnd
+		return writeFinalMarkdownV2(data, ent, start, string(utf16.Decode(data[ent.Offset:entEnd]))), entEnd
 	}
 	subPrev := ent.Offset
 	subEnd := ent.Offset
 	bd := strings.Builder{}
-	for _, e := range entities {
+	for _, e := range getUpperEntities(entities) {
 		if e.Offset < subEnd || e == ent {
 			continue
 		}
@@ -584,15 +594,15 @@ func fillNestedMarkdownV2(data []uint16, ent MessageEntity, start int, entities 
 		subPrev = end
 	}
 
-	bd.WriteString(escapeMarkdownV2String(string(utf16.Decode(data[subPrev:entEnd]))))
+	bd.WriteString(string(utf16.Decode(data[subPrev:entEnd])))
 
-	return writeFinalMarkdownV2(data, ent, 0, bd.String()), entEnd
+	return writeFinalMarkdownV2(data, ent, start, bd.String()), entEnd
 }
 
 func writeFinalHTML(data []uint16, ent MessageEntity, start int, cntnt string) string {
 	prevText := html.EscapeString(string(utf16.Decode(data[start:ent.Offset])))
 	switch ent.Type {
-	case "bold", "italic", "code", "underline", "strikethrough":
+	case "bold", "italic", "code", "underline", "strikethrough", "pre":
 		return prevText + "<" + htmlMap[ent.Type] + ">" + cntnt + "</" + htmlMap[ent.Type] + ">"
 	case "text_mention":
 		return prevText + `<a href="tg://user?id=` + strconv.Itoa(ent.User.Id) + `">` + cntnt + "</a>"
@@ -604,9 +614,9 @@ func writeFinalHTML(data []uint16, ent MessageEntity, start int, cntnt string) s
 }
 
 func writeFinalMarkdownV2(data []uint16, ent MessageEntity, start int, cntnt string) string {
-	prevText := escapeMarkdownV2String(string(utf16.Decode(data[start:ent.Offset])))
+	prevText := string(utf16.Decode(data[start:ent.Offset]))
 	switch ent.Type {
-	case "bold", "italic", "code", "underline", "strikethrough":
+	case "bold", "italic", "code", "underline", "strikethrough", "pre":
 		return prevText + mdV2Map[ent.Type] + cntnt + mdV2Map[ent.Type]
 	case "text_mention":
 		return prevText + "[" + cntnt + "](tg://user?id=" + strconv.Itoa(ent.User.Id) + ")"

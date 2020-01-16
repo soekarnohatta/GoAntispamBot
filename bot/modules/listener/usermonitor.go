@@ -71,40 +71,20 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 			restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 			_, err := restrictSend.Send()
-
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
-
+			err_handler.HandleErr(err)
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:51"), CallbackData: fmt.Sprintf("umute_%v_%v", user.Id, chat.Id)}
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 		case "kick":
 			_, err := b.UnbanChatMember(chat.Id, user.Id)
-
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
+			err_handler.HandleErr(err)
 			markup = nil
 		case "ban":
 			restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = -1
 			_, err := restrictSend.Send()
-
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
-
+			err_handler.HandleErr(err)
 			kbk := make([][]ext.InlineKeyboardButton, 1)
 			kbk[0] = make([]ext.InlineKeyboardButton, 1)
 			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:56"), CallbackData: fmt.Sprintf("uba_%v_%v", user.Id, chat.Id)}
@@ -122,7 +102,6 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 		}
 
 		notif := sql.GetNotification(user.Id)
-
 		if notif != nil && notif.Notification == "true" {
 			txt := function.GetStringf(user.Id, "unamep",
 				map[string]string{"1": strconv.Itoa(user.Id), "2": html.EscapeString(user.FirstName), "3": db.Action,
@@ -143,13 +122,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 				"3": strconv.Itoa(warns), "4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
 			replyText = function.GetStringf(msg.Chat.Id, "modules/warn2", val)
 			_, err := chat.UnbanMember(user.Id)
-
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
+			err_handler.HandleErr(err)
 		} else {
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
@@ -184,11 +157,7 @@ func username(b ext.Bot, u *gotgbot.Update) error {
 
 	if db.Deletion == "true" {
 		_, err := msg.Delete()
-		if err != nil {
-			if err.Error() == "Bad Request: message can't be deleted" {
-				err_handler.HandleTgErr(b, u, err)
-			}
-		}
+		err_handler.HandleErr(err)
 	}
 	err := logger.SendLog(b, u, "username", "")
 	return err
@@ -219,7 +188,7 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 
 	photo, _ := user.GetProfilePhotos(0, 0)
 
-	if photo != nil && photo.TotalCount != 0 {
+	if photo != nil && photo.TotalCount > 0 {
 		return gotgbot.ContinueGroups{}
 	}
 
@@ -237,14 +206,7 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			restrictSend := b.NewSendableRestrictChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 			_, err := restrictSend.Send()
-
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
-
+			err_handler.HandleErr(err)
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
 			kb[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:179"),
@@ -253,27 +215,13 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 			markup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 		case "kick":
 			_, err := b.UnbanChatMember(chat.Id, user.Id)
-
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
-
+			err_handler.HandleErr(err)
 			markup = nil
 		case "ban":
 			restrictSend := b.NewSendableKickChatMember(chat.Id, user.Id)
 			restrictSend.UntilDate = -1
 			_, err := restrictSend.Send()
-
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
-
+			err_handler.HandleErr(err)
 			kbk := make([][]ext.InlineKeyboardButton, 1)
 			kbk[0] = make([]ext.InlineKeyboardButton, 1)
 			kbk[0][0] = ext.InlineKeyboardButton{Text: function.GetString(chat.Id, "modules/listener/listener.go:184"),
@@ -313,12 +261,7 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 				"4": strconv.Itoa(limit), "5": strconv.Itoa(user.Id)}
 			reply = function.GetStringf(msg.Chat.Id, "modules/warn2", val)
 			_, err := chat.UnbanMember(user.Id)
-			if err != nil {
-				if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-					err_handler.HandleTgErr(b, u, err)
-					return err
-				}
-			}
+			err_handler.HandleErr(err)
 		} else {
 			kb := make([][]ext.InlineKeyboardButton, 1)
 			kb[0] = make([]ext.InlineKeyboardButton, 1)
@@ -353,11 +296,7 @@ func picture(b ext.Bot, u *gotgbot.Update) error {
 
 	if db.Deletion == "true" {
 		_, err := msg.Delete()
-		if err != nil {
-			if err.Error() == "Bad Request: message can't be deleted" {
-				err_handler.HandleTgErr(b, u, err)
-			}
-		}
+		err_handler.HandleErr(err)
 	}
 	err := logger.SendLog(b, u, "picture", "")
 	return err
@@ -394,13 +333,7 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 	restrictSend.UntilDate = extraction.ExtractTime(b, msg, sql.GetSetting(chat.Id).Time)
 	_, err := restrictSend.Send()
 
-	if err != nil {
-		if err.Error() == "Bad Request: not enough rights to restrict/unrestrict chat member" {
-			err_handler.HandleTgErr(b, u, err)
-			return err
-		}
-	}
-
+	err_handler.HandleErr(err)
 	reply := b.NewSendableMessage(chat.Id, replyText)
 	reply.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &kb}
 	reply.ParseMode = parsemode.Html
@@ -419,11 +352,7 @@ func verify(b ext.Bot, u *gotgbot.Update) error {
 
 	if db.Deletion == "true" {
 		_, err = msg.Delete()
-		if err != nil {
-			if err.Error() == "Bad Request: message can't be deleted" {
-				err_handler.HandleTgErr(b, u, err)
-			}
-		}
+		err_handler.HandleErr(err)
 	}
 
 	err = logger.SendLog(b, u, "welcome", "")
@@ -562,21 +491,16 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
 	if msg != nil {
-		if sql.GetChat(chat.Id) == nil {
-			sql.UpdateChat(strconv.Itoa(chat.Id), chat.Title, chat.Type, chat.InviteLink)
-		}
-		if sql.GetUser(user.Id) == nil {
-			sql.UpdateUser(user.Id, user.Username, user.FirstName, user.LastName)
-		}
+		sql.UpdateChat(strconv.Itoa(chat.Id), chat.Title, chat.Type, chat.InviteLink)
+		sql.UpdateUser(user.Id, user.Username, user.FirstName, user.LastName)
+
 		if sql.GetLang(chat.Id) == nil {
 			caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), "id", 7200)
 			sql.UpdateLang(chat.Id, "id")
 		}
 		if msg.ForwardFrom != nil {
 			usr := msg.ForwardFrom
-			if sql.GetUser(usr.Id) == nil {
-				sql.UpdateUser(usr.Id, usr.Username, usr.FirstName, usr.LastName)
-			}
+			sql.UpdateUser(usr.Id, usr.Username, usr.FirstName, usr.LastName)
 		}
 
 		if chat.Type == "supergroup" {
@@ -707,7 +631,6 @@ func pictureQuery(b ext.Bot, u *gotgbot.Update) error {
 				err_handler.HandleErr(err)
 				cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
 				_, err = b.UnRestrictChatMember(cid, user.Id)
-				err_handler.HandleErr(err)
 				return err
 			}
 		}
@@ -722,12 +645,10 @@ func pictureQuery(b ext.Bot, u *gotgbot.Update) error {
 				_, err = b.AnswerCallbackQueryText(msg.Id, "Unbanned!", true)
 				err_handler.HandleErr(err)
 				_, err = msg.Message.Delete()
-				err_handler.HandleErr(err)
 				return err
 			}
 		} else if chat.Type == "private" {
 			_, err := b.AnswerCallbackQuery(msg.Id)
-			err_handler.HandleErr(err)
 			return err
 		}
 

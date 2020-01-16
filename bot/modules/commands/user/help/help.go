@@ -29,18 +29,19 @@ func help(b ext.Bot, u *gotgbot.Update) error {
 		reply.ParseMode = parsemode.Markdown
 		_, err := reply.Send()
 		return err
-	} else {
-		markup := listener.InitHelpButtons()
-		replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-			"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
-		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
-		reply := b.NewSendableMessage(chat.Id, replyText)
-		reply.ReplyMarkup = &markup
-		reply.ReplyToMessageId = msg.MessageId
-		reply.ParseMode = parsemode.Markdown
-		_, err := reply.Send()
-		return err
 	}
+
+	markup := listener.InitHelpButtons()
+	replyText := fmt.Sprintf("*%v Version* `%v`\n"+
+		"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
+	replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
+	reply := b.NewSendableMessage(chat.Id, replyText)
+	reply.ReplyMarkup = &markup
+	reply.ReplyToMessageId = msg.MessageId
+	reply.ParseMode = parsemode.Markdown
+	_, err := reply.Send()
+	return err
+
 }
 
 func LoadHelp(u *gotgbot.Updater) {

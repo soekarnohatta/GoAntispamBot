@@ -15,7 +15,6 @@ func UpdateNotification(chatid int, notification string) {
 	set := &Notification{ChatId: strconv.Itoa(chatid), Notification: notification}
 	tx.Save(set)
 	tx.Commit()
-
 }
 
 func DelNotification(chatid int) bool {

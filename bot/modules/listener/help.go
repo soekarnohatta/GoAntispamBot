@@ -65,7 +65,6 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 		chat := u.EffectiveChat
 		replyText := fmt.Sprintf("*%v Version* `%v`\n"+
 			"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
-
 		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, replyText)
 		msg.ParseMode = parsemode.Markdown
