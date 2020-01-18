@@ -67,7 +67,7 @@ fabric.properties
 .idea/httpRequests
 
 # Configuration file
-.env
+data/configurations/.env
 
 # Idea
 .idea/
