@@ -2,11 +2,12 @@ package bot
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 )
 
 type Config struct {
@@ -30,7 +31,7 @@ type Config struct {
 var BotConfig Config
 
 func init() {
-	err := godotenv.Load()
+	err := godotenv.Load("data/configurations/.env")
 	err_handler.FatalError(err)
 
 	returnConfig := Config{}

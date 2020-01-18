@@ -5,13 +5,6 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
-	"github.com/jumatberkah/antispambot/bot"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/extraction"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
-	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
 	"github.com/tcnksm/go-httpstat"
 	"io"
@@ -20,6 +13,14 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jumatberkah/antispambot/bot"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/extraction"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
+	"github.com/jumatberkah/antispambot/bot/modules/sql"
 )
 
 func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {

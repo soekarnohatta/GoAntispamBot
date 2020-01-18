@@ -6,14 +6,15 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/ext/helpers"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/extraction"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/shirou/gopsutil/host"
 	"github.com/sirupsen/logrus"
 	"math"
 	"strconv"
 	"time"
+
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/extraction"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
+	"github.com/jumatberkah/antispambot/bot/modules/sql"
 )
 
 func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
@@ -69,7 +70,7 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 	}
 	infoButtons[0][1] = ext.InlineKeyboardButton{
 		Text: "📀 Source",
-		Url:  "https://github.com/soekarnohatta/antispambot",
+		Url:  "https://github.com/soekarnohatta/GoAntispamBot",
 	}
 	infoButtons[1][0] = ext.InlineKeyboardButton{
 		Text:         "💹 Donate",
