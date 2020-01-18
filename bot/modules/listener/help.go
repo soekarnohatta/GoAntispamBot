@@ -13,48 +13,7 @@ import (
 	"regexp"
 )
 
-func InitHelpButtons() ext.InlineKeyboardMarkup {
-	helpButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 2), make([]ext.InlineKeyboardButton, 2),
-		make([]ext.InlineKeyboardButton, 2), make([]ext.InlineKeyboardButton, 2)}
-
-	// First column
-	helpButtons[0][0] = ext.InlineKeyboardButton{
-		Text:         "Sudo",
-		CallbackData: fmt.Sprintf("help(%v)", "sudo"),
-	}
-	helpButtons[1][0] = ext.InlineKeyboardButton{
-		Text:         "Username",
-		CallbackData: fmt.Sprintf("help(%v)", "username"),
-	}
-	helpButtons[2][0] = ext.InlineKeyboardButton{
-		Text:         "Picture",
-		CallbackData: fmt.Sprintf("help(%v)", "picture"),
-	}
-	helpButtons[3][0] = ext.InlineKeyboardButton{
-		Text:         "Notification",
-		CallbackData: fmt.Sprintf("help(%v)", "notif"),
-	}
-
-	// Second column
-	helpButtons[0][1] = ext.InlineKeyboardButton{
-		Text:         "Anti Spam",
-		CallbackData: fmt.Sprintf("help(%v)", "aspam"),
-	}
-	helpButtons[1][1] = ext.InlineKeyboardButton{
-		Text:         "Verify",
-		CallbackData: fmt.Sprintf("help(%v)", "verify"),
-	}
-	helpButtons[2][1] = ext.InlineKeyboardButton{
-		Text:         "Privacy Policy",
-		CallbackData: fmt.Sprintf("help(%v)", "ppolicy"),
-	}
-	helpButtons[3][1] = ext.InlineKeyboardButton{
-		Text:         "Misc",
-		CallbackData: fmt.Sprintf("help(%v)", "misc"),
-	}
-	markup := ext.InlineKeyboardMarkup{InlineKeyboard: &helpButtons}
-	return markup
-}
+var btnList = function.BuildKeyboard("data/keyboard/help.json", 2)
 
 func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 	query := u.CallbackQuery
@@ -80,7 +39,7 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 			replyTxt += function.GetString(chat.Id, "modules/helpers/help.go:"+module)
 			msg.Text = replyTxt
 		} else if module == "back" {
-			markup := InitHelpButtons()
+			markup := ext.InlineKeyboardMarkup{&btnList}
 			msg.ReplyMarkup = &markup
 		}
 

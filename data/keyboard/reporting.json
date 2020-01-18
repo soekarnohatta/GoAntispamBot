@@ -1,0 +1,18 @@
+[
+  {
+    "text": "\uD83D\uDCDD Message Link",
+    "data": "https://t.me/{4}/{3}"
+  },
+  {
+    "text": "\uD83D\uDEB7 Kick",
+    "data": "report(kick)({1})({2})"
+  },
+  {
+    "text": "\uD83D\uDEAB Ban",
+    "data": "report(ban)({1})({2})"
+  },
+  {
+    "text": "❌ Delete Message",
+    "data": "report(del)({2})({3})"
+  }
+]

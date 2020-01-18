@@ -123,6 +123,6 @@ func main() {
 	caching.InitCache()
 	function.LoadAllLang()
 
-	multiInstance() // This is used if you want multiple bot running on single instance. Be aware that this can take much resources.
-	// singleInstance() // This is used if you have only single instance. Do not use both of them!
+	// multiInstance() // This is used if you want multiple bot running on single instance. Be aware that this can take much resources.
+	singleInstance() // This is used if you have only single instance. Do not use both of them!
 }

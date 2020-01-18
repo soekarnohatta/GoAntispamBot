@@ -130,8 +130,10 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 		"<b>Statistics</b>\n"+
 			"Total User(s): %v\n"+
 			"Total Chat(s): %v\n"+
-			"Total Spammer(s): %v", len(sql.GetAllUser()),
-		len(sql.GetAllChat()), len(sql.GetAllSpamUser()))
+			"Total Spammer(s): %v",
+		len(sql.GetAllUser()),
+		len(sql.GetAllChat()),
+		len(sql.GetAllSpamUser()))
 
 	_, err := msg.ReplyHTML(replyText)
 	return err
@@ -171,6 +173,9 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 				}
 			}
 		}
+	} else {
+		_, err := msg.ReplyHTMLf("<b>You must specify a message!</b>")
+		return err
 	}
 
 	_, err := msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>,"+
@@ -179,7 +184,7 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 }
 
 func ping(_ ext.Bot, u *gotgbot.Update) error {
-	req, err := http.NewRequest("GET", "https://api.telegram.org", nil)
+	req, err := http.NewRequest("GET", "https://google.com", nil)
 	err_handler.HandleErr(err)
 
 	var result httpstat.Result

@@ -8,9 +8,10 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/jumatberkah/antispambot/bot/modules/listener"
 	"github.com/sirupsen/logrus"
 )
+
+var btnList = function.BuildKeyboard("data/keyboard/help.json", 2)
 
 func help(b ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
@@ -31,7 +32,7 @@ func help(b ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 
-	markup := listener.InitHelpButtons()
+	markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
 	replyText := fmt.Sprintf("*%v Version* `%v`\n"+
 		"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 	replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")

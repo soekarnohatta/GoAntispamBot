@@ -23,7 +23,7 @@ func handleStart(b ext.Bot, u *gotgbot.Update) error {
 
 		switch module {
 		case "help":
-			markup := InitHelpButtons()
+			markup := ext.InlineKeyboardMarkup{&btnList}
 			replyText := fmt.Sprintf("*%v Version* `%v`\n"+
 				"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 			replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")

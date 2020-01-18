@@ -82,7 +82,7 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 		"🤖*Bot Username :* @%v\n"+
 		"🖥*Host OS :* %v\n"+
 		"⚙*Host Name :* %v\n"+
-		"⏱*Host Uptime :* %v\n"+
+		"⏱*Host Uptime :* `%v`\n"+
 		"💽*Kernel Version :* %v\n"+
 		"💾*Platform :* %v\n", helpers.EscapeMarkdown(b.FirstName), helpers.EscapeMarkdown(b.UserName), info.OS,
 		helpers.EscapeMarkdown(info.Hostname), convertSeconds(info.Uptime), info.KernelVersion, info.Platform)
