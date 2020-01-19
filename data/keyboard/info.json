@@ -1,0 +1,14 @@
+[
+  {
+    "text": "\uD83D\uDCE1 About",
+    "data": "info(about)"
+  },
+  {
+    "text": "\uD83D\uDCC0 Source",
+    "data": "https://github.com/soekarnohatta/GoAntispamBot"
+  },
+  {
+    "text": "\uD83D\uDCB9 Donate",
+    "data": "info(donate)"
+  }
+]

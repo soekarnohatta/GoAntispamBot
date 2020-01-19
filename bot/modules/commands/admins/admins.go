@@ -1,6 +1,7 @@
 package admins
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
@@ -175,13 +176,34 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 			}
 		}
 	} else {
-		_, err := msg.ReplyHTMLf("<b>You must specify a message!</b>")
+		_, err := msg.ReplyHTMLf("<b>You must specify a message in order to broadcast something!</b>")
 		return err
 	}
 
 	_, err := msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>,"+
 		"<code>%v</code> <b>Has Failed</b>\n", errNum)
 	return err
+}
+
+func dbg(b ext.Bot, u *gotgbot.Update) error {
+	msg := u.EffectiveMessage
+	if chat_status.RequireOwner(msg, msg.From.Id) == false {
+		return nil
+	}
+
+	if msg.ReplyToMessage != nil {
+		var jsonData []byte
+		jsonData, err := json.Marshal(msg.ReplyToMessage)
+		err_handler.HandleErr(err)
+		_, err = msg.ReplyText(string(jsonData))
+		return err
+	} else {
+		var jsonData []byte
+		jsonData, err := json.Marshal(msg)
+		err_handler.HandleErr(err)
+		_, err = msg.ReplyText(string(jsonData))
+		return err
+	}
 }
 
 func ping(_ ext.Bot, u *gotgbot.Update) error {
@@ -215,4 +237,5 @@ func LoadAdmins(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("stats", []rune{'/', '.'}, stats))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("broadcast", []rune{'/', '.'}, broadcast))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("ping", []rune{'/', '!'}, ping))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("dbg", []rune{'/', '!'}, dbg))
 }
