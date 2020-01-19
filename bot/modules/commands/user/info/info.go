@@ -17,6 +17,8 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 )
 
+var btnList = function.BuildKeyboard("data/keyboard/info.json", 2)
+
 func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
@@ -26,7 +28,12 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 		replyText := "👤*User Info*\n"
 		userInfo := sql.GetUser(userId)
 		if userInfo != nil {
-			val := map[string]string{"1": strconv.Itoa(userId), "2": userInfo.FirstName, "3": userInfo.LastName, "4": userInfo.UserName}
+			val := map[string]string{
+				"1": strconv.Itoa(userId),
+				"2": userInfo.FirstName,
+				"3": userInfo.LastName,
+				"4": userInfo.UserName,
+			}
 			replyText += function.GetStringf(chat.Id, "modules/info/info.go:29", val)
 		}
 
@@ -63,20 +70,6 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
-	infoButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 2), make([]ext.InlineKeyboardButton, 2)}
-	infoButtons[0][0] = ext.InlineKeyboardButton{
-		Text:         "📡 About",
-		CallbackData: fmt.Sprintf("info(%v)", "about"),
-	}
-	infoButtons[0][1] = ext.InlineKeyboardButton{
-		Text: "📀 Source",
-		Url:  "https://github.com/soekarnohatta/GoAntispamBot",
-	}
-	infoButtons[1][0] = ext.InlineKeyboardButton{
-		Text:         "💹 Donate",
-		CallbackData: fmt.Sprintf("info(%v)", "donate"),
-	}
-
 	info, _ := host.Info()
 	replyTxt := fmt.Sprintf("*Bot Info*\n"+
 		"👤*Bot Name :* %v\n"+
@@ -85,12 +78,19 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 		"⚙*Host Name :* %v\n"+
 		"⏱*Host Uptime :* `%v`\n"+
 		"💽*Kernel Version :* %v\n"+
-		"💾*Platform :* %v\n", helpers.EscapeMarkdown(b.FirstName), helpers.EscapeMarkdown(b.UserName), info.OS,
-		helpers.EscapeMarkdown(info.Hostname), convertSeconds(info.Uptime), info.KernelVersion, info.Platform)
+		"💾*Platform :* %v\n",
+		helpers.EscapeMarkdown(b.FirstName),
+		helpers.EscapeMarkdown(b.UserName),
+		helpers.EscapeMarkdown(info.OS),
+		helpers.EscapeMarkdown(info.Hostname),
+		convertSeconds(info.Uptime),
+		info.KernelVersion,
+		info.Platform,
+	)
 
 	replyMsg := b.NewSendableMessage(chat.Id, replyTxt)
 	replyMsg.ParseMode = "Markdown"
-	replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&infoButtons}
+	replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
 	replyMsg.ReplyToMessageId = msg.MessageId
 	_, err := replyMsg.Send()
 	return err

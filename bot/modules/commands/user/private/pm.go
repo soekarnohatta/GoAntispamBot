@@ -6,12 +6,11 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/sirupsen/logrus"
+
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/sirupsen/logrus"
 )
-
-var btnList = function.BuildKeyboard("data/keyboard/help.json", 2)
 
 func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
@@ -20,7 +19,9 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if len(args) != 0 {
 		switch args[0] {
 		case "help":
-			markup := ext.InlineKeyboardMarkup{&btnList}
+			btnList := function.BuildKeyboardf("data/keyboard/help.json",
+				2, map[string]string{"1": b.UserName})
+			markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
 			replyText := fmt.Sprintf("*%v Version* `%v`\n"+
 				"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 			replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
@@ -35,11 +36,11 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 				startButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 2)}
 				startButtons[0][0] = ext.InlineKeyboardButton{
 					Text:         "📝 Help",
-					CallbackData: fmt.Sprintf("start(%v)", "help"),
+					CallbackData: "start(help)",
 				}
 				startButtons[0][1] = ext.InlineKeyboardButton{
 					Text: "🔗 Add Me To Your Groups",
-					Url:  "https://t.me/PolyesterBot?startgroup=new",
+					Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
 				}
 
 				txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start",
@@ -75,7 +76,7 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 		}
 		startButtons[0][1] = ext.InlineKeyboardButton{
 			Text: "🔗 Add Me To Your Groups",
-			Url:  "https://t.me/PolyesterBot?startgroup=new",
+			Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
 		}
 
 		txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start",

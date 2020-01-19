@@ -8,14 +8,15 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext/helpers"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
 type adminList struct {
@@ -74,24 +75,7 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		helpers.EscapeMarkdown(reason),
 		time.Now())
 
-	reportButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 1), make([]ext.InlineKeyboardButton, 2),
-		make([]ext.InlineKeyboardButton, 1)}
-	reportButtons[0][0] = ext.InlineKeyboardButton{
-		Text: "📝 Message Link",
-		Url:  fmt.Sprintf("https://t.me/%v/%v", msg.Chat.Username, rep.MessageId),
-	}
-	reportButtons[1][0] = ext.InlineKeyboardButton{
-		Text:         "🚷 Kick",
-		CallbackData: fmt.Sprintf("report(kick)(%v)(%v)", rep.From.Id, rep.Chat.Id),
-	}
-	reportButtons[1][1] = ext.InlineKeyboardButton{
-		Text:         "🚫 Ban",
-		CallbackData: fmt.Sprintf("report(ban)(%v)(%v)", rep.From.Id, rep.Chat.Id),
-	}
-	reportButtons[2][0] = ext.InlineKeyboardButton{
-		Text:         "❌ Delete Message",
-		CallbackData: fmt.Sprintf("report(del)(%v)(%v)", rep.Chat.Id, rep.MessageId),
-	}
+	reportButtons := function.BuildKeyboard("data/keyboard/reporting.json", 1)
 
 	for _, adm := range x.Admin {
 		uId, _ := strconv.Atoi(adm)

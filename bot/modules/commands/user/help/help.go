@@ -6,12 +6,11 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/sirupsen/logrus"
+
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/sirupsen/logrus"
 )
-
-var btnList = function.BuildKeyboard("data/keyboard/help.json", 2)
 
 func help(b ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
@@ -32,6 +31,8 @@ func help(b ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 
+	btnList := function.BuildKeyboardf("data/keyboard/help.json",
+		2, map[string]string{"1": b.UserName})
 	markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
 	replyText := fmt.Sprintf("*%v Version* `%v`\n"+
 		"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)

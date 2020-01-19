@@ -6,14 +6,18 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
+	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/sirupsen/logrus"
+	"regexp"
+	"strings"
+
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
-	"github.com/sirupsen/logrus"
-	"regexp"
-	"strings"
 )
+
+var btnLang = function.BuildKeyboard("data/keyboard/language.json", 2)
 
 func setUsername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
@@ -193,12 +197,19 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 
 	if len(args) == 0 {
-		_, err := msg.ReplyText("Please insert the language code so that i can change your language")
+		newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
+		newMsg.ParseMode = parsemode.Markdown
+		newMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &btnLang}
+		_, err := newMsg.Send()
 		return err
 	}
 
 	if !goloc.IsLangSupported(args[0]) {
 		_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/language/language.go:58"))
+		newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
+		newMsg.ParseMode = parsemode.Markdown
+		newMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &btnLang}
+		_, err = newMsg.Send()
 		return err
 	}
 
