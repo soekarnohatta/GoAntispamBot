@@ -28,11 +28,11 @@ func setUsername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
 				switch strings.ToLower(args[0]) {
-				case "true":
+				case "true", "on", "yes":
 					sql.UpdateUsername(chat.Id, "true", "mute", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
-				case "false":
+				case "false", "off", "no":
 					sql.UpdateUsername(chat.Id, "false", "mute", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
@@ -54,18 +54,19 @@ func setVerify(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequireSupergroup(chat, msg) == true {
+	if chat_status.RequireSupergroup(chat, msg) {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
-				if strings.ToLower(args[0]) == "true" {
+				switch strings.ToLower(args[0]) {
+				case "true", "on", "yes":
 					sql.UpdateVerify(chat.Id, "true", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
-				} else if strings.ToLower(args[0]) == "false" {
+				case "false", "off", "no":
 					sql.UpdateVerify(chat.Id, "false", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
-				} else {
+				default:
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
 					return err
 				}
@@ -83,18 +84,19 @@ func setEnforce(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequireSupergroup(chat, msg) == true {
+	if chat_status.RequireSupergroup(chat, msg) {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
-				if strings.ToLower(args[0]) == "true" {
+				switch strings.ToLower(args[0]) {
+				case "true", "on", "yes":
 					sql.UpdateEnforceGban(chat.Id, "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
-				} else if strings.ToLower(args[0]) == "false" {
+				case "false", "off", "no":
 					sql.UpdateEnforceGban(chat.Id, "false")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
-				} else {
+				default:
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
 					return err
 				}
@@ -112,18 +114,19 @@ func setPicture(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequireSupergroup(chat, msg) == true {
+	if chat_status.RequireSupergroup(chat, msg) {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
-				if strings.ToLower(args[0]) == "true" {
+				switch strings.ToLower(args[0]) {
+				case "true", "on", "yes":
 					sql.UpdatePicture(chat.Id, "true", "mute", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
-				} else if strings.ToLower(args[0]) == "false" {
+				case "false", "off", "no":
 					sql.UpdatePicture(chat.Id, "false", "mute", "-", "true")
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 					return err
-				} else {
+				default:
 					_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
 					return err
 				}
@@ -141,7 +144,7 @@ func setTime(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequireSupergroup(chat, msg) == true {
+	if chat_status.RequireSupergroup(chat, msg) {
 		if chat_status.RequireUserAdmin(chat, msg, user.Id) {
 			if len(args) != 0 {
 				match, err := regexp.MatchString("^\\d+[mhd]", strings.ToLower(args[0]))
@@ -165,17 +168,18 @@ func setNotif(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequirePrivate(chat, msg) == true {
+	if chat_status.RequirePrivate(chat, msg) {
 		if len(args) != 0 {
-			if strings.ToLower(args[0]) == "true" {
+			switch strings.ToLower(args[0]) {
+			case "true", "on", "yes":
 				sql.UpdateNotification(user.Id, "true")
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 				return err
-			} else if strings.ToLower(args[0]) == "false" {
+			case "false":
 				sql.UpdateNotification(user.Id, "false")
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 				return err
-			} else {
+			default:
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:2"))
 				return err
 			}
@@ -192,7 +196,7 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequireUserAdmin(chat, msg, user.Id) == false {
+	if !chat_status.RequireUserAdmin(chat, msg, user.Id) {
 		return nil
 	}
 
@@ -228,11 +232,11 @@ func adminCache(b ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 	user := u.EffectiveUser
 
-	if chat_status.RequireSupergroup(chat, msg) == false {
+	if !chat_status.RequireSupergroup(chat, msg) {
 		return gotgbot.EndGroups{}
 	}
 
-	if chat_status.RequireUserAdmin(chat, msg, user.Id) == false {
+	if !chat_status.RequireUserAdmin(chat, msg, user.Id) {
 		return gotgbot.EndGroups{}
 	}
 

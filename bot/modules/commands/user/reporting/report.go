@@ -27,6 +27,10 @@ func report(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
+	if !chat_status.RequireSupergroup(chat, msg) {
+		return gotgbot.EndGroups{}
+	}
+
 	reason := "No reason has been specified"
 	if len(msg.Text) > 7 {
 		splitReason := strings.Split(msg.Text, "report")[1]
