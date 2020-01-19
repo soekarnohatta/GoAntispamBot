@@ -5,10 +5,11 @@ import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
-	"github.com/jumatberkah/antispambot/bot"
 	"html"
 	"strconv"
 	"time"
+
+	"github.com/jumatberkah/antispambot/bot"
 )
 
 func SendBanLog(b ext.Bot, uid int, rson string, u *gotgbot.Update) error {

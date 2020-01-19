@@ -6,15 +6,16 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/sirupsen/logrus"
+	"regexp"
+	"strconv"
+	"strings"
+
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
-	"github.com/sirupsen/logrus"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
 func panel(b ext.Bot, u *gotgbot.Update) error {

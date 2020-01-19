@@ -6,11 +6,12 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/sirupsen/logrus"
+	"regexp"
+
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/sirupsen/logrus"
-	"regexp"
 )
 
 var btnList = function.BuildKeyboard("data/keyboard/help.json", 2)
@@ -39,7 +40,7 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 			replyTxt += function.GetString(chat.Id, "modules/helpers/help.go:"+module)
 			msg.Text = replyTxt
 		} else if module == "back" {
-			markup := ext.InlineKeyboardMarkup{&btnList}
+			markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
 			msg.ReplyMarkup = &markup
 		}
 

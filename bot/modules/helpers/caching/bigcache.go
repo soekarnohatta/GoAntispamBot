@@ -2,8 +2,9 @@ package caching
 
 import (
 	"github.com/allegro/bigcache"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"time"
+
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 )
 
 var CACHE *bigcache.BigCache = nil

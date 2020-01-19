@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/google/uuid"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
-	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
+	"github.com/jumatberkah/antispambot/bot/modules/sql"
 )
 
 func GetUserId(username string) int {

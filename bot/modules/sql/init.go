@@ -2,10 +2,11 @@ package sql
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/jumatberkah/antispambot/bot"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+
+	"github.com/jumatberkah/antispambot/bot"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 )
 
 var SESSION *gorm.DB = nil

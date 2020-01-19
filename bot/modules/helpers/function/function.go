@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot/ext"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 )
 
 func Contains(key []string, str string) bool {

@@ -8,13 +8,6 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/handlers/Filters"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/extraction"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
-	"github.com/jumatberkah/antispambot/bot/modules/sql"
 	"github.com/sirupsen/logrus"
 	"html"
 	"io/ioutil"
@@ -23,6 +16,14 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/extraction"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/logger"
+	"github.com/jumatberkah/antispambot/bot/modules/sql"
 )
 
 type casban struct {

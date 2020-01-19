@@ -6,11 +6,12 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"github.com/PaulSonOfLars/gotgbot/handlers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
+	"github.com/sirupsen/logrus"
+	"regexp"
+
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/sirupsen/logrus"
-	"regexp"
 )
 
 func handleStart(b ext.Bot, u *gotgbot.Update) error {
@@ -23,7 +24,7 @@ func handleStart(b ext.Bot, u *gotgbot.Update) error {
 
 		switch module {
 		case "help":
-			markup := ext.InlineKeyboardMarkup{&btnList}
+			markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
 			replyText := fmt.Sprintf("*%v Version* `%v`\n"+
 				"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
 			replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")

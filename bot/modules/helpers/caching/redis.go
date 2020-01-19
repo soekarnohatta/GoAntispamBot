@@ -2,8 +2,9 @@ package caching
 
 import (
 	"github.com/go-redis/redis"
-	"github.com/jumatberkah/antispambot/bot"
 	"time"
+
+	"github.com/jumatberkah/antispambot/bot"
 )
 
 var REDIS *redis.Client = nil
