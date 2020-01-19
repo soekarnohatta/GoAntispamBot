@@ -19,7 +19,7 @@ import (
 	"strings"
 )
 
-const translationDir = "trans"
+const translationDir = "data/trans"
 
 type Translation struct {
 	XMLName xml.Name `xml:"translation"`
