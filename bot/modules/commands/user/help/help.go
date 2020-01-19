@@ -22,20 +22,29 @@ func help(b ext.Bot, u *gotgbot.Update) error {
 			Text: "📡 Help",
 			Url:  fmt.Sprintf("https://t.me/%v?start=help", b.UserName),
 		}
+
 		replyText := function.GetString(chat.Id, "modules/helpers/help.go:noprivate")
 		reply := b.NewSendableMessage(chat.Id, replyText)
-		reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&infoButtons}
+		reply.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &infoButtons}
 		reply.ReplyToMessageId = msg.MessageId
 		reply.ParseMode = parsemode.Markdown
 		_, err := reply.Send()
 		return err
 	}
 
-	btnList := function.BuildKeyboardf("data/keyboard/help.json",
-		2, map[string]string{"1": b.UserName})
+	btnList := function.BuildKeyboardf(
+		"data/keyboard/help.json",
+		2,
+		map[string]string{"1": b.UserName},
+	)
 	markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
-	replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-		"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
+	replyText := fmt.Sprintf(
+		"*%v Version* `%v`\n"+
+			"by *PolyDev\n\n*",
+		b.FirstName,
+		bot.BotConfig.BotVer,
+	)
+
 	replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 	reply := b.NewSendableMessage(chat.Id, replyText)
 	reply.ReplyMarkup = &markup

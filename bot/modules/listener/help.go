@@ -28,10 +28,12 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, replyText)
 		msg.ParseMode = parsemode.Markdown
+
 		backButton := [][]ext.InlineKeyboardButton{{ext.InlineKeyboardButton{
 			Text:         "Back",
 			CallbackData: "help(back)",
 		}}}
+
 		backKeyboard := ext.InlineKeyboardMarkup{InlineKeyboard: &backButton}
 		msg.ReplyMarkup = &backKeyboard
 		if module != "back" {

@@ -19,11 +19,20 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	if len(args) != 0 {
 		switch args[0] {
 		case "help":
-			btnList := function.BuildKeyboardf("data/keyboard/help.json",
-				2, map[string]string{"1": b.UserName})
+			btnList := function.BuildKeyboardf(
+				"data/keyboard/help.json",
+				2,
+				map[string]string{"1": b.UserName},
+			)
+
 			markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
-			replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-				"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
+			replyText := fmt.Sprintf(
+				"*%v Version* `%v`\n"+
+					"by *PolyDev\n\n*",
+				b.FirstName,
+				bot.BotConfig.BotVer,
+			)
+
 			replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ReplyMarkup = &markup
@@ -43,8 +52,12 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 					Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
 				}
 
-				txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start",
-					map[string]string{"1": bot.BotConfig.BotVer})
+				txtStart := function.GetStringf(
+					chat.Id,
+					"modules/private/pm.go:start",
+					map[string]string{"1": bot.BotConfig.BotVer},
+				)
+
 				replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 				replyMsg.ParseMode = "Markdown"
 				replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}
@@ -57,6 +70,7 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 					Text: "📡 Help",
 					Url:  fmt.Sprintf("https://t.me/%v?start=help", b.UserName),
 				}
+
 				replyText := function.GetString(chat.Id, "modules/helpers/help.go:noprivate")
 				reply := b.NewSendableMessage(chat.Id, replyText)
 				reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&infoButtons}
@@ -79,8 +93,12 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 			Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
 		}
 
-		txtStart := function.GetStringf(chat.Id, "modules/private/pm.go:start",
-			map[string]string{"1": bot.BotConfig.BotVer, "2": b.FirstName})
+		txtStart := function.GetStringf(
+			chat.Id,
+			"modules/private/pm.go:start",
+			map[string]string{"1": bot.BotConfig.BotVer, "2": b.FirstName},
+		)
+
 		replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 		replyMsg.ParseMode = "Markdown"
 		replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}

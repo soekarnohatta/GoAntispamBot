@@ -54,7 +54,7 @@ Run your bot by typing `./antispambot` for linux, or `antispambot.exe` for windo
 
 ## License
 
-This project is licensed under the GNU GPL V3 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GNU GPL V3 License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 
