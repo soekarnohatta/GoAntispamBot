@@ -71,7 +71,7 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		helpers.EscapeMarkdown(rep.From.FirstName),
 		rep.From.Id,
 		rep.From.Id,
-		msg.Chat.Username,
+		helpers.EscapeMarkdown(msg.Chat.Username),
 		rep.MessageId,
 		helpers.EscapeMarkdown(msg.From.FirstName),
 		msg.From.Id,
@@ -79,7 +79,7 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		helpers.EscapeMarkdown(reason),
 		time.Now())
 
-	reportButtons := function.BuildKeyboard("data/keyboard/reporting.json", 1)
+	reportButtons := function.BuildKeyboard("data/keyboard/reporting.json", 2)
 
 	for _, adm := range x.Admin {
 		uId, _ := strconv.Atoi(adm)

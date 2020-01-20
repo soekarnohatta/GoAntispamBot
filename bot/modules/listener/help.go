@@ -14,7 +14,7 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
-var btnList = function.BuildKeyboard("data/keyboard/help.json", 2)
+var btnList = function.BuildKeyboardf("data/keyboard/help.json", 2, map[string]string{"1": "Polyesterbot"})
 
 func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 	query := u.CallbackQuery

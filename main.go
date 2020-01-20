@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
+	"github.com/sirupsen/logrus"
+
 	"github.com/jumatberkah/antispambot/bot"
 	"github.com/jumatberkah/antispambot/bot/modules/commands/admins"
 	"github.com/jumatberkah/antispambot/bot/modules/commands/user/help"
@@ -15,7 +17,6 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/listener"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
-	"github.com/sirupsen/logrus"
 )
 
 func multiInstance() {
@@ -123,6 +124,6 @@ func main() {
 	caching.InitCache()
 	function.LoadAllLang()
 
-	// multiInstance() // This is used if you want multiple bot running on single instance. Be aware that this can take much resources.
-	singleInstance() // This is used if you have only single instance. Do not use both of them!
+	multiInstance() // This is used if you want multiple bot running on single instance. Be aware that this can take much resources.
+	//singleInstance() // This is used if you have only single instance. Do not use both of them!
 }

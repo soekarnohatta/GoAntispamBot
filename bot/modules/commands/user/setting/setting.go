@@ -175,7 +175,7 @@ func setNotif(_ ext.Bot, u *gotgbot.Update, args []string) error {
 				sql.UpdateNotification(user.Id, "true")
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 				return err
-			case "false":
+			case "false", "off", "no":
 				sql.UpdateNotification(user.Id, "false")
 				_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/setting/setting.go:1"))
 				return err
