@@ -83,7 +83,7 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 		helpers.EscapeMarkdown(b.UserName),
 		helpers.EscapeMarkdown(info.OS),
 		helpers.EscapeMarkdown(info.Hostname),
-		convertSeconds(info.Uptime),
+		_convertSeconds(info.Uptime),
 		info.KernelVersion,
 		info.Platform,
 	)
@@ -96,7 +96,7 @@ func getBot(b ext.Bot, u *gotgbot.Update) error {
 	return err
 }
 
-func convertSeconds(input uint64) (result string) {
+func _convertSeconds(input uint64) (result string) {
 	if input != 0 {
 		years := math.Floor(float64(input) / 60 / 60 / 24 / 7 / 30 / 12)
 		seconds := input % (60 * 60 * 24 * 7 * 30 * 12)
@@ -112,26 +112,26 @@ func convertSeconds(input uint64) (result string) {
 		seconds = input % 60
 
 		if years > 0 {
-			result = plural(int(years), "year") + plural(int(months), "month") + plural(int(weeks), "week") + plural(int(days), "day") + plural(int(hours), "hour") + plural(int(minutes), "minute") + plural(int(seconds), "second")
+			result = _plural(int(years), "year") + _plural(int(months), "month") + _plural(int(weeks), "week") + _plural(int(days), "day") + _plural(int(hours), "hour") + _plural(int(minutes), "minute") + _plural(int(seconds), "second")
 		} else if months > 0 {
-			result = plural(int(months), "month") + plural(int(weeks), "week") + plural(int(days), "day") + plural(int(hours), "hour") + plural(int(minutes), "minute") + plural(int(seconds), "second")
+			result = _plural(int(months), "month") + _plural(int(weeks), "week") + _plural(int(days), "day") + _plural(int(hours), "hour") + _plural(int(minutes), "minute") + _plural(int(seconds), "second")
 		} else if weeks > 0 {
-			result = plural(int(weeks), "week") + plural(int(days), "day") + plural(int(hours), "hour") + plural(int(minutes), "minute") + plural(int(seconds), "second")
+			result = _plural(int(weeks), "week") + _plural(int(days), "day") + _plural(int(hours), "hour") + _plural(int(minutes), "minute") + _plural(int(seconds), "second")
 		} else if days > 0 {
-			result = plural(int(days), "day") + plural(int(hours), "hour") + plural(int(minutes), "minute") + plural(int(seconds), "second")
+			result = _plural(int(days), "day") + _plural(int(hours), "hour") + _plural(int(minutes), "minute") + _plural(int(seconds), "second")
 		} else if hours > 0 {
-			result = plural(int(hours), "hour") + plural(int(minutes), "minute") + plural(int(seconds), "second")
+			result = _plural(int(hours), "hour") + _plural(int(minutes), "minute") + _plural(int(seconds), "second")
 		} else if minutes > 0 {
-			result = plural(int(minutes), "minute") + plural(int(seconds), "second")
+			result = _plural(int(minutes), "minute") + _plural(int(seconds), "second")
 		} else {
-			result = plural(int(seconds), "second")
+			result = _plural(int(seconds), "second")
 		}
 		return
 	}
 	return
 }
 
-func plural(count int, singular string) (result string) {
+func _plural(count int, singular string) (result string) {
 	if (count == 1) || (count == 0) {
 		result = strconv.Itoa(count) + " " + singular + " "
 	} else {

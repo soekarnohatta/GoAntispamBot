@@ -64,6 +64,7 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 	rep := msg.ReplyToMessage
 	reportTxt := fmt.Sprintf("#REPORT\n"+
 		"Reported User : [%v](tg://user?id=%v) \\[`%v`] \n"+
+		"Chat : %v\\[%v\\]"+
 		"Message Link : [Here](https://t.me/%v/%v)\n"+
 		"Reporter : [%v](tg://user?id=%v) \\[`%v`] \n"+
 		"Reason : `%v` \n"+
@@ -71,6 +72,8 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		helpers.EscapeMarkdown(rep.From.FirstName),
 		rep.From.Id,
 		rep.From.Id,
+		helpers.EscapeMarkdown(msg.Chat.Title),
+		rep.Chat.Id,
 		helpers.EscapeMarkdown(msg.Chat.Username),
 		rep.MessageId,
 		helpers.EscapeMarkdown(msg.From.FirstName),
@@ -79,7 +82,15 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		helpers.EscapeMarkdown(reason),
 		time.Now())
 
-	reportButtons := function.BuildKeyboard("data/keyboard/reporting.json", 2)
+	reportButtons := function.BuildKeyboardf(
+		"data/keyboard/reporting.json",
+		2,
+		map[string]string{
+			"1": strconv.Itoa(rep.Chat.Id),
+			"2": strconv.Itoa(rep.From.Id),
+			"3": strconv.Itoa(rep.MessageId),
+			"4": rep.Chat.Username,
+		})
 
 	for _, adm := range x.Admin {
 		uId, _ := strconv.Atoi(adm)

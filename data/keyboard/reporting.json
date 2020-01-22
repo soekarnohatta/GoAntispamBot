@@ -13,6 +13,6 @@
   },
   {
     "text": "❌ Delete Message",
-    "data": "report(del)({2})({3})"
+    "data": "report(del)({1})({3})"
   }
 ]
