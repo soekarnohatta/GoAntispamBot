@@ -27,16 +27,22 @@ import (
 func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 
-	if chat_status.RequireOwner(msg, msg.From.Id) == false {
+	if !chat_status.RequireOwner(msg, msg.From.Id) {
 		return nil
 	}
 
 	userId, reason := extraction.ExtractUserAndText(msg, args)
 	if userId == 0 {
-		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"))
+		_, err := b.SendMessageHTML(
+			msg.Chat.Id,
+			function.GetString(msg.Chat.Id, "modules/admins/admins.go:27"),
+		)
 		return err
 	} else if function.Contains(bot.BotConfig.SudoUsers, fmt.Sprint(userId)) || userId == b.Id {
-		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:33"))
+		_, err := b.SendMessageHTML(
+			msg.Chat.Id,
+			function.GetString(msg.Chat.Id, "modules/admins/admins.go:33"),
+		)
 		return err
 	}
 
@@ -48,24 +54,58 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	ban := sql.GetUserSpam(userId)
 	if ban != nil {
 		if ban.Reason == reason {
-			_, err := b.SendMessageHTML(msg.Chat.Id, function.GetString(msg.Chat.Id, "modules/admins/admins.go:38"))
+			_, err := b.SendMessageHTML(
+				msg.Chat.Id,
+				function.GetString(msg.Chat.Id, "modules/admins/admins.go:38"),
+			)
 			return err
 		}
 
-		_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:43",
-			map[string]string{"1": strconv.Itoa(userId), "2": ban.Reason, "3": reason}))
+		_, err := b.SendMessageHTML(
+			msg.Chat.Id,
+			function.GetStringf(
+				msg.Chat.Id,
+				"modules/admins/admins.go:43",
+				map[string]string{
+					"1": strconv.Itoa(userId),
+					"2": ban.Reason,
+					"3": reason},
+			),
+		)
+
 		err_handler.HandleErr(err)
-		go sql.UpdateUserSpam(userId, reason, fmt.Sprint(msg.From.Id), timeAdd)
+		go sql.UpdateUserSpam(
+			userId,
+			reason,
+			fmt.Sprint(msg.From.Id),
+			timeAdd,
+		)
 		err = logger.SendBanLog(b, userId, reason, u)
 		return err
 	}
 
-	_, err := b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:54",
-		map[string]string{"1": strconv.Itoa(userId)}))
+	_, err := b.SendMessageHTML(
+		msg.Chat.Id,
+		function.GetStringf(
+			msg.Chat.Id,
+			"modules/admins/admins.go:54",
+			map[string]string{"1": strconv.Itoa(userId)},
+		),
+	)
 	err_handler.HandleErr(err)
-	go sql.UpdateUserSpam(userId, reason, fmt.Sprint(msg.From.Id), timeAdd)
-	_, err = b.SendMessageHTML(msg.Chat.Id, function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:62",
-		map[string]string{"1": strconv.Itoa(userId), "2": reason}))
+	go sql.UpdateUserSpam(
+		userId,
+		reason,
+		fmt.Sprint(msg.From.Id),
+		timeAdd,
+	)
+	_, err = b.SendMessageHTML(
+		msg.Chat.Id,
+		function.GetStringf(
+			msg.Chat.Id,
+			"modules/admins/admins.go:62",
+			map[string]string{"1": strconv.Itoa(userId), "2": reason}),
+	)
 	err_handler.HandleErr(err)
 	err = logger.SendBanLog(b, userId, reason, u)
 	return err
@@ -74,7 +114,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 func unGbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 
-	if chat_status.RequireOwner(msg, msg.From.Id) == false {
+	if !chat_status.RequireOwner(msg, msg.From.Id) {
 		return nil
 	}
 
@@ -96,9 +136,12 @@ func unGbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 		go func() {
 			group := sql.GetAllChat
-			banerr := []string{"Bad Request: USER_ID_INVALID", "Bad Request: USER_NOT_PARTICIPANT" +
-				"Bad Request: chat member status can't be changed in private chats"}
-			go sql.DelUserSpam(userId)
+			banerr := []string{
+				"Bad Request: USER_ID_INVALID", "Bad Request: USER_NOT_PARTICIPANT" +
+					"Bad Request: chat member status can't be changed in private chats",
+			}
+
+			sql.DelUserSpam(userId)
 			for _, a := range group() {
 				cid, _ := strconv.Atoi(a.ChatId)
 				_, err = b.UnbanChatMember(cid, userId)
@@ -113,8 +156,13 @@ func unGbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 			}
 		}()
 
-		_, err = msg.ReplyHTMLf(function.GetStringf(msg.Chat.Id, "modules/admins/admins.go:111",
-			map[string]string{"1": strconv.Itoa(userId)}))
+		_, err = msg.ReplyHTMLf(
+			function.GetStringf(
+				msg.Chat.Id,
+				"modules/admins/admins.go:111",
+				map[string]string{"1": strconv.Itoa(userId)},
+			),
+		)
 		return err
 	}
 	_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/admins/admins.go:116"))
@@ -180,8 +228,11 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 		return err
 	}
 
-	_, err := msg.ReplyHTMLf("<b>Message Has Been Broadcasted</b>,"+
-		"<code>%v</code> <b>Has Failed</b>\n", errNum)
+	_, err := msg.ReplyHTMLf(
+		"<b>Message Has Been Broadcasted</b>,"+
+			"<code>%v</code> <b>Has Failed</b>\n",
+		errNum,
+	)
 	return err
 }
 
@@ -192,13 +243,13 @@ func dbg(b ext.Bot, u *gotgbot.Update) error {
 	}
 
 	if msg.ReplyToMessage != nil {
-		var jsonData []byte
+		var jsonData []byte = nil
 		jsonData, err := json.Marshal(msg.ReplyToMessage)
 		err_handler.HandleErr(err)
 		_, err = msg.ReplyText(string(jsonData))
 		return err
 	} else {
-		var jsonData []byte
+		var jsonData []byte = nil
 		jsonData, err := json.Marshal(msg)
 		err_handler.HandleErr(err)
 		_, err = msg.ReplyText(string(jsonData))
