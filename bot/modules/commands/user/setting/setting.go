@@ -222,8 +222,11 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 		sql.UpdateLang(chat.Id, args[0])
 	}
 
-	_, err = msg.ReplyHTML(function.GetStringf(chat.Id, "modules/language/language.go:51",
-		map[string]string{"1": args[0]}))
+	_, err = msg.ReplyHTML(function.GetStringf(
+		chat.Id,
+		"modules/language/language.go:51",
+		map[string]string{"1": args[0]}),
+	)
 	return err
 }
 

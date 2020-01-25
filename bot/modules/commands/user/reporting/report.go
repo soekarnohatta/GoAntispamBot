@@ -19,16 +19,12 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
-type adminList struct {
-	Admin []string `json:"admin"`
-}
-
 func report(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
 	if !chat_status.RequireSupergroup(chat, msg) {
-		return gotgbot.EndGroups{}
+		return nil
 	}
 
 	reason := "No reason has been specified"
@@ -41,7 +37,10 @@ func report(b ext.Bot, u *gotgbot.Update) error {
 
 	if msg.ReplyToMessage != nil {
 		go reportUser(b, msg, reason)
-		replyMsg := b.NewSendableMessage(chat.Id, function.GetString(chat.Id, "modules/reporting/report.go:start"))
+		replyMsg := b.NewSendableMessage(
+			chat.Id,
+			function.GetString(chat.Id, "modules/reporting/report.go:start"),
+		)
 		replyMsg.ParseMode = parsemode.Markdown
 		replyMsg.ReplyToMessageId = msg.ReplyToMessage.MessageId
 		_, err := replyMsg.Send()
@@ -58,7 +57,7 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		admins, _ = caching.CACHE.Get(fmt.Sprintf("admin_%v", msg.Chat.Id))
 	}
 
-	var x adminList
+	var x map[string]string
 	_ = json.Unmarshal(admins, &x)
 
 	rep := msg.ReplyToMessage
@@ -92,11 +91,11 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 			"4": rep.Chat.Username,
 		})
 
-	for _, adm := range x.Admin {
+	for _, adm := range x {
 		uId, _ := strconv.Atoi(adm)
 		sendMsg := b.NewSendableMessage(uId, reportTxt)
 		sendMsg.ParseMode = parsemode.Markdown
-		sendMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&reportButtons}
+		sendMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &reportButtons}
 		sendMsg.DisableWebPreview = true
 		sendMsg.DisableNotification = true
 		_, err := sendMsg.Send()

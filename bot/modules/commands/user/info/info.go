@@ -39,9 +39,17 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 		spamStatus := sql.GetUserSpam(userId)
 		if spamStatus != nil {
-			timeBanned, _ := strconv.ParseInt(fmt.Sprint(spamStatus.TimeAdded), 10, 64)
-			val := map[string]string{"1": spamStatus.Reason, "2": spamStatus.Banner,
-				"3": fmt.Sprint(time.Unix(timeBanned, 0))}
+			timeBanned, _ := strconv.ParseInt(
+				fmt.Sprint(spamStatus.TimeAdded),
+				10,
+				64,
+			)
+			val := map[string]string{
+				"1": spamStatus.Reason,
+				"2": spamStatus.Banner,
+				"3": fmt.Sprint(time.Unix(timeBanned, 0)),
+			}
+
 			replyText += function.GetStringf(chat.Id, "modules/info/info.go:35", val)
 		}
 
@@ -58,12 +66,14 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 				}
 			}
 			return err
+		} else {
+			_, err := msg.ReplyText(function.GetString(chat.Id, "modules/info/info.go:51"))
+			return err
 		}
 	} else {
 		_, err := msg.ReplyText(function.GetString(chat.Id, "modules/info/info.go:51"))
 		return err
 	}
-	return nil
 }
 
 func getBot(b ext.Bot, u *gotgbot.Update) error {

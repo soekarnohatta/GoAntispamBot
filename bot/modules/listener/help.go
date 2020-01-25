@@ -15,6 +15,10 @@ import (
 )
 
 var btnList = function.BuildKeyboardf("data/keyboard/help.json", 2, map[string]string{"1": "Polyesterbot"})
+var backButton = [][]ext.InlineKeyboardButton{{ext.InlineKeyboardButton{
+	Text:         "Back",
+	CallbackData: "help(back)",
+}}}
 
 func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 	query := u.CallbackQuery
@@ -24,16 +28,13 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 		module := pattern.FindStringSubmatch(query.Data)[1]
 		chat := u.EffectiveChat
 		replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-			"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
+			"by *PolyDev\n\n*",
+			b.FirstName,
+			bot.BotConfig.BotVer,
+		)
 		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, replyText)
 		msg.ParseMode = parsemode.Markdown
-
-		backButton := [][]ext.InlineKeyboardButton{{ext.InlineKeyboardButton{
-			Text:         "Back",
-			CallbackData: "help(back)",
-		}}}
-
 		backKeyboard := ext.InlineKeyboardMarkup{InlineKeyboard: &backButton}
 		msg.ReplyMarkup = &backKeyboard
 		if module != "back" {

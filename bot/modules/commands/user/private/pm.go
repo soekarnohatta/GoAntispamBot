@@ -16,6 +16,21 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
+	startButtons := [][]ext.InlineKeyboardButton{
+		{ext.InlineKeyboardButton{
+			Text:         "📝 Help",
+			CallbackData: "start(help)",
+		}},
+		{ext.InlineKeyboardButton{
+			Text: "🔗 Add Me To Your Groups",
+			Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
+		}}}
+	infoButtons := [][]ext.InlineKeyboardButton{
+		{ext.InlineKeyboardButton{
+			Text: "📡 Help",
+			Url:  fmt.Sprintf("https://t.me/%v?start=help", b.UserName),
+		}}}
+
 	if len(args) != 0 {
 		switch args[0] {
 		case "help":
@@ -42,16 +57,6 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 			return err
 		default:
 			if chat.Type == "private" {
-				startButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 2)}
-				startButtons[0][0] = ext.InlineKeyboardButton{
-					Text:         "📝 Help",
-					CallbackData: "start(help)",
-				}
-				startButtons[0][1] = ext.InlineKeyboardButton{
-					Text: "🔗 Add Me To Your Groups",
-					Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
-				}
-
 				txtStart := function.GetStringf(
 					chat.Id,
 					"modules/private/pm.go:start",
@@ -65,12 +70,6 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 				_, err := replyMsg.Send()
 				return err
 			} else {
-				infoButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 1)}
-				infoButtons[0][0] = ext.InlineKeyboardButton{
-					Text: "📡 Help",
-					Url:  fmt.Sprintf("https://t.me/%v?start=help", b.UserName),
-				}
-
 				replyText := function.GetString(chat.Id, "modules/helpers/help.go:noprivate")
 				reply := b.NewSendableMessage(chat.Id, replyText)
 				reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&infoButtons}
@@ -83,16 +82,6 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 
 	if chat.Type == "private" {
-		startButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 2)}
-		startButtons[0][0] = ext.InlineKeyboardButton{
-			Text:         "📝 Help",
-			CallbackData: fmt.Sprintf("start(%v)", "help"),
-		}
-		startButtons[0][1] = ext.InlineKeyboardButton{
-			Text: "🔗 Add Me To Your Groups",
-			Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
-		}
-
 		txtStart := function.GetStringf(
 			chat.Id,
 			"modules/private/pm.go:start",
@@ -106,11 +95,6 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 		_, err := replyMsg.Send()
 		return err
 	} else {
-		infoButtons := [][]ext.InlineKeyboardButton{make([]ext.InlineKeyboardButton, 1)}
-		infoButtons[0][0] = ext.InlineKeyboardButton{
-			Text: "📡 Help",
-			Url:  fmt.Sprintf("https://t.me/%v?start=help", b.UserName),
-		}
 		replyText := function.GetString(chat.Id, "modules/helpers/help.go:noprivate")
 		reply := b.NewSendableMessage(chat.Id, replyText)
 		reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&infoButtons}

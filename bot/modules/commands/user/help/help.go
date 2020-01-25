@@ -37,6 +37,7 @@ func help(b ext.Bot, u *gotgbot.Update) error {
 		2,
 		map[string]string{"1": b.UserName},
 	)
+
 	markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
 	replyText := fmt.Sprintf(
 		"*%v Version* `%v`\n"+
