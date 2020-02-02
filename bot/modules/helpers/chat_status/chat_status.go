@@ -122,7 +122,7 @@ func CanRestrict(bot ext.Bot, chat *ext.Chat) bool {
 	restrict, err := caching.CACHE.Get(fmt.Sprintf("restrict_%v", chat.Id))
 
 	if err != nil {
-		go doRestrictCache(chat, bot)
+		doRestrictCache(chat, bot)
 		botChatMember, err := chat.GetMember(bot.Id)
 		err_handler.HandleErr(err)
 		if !botChatMember.CanRestrictMembers {
@@ -142,7 +142,7 @@ func CanDelete(bot ext.Bot, chat *ext.Chat) bool {
 	restrict, err := caching.CACHE.Get(fmt.Sprintf("delete_%v", chat.Id))
 
 	if err != nil {
-		go doDeleteCache(chat, bot)
+		doDeleteCache(chat, bot)
 		botChatMember, err := chat.GetMember(bot.Id)
 		err_handler.HandleErr(err)
 		if !botChatMember.CanDeleteMessages {
@@ -175,10 +175,9 @@ func doDeleteCache(chat *ext.Chat, bot ext.Bot) {
 	botChatMember, err := chat.GetMember(bot.Id)
 	err_handler.HandleErr(err)
 	deleteCaches := false
-	if !botChatMember.CanDeleteMessages {
-		deleteCaches = false
+	if botChatMember.CanDeleteMessages {
+		deleteCaches = true
 	}
-	deleteCaches = true
 
 	cacheDelete := &deleteCache{deleteCaches}
 	finalCache, _ := json.Marshal(cacheDelete)
@@ -189,10 +188,9 @@ func doRestrictCache(chat *ext.Chat, bot ext.Bot) {
 	botChatMember, err := chat.GetMember(bot.Id)
 	err_handler.HandleErr(err)
 	deleteRestrict := false
-	if !botChatMember.CanRestrictMembers {
-		deleteRestrict = false
+	if botChatMember.CanRestrictMembers {
+		deleteRestrict = true
 	}
-	deleteRestrict = true
 
 	cacheDelete := &restrictCache{deleteRestrict}
 	finalCache, _ := json.Marshal(cacheDelete)
