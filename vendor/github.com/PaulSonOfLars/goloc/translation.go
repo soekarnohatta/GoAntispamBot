@@ -16,7 +16,7 @@ import (
 var data = make(map[string]map[string]Value)
 var dataCount = make(map[string]int)
 var languages []string
-var DefaultLang = "en-GB"
+var DefaultLang = "en"
 
 func Trnl(lang string, trnlVal string) string {
 	v, ok := data[lang][trnlVal]

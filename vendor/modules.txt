@@ -1,8 +1,9 @@
 # github.com/PaulSonOfLars/goloc v0.0.0-20190928104011-41745139b91a
 github.com/PaulSonOfLars/goloc
-# github.com/PaulSonOfLars/gotgbot v0.0.0-20200103184348-7ae29654e65a
+# github.com/PaulSonOfLars/gotgbot v0.0.0-20200123214243-abe3d8f5395b
 github.com/PaulSonOfLars/gotgbot
 github.com/PaulSonOfLars/gotgbot/ext
+github.com/PaulSonOfLars/gotgbot/ext/helpers
 github.com/PaulSonOfLars/gotgbot/handlers
 github.com/PaulSonOfLars/gotgbot/handlers/Filters
 github.com/PaulSonOfLars/gotgbot/parsemode
@@ -24,7 +25,7 @@ github.com/go-redis/redis/internal/proto
 github.com/go-redis/redis/internal/util
 # github.com/google/uuid v1.1.1
 github.com/google/uuid
-# github.com/jinzhu/gorm v1.9.11
+# github.com/jinzhu/gorm v1.9.12
 github.com/jinzhu/gorm
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
@@ -36,8 +37,10 @@ github.com/konsorten/go-windows-terminal-sequences
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
-# github.com/pkg/errors v0.8.1
+# github.com/pkg/errors v0.9.1
 github.com/pkg/errors
+# github.com/robfig/cron v1.2.0
+github.com/robfig/cron
 # github.com/shirou/gopsutil v2.19.12+incompatible
 github.com/shirou/gopsutil/cpu
 github.com/shirou/gopsutil/host
@@ -49,13 +52,13 @@ github.com/shirou/gopsutil/process
 github.com/sirupsen/logrus
 # github.com/tcnksm/go-httpstat v0.2.0
 github.com/tcnksm/go-httpstat
-# golang.org/x/sys v0.0.0-20200103143344-a1369afcdac7
+# golang.org/x/sys v0.0.0-20200124204421-9fbb57f87de9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
+# golang.org/x/text v0.3.2
 golang.org/x/text/internal/language
 golang.org/x/text/internal/language/compact
 golang.org/x/text/internal/tag
 golang.org/x/text/language
-# golang.org/x/tools v0.0.0-20191026034945-b2104f82a97d
+# golang.org/x/tools v0.0.0-20200124220429-8fe064f891f2
 golang.org/x/tools/go/ast/astutil

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	"fmt"
 
 	"github.com/pkg/errors"
 )
@@ -51,7 +52,25 @@ func Post(bot Bot, fileType string, method string, params url.Values, file io.Re
 }
 
 func (tbg *TgBotGetter) Get(bot Bot, method string, params url.Values) (*Response, error) {
+	time1 := time.Now()
 	req, err := http.NewRequest("GET", tbg.ApiUrl+bot.Token+"/"+method, nil)
+	msgTxt := params.Get("text")
+	parseMode := params.Get("parse_mode")
+
+	if params != nil {
+		if msgTxt != ""{
+			timeProc := time.Now().Sub(time1)
+			if parseMode == "HTML"{
+				msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code>", timeProc)
+			} else if parseMode == "Markdown"{
+				msgTxt += fmt.Sprintf("\n\n⏱ `%v`", timeProc)
+			} else {
+				msgTxt += fmt.Sprintf("\n\n⏱ %v", timeProc)
+			}
+		}
+		params.Set("text", msgTxt)
+	}
+
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to build GET request to %v", method)
 	}
@@ -77,6 +96,7 @@ func (tbg *TgBotGetter) Get(bot Bot, method string, params url.Values) (*Respons
 }
 
 func (tbg *TgBotGetter) Post(bot Bot, fileType string, method string, params url.Values, file io.Reader, filename string) (*Response, error) {
+	time1 := time.Now()
 	if filename == "" {
 		filename = "unnamed_file"
 	}
@@ -101,6 +121,24 @@ func (tbg *TgBotGetter) Post(bot Bot, fileType string, method string, params url
 		bot.Logger.WithError(err).Debugf("failed to execute POST request to %v", method)
 		return nil, errors.Wrapf(err, "unable to execute POST request to %v", method)
 	}
+
+	parseMode := params.Get("parse_mode")
+	msgTxt := params.Get("caption")
+
+	if params != nil {
+		timeProc := time.Now().Sub(time1)
+		if parseMode == "HTML"{
+			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code>", timeProc)
+		} else if parseMode == "Markdown"{
+			msgTxt += fmt.Sprintf("\n\n⏱ `%v`", timeProc)
+		} else {
+			params.Set("parse_mode", "HTML")
+			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code>", timeProc)
+		}
+
+		params.Set("caption", msgTxt)
+	}
+
 	req.URL.RawQuery = params.Encode()
 	req.Header.Set("Content-Type", w.FormDataContentType())
 
