@@ -32,8 +32,9 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 			b.FirstName,
 			bot.BotConfig.BotVer,
 		)
+
 		replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
-		msg := b.NewSendableEditMessageText(chat.Id, u.EffectiveMessage.MessageId, replyText)
+		msg := b.NewSendableMessage(chat.Id, replyText)
 		msg.ParseMode = parsemode.Markdown
 		backKeyboard := ext.InlineKeyboardMarkup{InlineKeyboard: &backButton}
 		msg.ReplyMarkup = &backKeyboard
@@ -47,7 +48,9 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 			msg.ReplyMarkup = &markup
 		}
 
-		_, err := msg.Send()
+		_, err := query.Message.Delete()
+		err_handler.HandleErr(err)
+		_, err = msg.Send()
 		err_handler.HandleErr(err)
 	}
 	return gotgbot.ContinueGroups{}
