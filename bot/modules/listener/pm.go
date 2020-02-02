@@ -14,6 +14,8 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
+var btnLang = function.BuildKeyboard("data/keyboard/language.json", 2)
+
 func handleStart(b ext.Bot, u *gotgbot.Update) error {
 	query := u.CallbackQuery
 	pattern, _ := regexp.Compile(`start\((.+?)\)`)
@@ -25,14 +27,28 @@ func handleStart(b ext.Bot, u *gotgbot.Update) error {
 		switch module {
 		case "help":
 			markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
-			replyText := fmt.Sprintf("*%v Version* `%v`\n"+
-				"by *PolyDev\n\n*", b.FirstName, bot.BotConfig.BotVer)
+			replyText := fmt.Sprintf(
+				"*%v Version* `%v`\n"+
+					"by *PolyDev\n\n*",
+				b.FirstName,
+				bot.BotConfig.BotVer,
+			)
 			replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
-			reply := b.NewSendableEditMessageText(chat.Id, query.Message.MessageId, replyText)
+			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ReplyMarkup = &markup
 			reply.ParseMode = parsemode.Markdown
-			_, err := reply.Send()
+			_, err := query.Message.Delete()
 			err_handler.HandleErr(err)
+			_, err = reply.Send()
+			err_handler.HandleErr(err)
+		case "language":
+			_, err := query.Message.Delete()
+			err_handler.HandleErr(err)
+			newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
+			newMsg.ParseMode = parsemode.Markdown
+			newMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &btnLang}
+			_, err = newMsg.Send()
+			return err
 		}
 	}
 	return gotgbot.ContinueGroups{}
