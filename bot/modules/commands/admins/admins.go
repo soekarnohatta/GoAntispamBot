@@ -74,7 +74,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 		)
 
 		err_handler.HandleErr(err)
-		go sql.UpdateUserSpam(
+		sql.UpdateUserSpam(
 			userId,
 			reason,
 			fmt.Sprint(msg.From.Id),
@@ -93,7 +93,7 @@ func gbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 		),
 	)
 	err_handler.HandleErr(err)
-	go sql.UpdateUserSpam(
+	sql.UpdateUserSpam(
 		userId,
 		reason,
 		fmt.Sprint(msg.From.Id),
@@ -172,7 +172,7 @@ func unGbanUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 func stats(_ ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
-	if chat_status.RequireOwner(msg, msg.From.Id) == false {
+	if !chat_status.RequireOwner(msg, msg.From.Id) {
 		return nil
 	}
 
@@ -192,7 +192,7 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 func broadcast(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 
-	if chat_status.RequireOwner(msg, msg.From.Id) == false {
+	if !chat_status.RequireOwner(msg, msg.From.Id) {
 		return nil
 	}
 
@@ -238,7 +238,7 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 
 func dbg(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
-	if chat_status.RequireOwner(msg, msg.From.Id) == false {
+	if !chat_status.RequireOwner(msg, msg.From.Id) {
 		return nil
 	}
 
@@ -258,7 +258,7 @@ func dbg(b ext.Bot, u *gotgbot.Update) error {
 }
 
 func ping(_ ext.Bot, u *gotgbot.Update) error {
-	req, err := http.NewRequest("GET", "https://google.com", nil)
+	req, err := http.NewRequest("GET", "https://api.telegram.org", nil)
 	err_handler.HandleErr(err)
 
 	var result httpstat.Result
@@ -287,6 +287,7 @@ func LoadAdmins(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("ungban", []rune{'/', '.'}, unGbanUser))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("stats", []rune{'/', '.'}, stats))
 	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("broadcast", []rune{'/', '.'}, broadcast))
-	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("ping", []rune{'/', '!'}, ping))
-	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("dbg", []rune{'/', '!'}, dbg))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("ping", []rune{'/', '.'}, ping))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("dbg", []rune{'/', '.'}, dbg))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("backup", []rune{'/', '.'}, backupDb))
 }

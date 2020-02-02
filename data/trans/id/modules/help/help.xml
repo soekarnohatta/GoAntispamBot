@@ -34,7 +34,7 @@ Untuk pengaturan lebih lanjut gunakan perintah /settings</value>
     </Rows>
     <Rows id="4" name="modules/helpers/help.go:notif">
         <value>*Notifikasi*
-Anda pasti akan selalu mendapatkan notifikasi apabila Anda belum menggunakan username/foto/belum verifikasi melalui pesan privat. Anda dapat mematikan atau menyalakan fitur notifikasi dengan perintah /notify (true/false).</value>
+Anda pasti akan selalu mendapatkan notifikasi apabila Anda belum menggunakan username/foto/belum verifikasi melalui pesan privat. Anda dapat mematikan atau menyalakan fitur notifikasi dengan perintah /notif (true/false).</value>
         <!--modules/helpers/help.go:100-->
     </Rows>
     <Rows id="5" name="modules/helpers/help.go:aspam">

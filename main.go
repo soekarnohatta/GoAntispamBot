@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
+	"github.com/robfig/cron"
 	"github.com/sirupsen/logrus"
 
 	"github.com/jumatberkah/antispambot/bot"
@@ -69,6 +70,14 @@ func multiInstance() {
 			logrus.Info(fmt.Sprintf("Bot Running On Version: %v - %v", bot.BotConfig.BotVer,
 				updater.Bot.UserName))
 			go updater.Idle()
+			go func() {
+				// cron job
+				c := cron.New()
+				_ = c.AddFunc("@every 30m", func() {
+					_ = admins.CronBackupDb(updater)
+				})
+				c.Start()
+			}()
 		}
 	}
 }

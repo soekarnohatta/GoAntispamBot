@@ -17,11 +17,11 @@
         <!--modules/helpers/chat_status.go:100-->
     </Rows>
     <Rows id="5" name="modules/helpers/chat_status.go:111">
-        <value>❌ Saya tidak bisa menghapus pesan disini! Pastikan saya Admin dengan hak penuh!</value>
+        <value>❌ Saya tidak bisa membatasi orang disini! Pastikan saya Admin dengan hak penuh!</value>
         <!--modules/helpers/chat_status.go:111-->
     </Rows>
     <Rows id="6" name="modules/helpers/chat_status.go:122">
-        <value>❌ Saya tidak bisa membatasi orang disini! Pastikan saya Admin dengan hak penuh!</value>
+        <value>❌ Saya tidak bisa menghapus pesan disini! Pastikan saya Admin dengan hak penuh!</value>
         <!--modules/helpers/chat_status.go:122-->
     </Rows>
     <Counter>6</Counter>

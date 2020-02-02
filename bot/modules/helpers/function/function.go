@@ -73,7 +73,7 @@ func BuildKeyboardf(path string, size int, dataMap map[string]string) (res [][]e
 		}
 		repl := strings.NewReplacer(replData...)
 
-		if isValidUrl(btnData) {
+		if isValidUrl(repl.Replace(btnData)) {
 			btnList = append(btnList, ext.InlineKeyboardButton{
 				Text: repl.Replace(btnText),
 				Url:  repl.Replace(btnData),

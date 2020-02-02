@@ -12,76 +12,71 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
+var startButtons = [][]ext.InlineKeyboardButton{
+	{ext.InlineKeyboardButton{
+		Text:         "📝 Help",
+		CallbackData: "start(help)",
+	}},
+	{ext.InlineKeyboardButton{
+		Text:         "🇦🇺 Language",
+		CallbackData: "start(language)",
+	}},
+	{ext.InlineKeyboardButton{
+		Text: "🔗 Add Me To Your Groups",
+		Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", ext.Bot{}.UserName),
+	}}}
+
+var infoButtons = [][]ext.InlineKeyboardButton{
+	{ext.InlineKeyboardButton{
+		Text: "📡 Help",
+		Url:  fmt.Sprintf("https://t.me/%v?start=help", ext.Bot{}.UserName),
+	}}}
+
 func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
-	startButtons := [][]ext.InlineKeyboardButton{
-		{ext.InlineKeyboardButton{
-			Text:         "📝 Help",
-			CallbackData: "start(help)",
-		}},
-		{ext.InlineKeyboardButton{
-			Text: "🔗 Add Me To Your Groups",
-			Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
-		}}}
-	infoButtons := [][]ext.InlineKeyboardButton{
-		{ext.InlineKeyboardButton{
-			Text: "📡 Help",
-			Url:  fmt.Sprintf("https://t.me/%v?start=help", b.UserName),
-		}}}
-
-	if len(args) != 0 {
-		switch args[0] {
-		case "help":
-			btnList := function.BuildKeyboardf(
-				"data/keyboard/help.json",
-				2,
-				map[string]string{"1": b.UserName},
-			)
-
-			markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
-			replyText := fmt.Sprintf(
-				"*%v Version* `%v`\n"+
-					"by *PolyDev\n\n*",
-				b.FirstName,
-				bot.BotConfig.BotVer,
-			)
-
-			replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
-			reply := b.NewSendableMessage(chat.Id, replyText)
-			reply.ReplyMarkup = &markup
-			reply.ReplyToMessageId = msg.MessageId
-			reply.ParseMode = parsemode.Markdown
-			_, err := reply.Send()
-			return err
-		default:
-			if chat.Type == "private" {
-				txtStart := function.GetStringf(
-					chat.Id,
-					"modules/private/pm.go:start",
-					map[string]string{"1": bot.BotConfig.BotVer},
+	if chat.Type == "private" {
+		if len(args) != 0 {
+			switch args[0] {
+			case "help":
+				btnList := function.BuildKeyboardf(
+					"data/keyboard/help.json",
+					2,
+					map[string]string{"1": b.UserName},
 				)
 
-				replyMsg := b.NewSendableMessage(chat.Id, txtStart)
-				replyMsg.ParseMode = "Markdown"
-				replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}
-				replyMsg.ReplyToMessageId = msg.MessageId
-				_, err := replyMsg.Send()
-				return err
-			} else {
-				replyText := function.GetString(chat.Id, "modules/helpers/help.go:noprivate")
+				markup := ext.InlineKeyboardMarkup{InlineKeyboard: &btnList}
+				replyText := fmt.Sprintf(
+					"*%v Version* `%v`\n"+
+						"by *PolyDev\n\n*",
+					b.FirstName,
+					bot.BotConfig.BotVer,
+				)
+
+				replyText += function.GetString(chat.Id, "modules/helpers/help.go:helptxt")
 				reply := b.NewSendableMessage(chat.Id, replyText)
-				reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&infoButtons}
+				reply.ReplyMarkup = &markup
 				reply.ReplyToMessageId = msg.MessageId
 				reply.ParseMode = parsemode.Markdown
 				_, err := reply.Send()
 				return err
+			default:
+				txtStart := function.GetStringf(
+					chat.Id,
+					"modules/private/pm.go:start",
+					map[string]string{"1": bot.BotConfig.BotVer, "2": b.FirstName},
+				)
+
+				replyMsg := b.NewSendableMessage(chat.Id, txtStart)
+				replyMsg.ParseMode = "Markdown"
+				replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &startButtons}
+				replyMsg.ReplyToMessageId = msg.MessageId
+				_, err := replyMsg.Send()
+				return err
 			}
 		}
-	}
 
-	if chat.Type == "private" {
 		txtStart := function.GetStringf(
 			chat.Id,
 			"modules/private/pm.go:start",
@@ -90,14 +85,14 @@ func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 		replyMsg := b.NewSendableMessage(chat.Id, txtStart)
 		replyMsg.ParseMode = "Markdown"
-		replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{&startButtons}
+		replyMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &startButtons}
 		replyMsg.ReplyToMessageId = msg.MessageId
 		_, err := replyMsg.Send()
 		return err
 	} else {
 		replyText := function.GetString(chat.Id, "modules/helpers/help.go:noprivate")
 		reply := b.NewSendableMessage(chat.Id, replyText)
-		reply.ReplyMarkup = &ext.InlineKeyboardMarkup{&infoButtons}
+		reply.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &infoButtons}
 		reply.ReplyToMessageId = msg.MessageId
 		reply.ParseMode = parsemode.Markdown
 		_, err := reply.Send()

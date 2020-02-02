@@ -34,7 +34,7 @@ For further settings, use the command /settings</value>
     </Rows>
     <Rows id="4" name="modules/helpers/help.go:notif">
         <value>*Notifications*
-You will always get a notification if you have not used a username / photo / have not verified through a private message. You can turn off or turn on the notification feature with the /notify (`true / false`) command.</value>
+You will always get a notification if you have not used a username / photo / have not verified through a private message. You can turn off or turn on the notification feature with the /notif (`true / false`) command.</value>
         <!--modules/helpers/help.go:100-->
     </Rows>
     <Rows id="5" name="modules/helpers/help.go:aspam">
@@ -70,7 +70,7 @@ We have done all of this so that you can enjoy this service smoothly without spr
     </Rows>
     <Rows id="8" name="modules/helpers/help.go:helptxt">
         <value>*Main*
-Is a group management bot, packed with security features. You have to make me as an admin with all admin permissions in order to use my full power. Suggestions, complains, or anything else can be proposed at @PolyBotSuppport.</value>
+Is a group management bot, packed with security features. You have to make me as an admin with all admin permissions in order to use my full power. Suggestions, complains, or anything else can be proposed at @PolyBotSupport.</value>
         <!--modules/helpers/help.go:122-->
     </Rows>
     <Rows id="9" name="modules/helpers/help.go:noprivate">

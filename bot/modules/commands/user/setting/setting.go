@@ -17,8 +17,6 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 )
 
-var btnLang = function.BuildKeyboard("data/keyboard/language.json", 2)
-
 func setUsername(_ ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
@@ -200,6 +198,8 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return nil
 	}
 
+	btnLang := function.BuildKeyboard("data/keyboard/language.json", 2)
+
 	if len(args) == 0 {
 		newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
 		newMsg.ParseMode = parsemode.Markdown
@@ -209,11 +209,11 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 
 	if !goloc.IsLangSupported(args[0]) {
-		_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/language/language.go:58"))
+		_, _ = msg.ReplyHTML(function.GetString(chat.Id, "modules/language/language.go:58"))
 		newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
 		newMsg.ParseMode = parsemode.Markdown
 		newMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &btnLang}
-		_, err = newMsg.Send()
+		_, err := newMsg.Send()
 		return err
 	}
 
@@ -230,7 +230,7 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	return err
 }
 
-func adminCache(b ext.Bot, u *gotgbot.Update) error {
+func adminCache(_ ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 	user := u.EffectiveUser

@@ -19,6 +19,10 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
+type adminCache struct {
+	Admin []string `json:"admin"`
+}
+
 func report(b ext.Bot, u *gotgbot.Update) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
@@ -57,13 +61,13 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 		admins, _ = caching.CACHE.Get(fmt.Sprintf("admin_%v", msg.Chat.Id))
 	}
 
-	var x map[string]string
+	var x adminCache
 	_ = json.Unmarshal(admins, &x)
 
 	rep := msg.ReplyToMessage
 	reportTxt := fmt.Sprintf("#REPORT\n"+
 		"Reported User : [%v](tg://user?id=%v) \\[`%v`] \n"+
-		"Chat : %v\\[%v\\]"+
+		"Chat : %v \\[`%v`]\n"+
 		"Message Link : [Here](https://t.me/%v/%v)\n"+
 		"Reporter : [%v](tg://user?id=%v) \\[`%v`] \n"+
 		"Reason : `%v` \n"+
@@ -91,7 +95,7 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string) {
 			"4": rep.Chat.Username,
 		})
 
-	for _, adm := range x {
+	for _, adm := range x.Admin {
 		uId, _ := strconv.Atoi(adm)
 		sendMsg := b.NewSendableMessage(uId, reportTxt)
 		sendMsg.ParseMode = parsemode.Markdown

@@ -2,8 +2,7 @@
 <translation>
     <Rows id="1" name="modules/private/pm.go:start">
         <value>🤖 *{2} Bot Version* `{1}` by *PolyDev.*
-Is a group management bot, packed with security features. You have to make me as an admin with all admin permissions in order to use my full power. Suggestions, complains, or anything else can be proposed at @PolyBotSuppport
-        </value>
+Is a group management bot, packed with security features. You have to make me as an admin with all admin permissions in order to use my full power. Suggestions, complains, or anything else can be proposed at @PolyBotSupport</value>
         <!--modules/private/pm.go:15-->
     </Rows>
     <Counter>1</Counter>
