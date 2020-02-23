@@ -52,36 +52,20 @@ func Post(bot Bot, fileType string, method string, params url.Values, file io.Re
 }
 
 func (tbg *TgBotGetter) Get(bot Bot, method string, params url.Values) (*Response, error) {
-	time1 := time.Now()
 	req, err := http.NewRequest("GET", tbg.ApiUrl+bot.Token+"/"+method, nil)
-	msgTxt := params.Get("text")
-	parseMode := params.Get("parse_mode")
-
-	if params != nil {
-		if msgTxt != ""{
-			timeProc := time.Now().Sub(time1)
-			if parseMode == "HTML"{
-				msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code>", timeProc)
-			} else if parseMode == "Markdown"{
-				msgTxt += fmt.Sprintf("\n\n⏱ `%v`", timeProc)
-			} else {
-				msgTxt += fmt.Sprintf("\n\n⏱ %v", timeProc)
-			}
-		}
-		params.Set("text", msgTxt)
-	}
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to build GET request to %v", method)
 	}
 	req.URL.RawQuery = params.Encode()
-
 	bot.Logger.Debug("executing GET: %+v", req)
 	resp, err := tbg.Client.Do(req)
+
 	if err != nil {
 		bot.Logger.WithError(err).Debugf("failed to execute GET request to %v", method)
 		return nil, errors.Wrapf(err, "unable to execute GET request to %v", method)
 	}
+
 	defer resp.Body.Close()
 	bot.Logger.Debugf("successful GET request: %+v", resp)
 
@@ -96,7 +80,9 @@ func (tbg *TgBotGetter) Get(bot Bot, method string, params url.Values) (*Respons
 }
 
 func (tbg *TgBotGetter) Post(bot Bot, fileType string, method string, params url.Values, file io.Reader, filename string) (*Response, error) {
-	time1 := time.Now()
+	defer func() {
+		timeProc = GetJeda(time.Now())
+	} ()
 	if filename == "" {
 		filename = "unnamed_file"
 	}
@@ -126,14 +112,13 @@ func (tbg *TgBotGetter) Post(bot Bot, fileType string, method string, params url
 	msgTxt := params.Get("caption")
 
 	if params != nil {
-		timeProc := time.Now().Sub(time1)
 		if parseMode == "HTML"{
-			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code>", timeProc)
+			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code> s", timeProc)
 		} else if parseMode == "Markdown"{
-			msgTxt += fmt.Sprintf("\n\n⏱ `%v`", timeProc)
+			msgTxt += fmt.Sprintf("\n\n⏱ `%v` s", timeProc)
 		} else {
 			params.Set("parse_mode", "HTML")
-			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code>", timeProc)
+			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code> s", timeProc)
 		}
 
 		params.Set("caption", msgTxt)

@@ -12,20 +12,6 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
-var startButtons = [][]ext.InlineKeyboardButton{
-	{ext.InlineKeyboardButton{
-		Text:         "📝 Help",
-		CallbackData: "start(help)",
-	}},
-	{ext.InlineKeyboardButton{
-		Text:         "🇦🇺 Language",
-		CallbackData: "start(language)",
-	}},
-	{ext.InlineKeyboardButton{
-		Text: "🔗 Add Me To Your Groups",
-		Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", ext.Bot{}.UserName),
-	}}}
-
 var infoButtons = [][]ext.InlineKeyboardButton{
 	{ext.InlineKeyboardButton{
 		Text: "📡 Help",
@@ -35,6 +21,20 @@ var infoButtons = [][]ext.InlineKeyboardButton{
 func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
+
+	var startButtons = [][]ext.InlineKeyboardButton{
+		{ext.InlineKeyboardButton{
+			Text:         "📝 Help",
+			CallbackData: "start(help)",
+		}},
+		{ext.InlineKeyboardButton{
+			Text:         "🇦🇺 Language",
+			CallbackData: "start(language)",
+		}},
+		{ext.InlineKeyboardButton{
+			Text: "🔗 Add Me To Your Groups",
+			Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
+		}}}
 
 	if chat.Type == "private" {
 		if len(args) != 0 {

@@ -14,8 +14,6 @@ import (
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 )
 
-var btnLang = function.BuildKeyboard("data/keyboard/language.json", 2)
-
 func handleStart(b ext.Bot, u *gotgbot.Update) error {
 	query := u.CallbackQuery
 	pattern, _ := regexp.Compile(`start\((.+?)\)`)
@@ -42,6 +40,11 @@ func handleStart(b ext.Bot, u *gotgbot.Update) error {
 			_, err = reply.Send()
 			err_handler.HandleErr(err)
 		case "language":
+			var btnLang = function.BuildKeyboardf(
+				"data/keyboard/language.json",
+				2,
+				map[string]string{"1": fmt.Sprint(chat.Id)},
+			)
 			_, err := query.Message.Delete()
 			err_handler.HandleErr(err)
 			newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")

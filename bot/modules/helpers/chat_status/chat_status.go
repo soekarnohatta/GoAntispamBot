@@ -84,7 +84,7 @@ func IsBotAdmin(chat *ext.Chat, member *ext.ChatMember) bool {
 
 func RequireUserAdmin(chat *ext.Chat, msg *ext.Message, userId int) bool {
 	if !IsUserAdmin(chat, userId) {
-		_, err := msg.ReplyText(function.GetString(chat.Id, "modules/helpers/chat_status.go:73"))
+		_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/helpers/chat_status.go:73"))
 		err_handler.HandleErr(err)
 		return false
 	}
@@ -102,7 +102,7 @@ func RequireOwner(msg *ext.Message, userId int) bool {
 
 func RequirePrivate(chat *ext.Chat, msg *ext.Message) bool {
 	if chat.Type != "private" {
-		_, err := msg.ReplyText(function.GetString(msg.Chat.Id, "modules/helpers/chat_status.go:91"))
+		_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/helpers/chat_status.go:91"))
 		err_handler.HandleErr(err)
 		return false
 	}
@@ -111,7 +111,7 @@ func RequirePrivate(chat *ext.Chat, msg *ext.Message) bool {
 
 func RequireSupergroup(chat *ext.Chat, msg *ext.Message) bool {
 	if chat.Type != "supergroup" {
-		_, err := msg.ReplyText(function.GetString(msg.Chat.Id, "modules/helpers/chat_status.go:100"))
+		_, err := msg.ReplyHTML(function.GetString(msg.Chat.Id, "modules/helpers/chat_status.go:100"))
 		err_handler.HandleErr(err)
 		return false
 	}

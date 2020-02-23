@@ -177,10 +177,10 @@ func stats(_ ext.Bot, u *gotgbot.Update) error {
 	}
 
 	replyText := fmt.Sprintf(
-		"<b>Statistics</b>\n"+
-			"Total User(s): %v\n"+
-			"Total Chat(s): %v\n"+
-			"Total Spammer(s): %v",
+		"<b>Statistics</b>"+
+			"\nTotal User(s): %v"+
+			"\nTotal Chat(s): %v"+
+			"\nTotal Spammer(s): %v",
 		len(sql.GetAllUser()),
 		len(sql.GetAllChat()),
 		len(sql.GetAllSpamUser()))
@@ -198,7 +198,6 @@ func broadcast(b ext.Bot, u *gotgbot.Update) error {
 
 	group := sql.GetAllChat
 	errNum := 0
-
 	txtToSend := ""
 
 	if msg.ReplyToMessage != nil {
@@ -275,7 +274,7 @@ func ping(_ ext.Bot, u *gotgbot.Update) error {
 
 	_ = res.Body.Close()
 
-	text := fmt.Sprintf("Ping: <b>%d</b> ms", result.ServerProcessing/time.Millisecond)
+	text := fmt.Sprintf("Ping: <b>%v</b> ms", result.ServerProcessing.Seconds())
 
 	_, err = u.EffectiveMessage.ReplyHTML(text)
 	return err

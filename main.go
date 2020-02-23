@@ -38,6 +38,7 @@ func multiInstance() {
 		listener.LoadHelpListener(updater)
 		listener.LoadStartListener(updater)
 		listener.LoadReportListener(updater)
+		listener.LoadLangListener(updater)
 		listener.LoadUserListener(updater)
 
 		if bot.BotConfig.WebhookUrl != "" {
@@ -97,8 +98,9 @@ func singleInstance() {
 
 	listener.LoadSettingListener(updater)
 	listener.LoadHelpListener(updater)
-	listener.LoadReportListener(updater)
 	listener.LoadStartListener(updater)
+	listener.LoadReportListener(updater)
+	listener.LoadLangListener(updater)
 	listener.LoadUserListener(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {

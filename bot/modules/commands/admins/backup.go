@@ -35,11 +35,11 @@ func backupDb(b ext.Bot, u *gotgbot.Update) error {
 		return nil
 	}
 	ctx := PostgreSQL{
-		host:     "",
+		host:     "localhost",
 		port:     "5432",
-		username: "",
-		password: "",
-		database: "",
+		username: "ahmad",
+		password: "root",
+		database: "nayef",
 	}
 
 	if err := ctx.prepare(); err != nil {
@@ -61,11 +61,11 @@ func backupDb(b ext.Bot, u *gotgbot.Update) error {
 
 func CronBackupDb(b *gotgbot.Updater) error {
 	ctx := PostgreSQL{
-		host:     "",
+		host:     "localhost",
 		port:     "5432",
-		username: "",
-		password: "",
-		database: "",
+		username: "ahmad",
+		password: "root",
+		database: "nayef",
 	}
 
 	if err := ctx.prepare(); err != nil {

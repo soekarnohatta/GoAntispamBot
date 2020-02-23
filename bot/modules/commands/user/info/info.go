@@ -25,7 +25,7 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 
 	userId := extraction.ExtractUser(msg, args)
 	if userId != 0 {
-		replyText := "👤*User Info*\n"
+		replyText := "*User Info*"
 		userInfo := sql.GetUser(userId)
 		if userInfo != nil {
 			val := map[string]string{
@@ -53,7 +53,7 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 			replyText += function.GetStringf(chat.Id, "modules/info/info.go:35", val)
 		}
 
-		if replyText != "👤*User Info*\n" {
+		if replyText != "*User Info*" {
 			message := b.NewSendableMessage(chat.Id, replyText)
 			message.ParseMode = "markdown"
 			message.ReplyToMessageId = msg.MessageId
@@ -67,11 +67,11 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 			}
 			return err
 		} else {
-			_, err := msg.ReplyText(function.GetString(chat.Id, "modules/info/info.go:51"))
+			_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/info/info.go:51"))
 			return err
 		}
 	} else {
-		_, err := msg.ReplyText(function.GetString(chat.Id, "modules/info/info.go:51"))
+		_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/info/info.go:51"))
 		return err
 	}
 }

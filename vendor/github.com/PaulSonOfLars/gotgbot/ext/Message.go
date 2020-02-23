@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf16"
+	"time"
 )
 
 type MessageEntity struct {
@@ -196,12 +197,18 @@ type Message struct {
 	originalCaptionHTML string
 }
 
+var timeProc float64 = 0
+
 func (b Bot) ParseMessage(message json.RawMessage) (mess *Message, err error) {
 	mess = &Message{Bot: b}
 	return mess, json.Unmarshal(message, mess)
 }
 
 func (m Message) ReplyText(text string) (*Message, error) {
+	defer func() {
+		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+	}()
+	text += fmt.Sprintf("\n\n⏱ %.3f s", timeProc)
 	return m.Bot.ReplyText(m.Chat.Id, text, m.MessageId)
 }
 
@@ -210,6 +217,10 @@ func (m Message) ReplyTextf(format string, a ...interface{}) (*Message, error) {
 }
 
 func (m Message) ReplyHTML(text string) (*Message, error) {
+	defer func() {
+		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+	}()
+	text += fmt.Sprintf("\n\n⏱ <code>%.3f s</code>", timeProc)
 	return m.Bot.ReplyHTML(m.Chat.Id, text, m.MessageId)
 }
 
@@ -218,6 +229,10 @@ func (m Message) ReplyHTMLf(format string, a ...interface{}) (*Message, error) {
 }
 
 func (m Message) ReplyMarkdown(text string) (*Message, error) {
+	defer func() {
+		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+	}()
+	text += fmt.Sprintf("\n\n⏱ `%.3f s`", timeProc)
 	return m.Bot.ReplyMarkdown(m.Chat.Id, text, m.MessageId)
 }
 
@@ -226,6 +241,10 @@ func (m Message) ReplyMarkdownf(format string, a ...interface{}) (*Message, erro
 }
 
 func (m Message) EditText(text string) (*Message, error) {
+	defer func() {
+		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+	}()
+	text += fmt.Sprintf("\n\n⏱ %.3f s", timeProc)
 	return m.Bot.EditMessageText(m.Chat.Id, m.MessageId, text)
 }
 
@@ -234,6 +253,10 @@ func (m Message) EditTextf(format string, a ...interface{}) (*Message, error) {
 }
 
 func (m Message) EditHTML(text string) (*Message, error) {
+	defer func() {
+		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+	}()
+	text += fmt.Sprintf("\n\n⏱ <code>%.3f s</code>`", timeProc)
 	return m.Bot.EditMessageHTML(m.Chat.Id, m.MessageId, text)
 }
 
@@ -242,6 +265,10 @@ func (m Message) EditHTMLf(format string, a ...interface{}) (*Message, error) {
 }
 
 func (m Message) EditMarkdown(text string) (*Message, error) {
+	defer func() {
+		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+	}()
+	text += fmt.Sprintf("\n\n⏱ `%.3f s`", timeProc)
 	return m.Bot.EditMessageMarkdown(m.Chat.Id, m.MessageId, text)
 }
 

@@ -13,6 +13,7 @@ import (
 
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/chat_status"
+	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
 	"github.com/jumatberkah/antispambot/bot/modules/sql"
 )
@@ -198,7 +199,11 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 		return nil
 	}
 
-	btnLang := function.BuildKeyboard("data/keyboard/language.json", 2)
+	var btnLang = function.BuildKeyboardf(
+		"data/keyboard/language.json",
+		2,
+		map[string]string{"1": fmt.Sprint(chat.Id)},
+	)
 
 	if len(args) == 0 {
 		newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
@@ -209,20 +214,19 @@ func setLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	}
 
 	if !goloc.IsLangSupported(args[0]) {
-		_, _ = msg.ReplyHTML(function.GetString(chat.Id, "modules/language/language.go:58"))
+		_, err := msg.ReplyHTML(function.GetString(chat.Id, "modules/language/language.go:58"))
+		err_handler.HandleErr(err)
 		newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
 		newMsg.ParseMode = parsemode.Markdown
 		newMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &btnLang}
-		_, err := newMsg.Send()
+		_, err = newMsg.Send()
 		return err
 	}
 
-	_, err := caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), args[0], 7200).Result()
-	if err != nil {
-		sql.UpdateLang(chat.Id, args[0])
-	}
+	_, _ = caching.REDIS.Set(fmt.Sprintf("lang_%v", chat.Id), args[0], 7200).Result()
+	sql.UpdateLang(chat.Id, args[0])
 
-	_, err = msg.ReplyHTML(function.GetStringf(
+	_, err := msg.ReplyHTML(function.GetStringf(
 		chat.Id,
 		"modules/language/language.go:51",
 		map[string]string{"1": args[0]}),
