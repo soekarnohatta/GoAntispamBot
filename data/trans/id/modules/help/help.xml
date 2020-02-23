@@ -77,5 +77,13 @@ Polybot Adalah bot multiguna, manajemen grup yang di lengkapi dengan alat keaman
         <value>📚 Untuk Mendapatkan Bantuan, Tekan Tombol Dibawah.</value>
         <!--modules/helpers/help.go:122-->
     </Rows>
-    <Counter>9</Counter>
+    <Rows id="9" name="modules/helpers/help.go:noprivate">
+        <value>*Misc*
+There are several other command(s) that you can use to maximize the usage of this bot, such as:
+        1. /admincache - Use this command to update the admin list in your chat
+        2. /info - This command is used to show the bot host info
+        3. /whois (`User ID/Username/Permalink`) - This command is used to know someone</value>
+    <!--modules/helpers/help.go:122-->
+    </Rows>
+    <Counter>10</Counter>
 </translation>

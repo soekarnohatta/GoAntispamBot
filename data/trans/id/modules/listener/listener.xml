@@ -13,8 +13,7 @@
         <!--modules/listener/listener.go:41-->
     </Rows>
     <Rows id="4" name="modules/listener/listener.go:173">
-        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena ia belum memasang &lt;b&gt; profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]
-        </value>
+        <value>🔇 &lt;a href=&#34;tg://user?id={1}&#34;&gt;{2}&lt;/a&gt; telah &lt;b&gt;di{3}&lt;/b&gt; karena ia belum memasang &lt;b&gt; profile picture&lt;/b&gt;. [&lt;code&gt;{4}&lt;/code&gt;]</value>
         <!--modules/listener/listener.go:26-->
     </Rows>
     <Rows id="5" name="modules/listener/listener.go:179">
