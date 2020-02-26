@@ -7,17 +7,17 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/jumatberkah/antispambot/bot"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/admins"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/user/help"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/user/info"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/user/private"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/user/reporting"
-	"github.com/jumatberkah/antispambot/bot/modules/commands/user/setting"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/caching"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/function"
-	"github.com/jumatberkah/antispambot/bot/modules/listener"
-	"github.com/jumatberkah/antispambot/bot/modules/sql"
+	"github.com/jumatberkah/antispambot/bot/handlers/commands/admins"
+	"github.com/jumatberkah/antispambot/bot/handlers/commands/user/help"
+	"github.com/jumatberkah/antispambot/bot/handlers/commands/user/info"
+	"github.com/jumatberkah/antispambot/bot/handlers/commands/user/private"
+	"github.com/jumatberkah/antispambot/bot/handlers/commands/user/reporting"
+	"github.com/jumatberkah/antispambot/bot/handlers/commands/user/setting"
+	"github.com/jumatberkah/antispambot/bot/handlers/listener"
+	"github.com/jumatberkah/antispambot/bot/helpers/caching"
+	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
+	"github.com/jumatberkah/antispambot/bot/helpers/function"
+	"github.com/jumatberkah/antispambot/bot/sql"
 )
 
 func multiInstance() {
@@ -26,20 +26,7 @@ func multiInstance() {
 
 		updater, err := gotgbot.NewUpdater(botToken)
 		err_handler.FatalError(err)
-
-		admins.LoadAdmins(updater)
-		setting.LoadSetting(updater)
-		private.LoadPm(updater)
-		info.LoadInfo(updater)
-		help.LoadHelp(updater)
-		reporting.LoadReport(updater)
-
-		listener.LoadSettingListener(updater)
-		listener.LoadHelpListener(updater)
-		listener.LoadStartListener(updater)
-		listener.LoadReportListener(updater)
-		listener.LoadLangListener(updater)
-		listener.LoadUserListener(updater)
+		registerHandlers(updater)
 
 		if bot.BotConfig.WebhookUrl != "" {
 			for _, hookPath := range bot.BotConfig.WebhookPath {
@@ -88,20 +75,7 @@ func singleInstance() {
 
 	updater, err := gotgbot.NewUpdater(bot.BotConfig.ApiKey[0])
 	err_handler.FatalError(err)
-
-	admins.LoadAdmins(updater)
-	setting.LoadSetting(updater)
-	private.LoadPm(updater)
-	info.LoadInfo(updater)
-	help.LoadHelp(updater)
-	reporting.LoadReport(updater)
-
-	listener.LoadSettingListener(updater)
-	listener.LoadHelpListener(updater)
-	listener.LoadStartListener(updater)
-	listener.LoadReportListener(updater)
-	listener.LoadLangListener(updater)
-	listener.LoadUserListener(updater)
+	registerHandlers(updater)
 
 	if bot.BotConfig.WebhookUrl != "" {
 		webHook := gotgbot.Webhook{
@@ -127,6 +101,22 @@ func singleInstance() {
 	logrus.Info(fmt.Sprintf("Bot Running On Version: %v - %v", bot.BotConfig.BotVer,
 		updater.Bot.UserName))
 	updater.Idle()
+}
+
+func registerHandlers(updater *gotgbot.Updater) {
+	admins.LoadAdmins(updater)
+	setting.LoadSetting(updater)
+	private.LoadPm(updater)
+	info.LoadInfo(updater)
+	help.LoadHelp(updater)
+	reporting.LoadReport(updater)
+
+	listener.LoadSettingListener(updater)
+	listener.LoadHelpListener(updater)
+	listener.LoadStartListener(updater)
+	listener.LoadReportListener(updater)
+	listener.LoadLangListener(updater)
+	listener.LoadUserListener(updater)
 }
 
 func main() {

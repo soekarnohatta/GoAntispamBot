@@ -2,7 +2,6 @@ package gotgbot
 
 import (
 	"encoding/json"
-
 	"github.com/PaulSonOfLars/gotgbot/ext"
 )
 

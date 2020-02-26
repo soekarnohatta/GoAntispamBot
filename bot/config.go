@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jumatberkah/antispambot/bot/modules/helpers/err_handler"
+	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
 )
 
 type Config struct {

@@ -46,7 +46,6 @@ type Document struct {
 	MimeType     string    `json:"mime_type"`
 	FileSize     int       `json:"file_size"`
 }
-
 type PhotoSize struct {
 	FileId       string `json:"file_id"`
 	FileUniqueId string `json:"file_unique_id"`
@@ -185,6 +184,7 @@ type Message struct {
 	ConnectedWebsite      string                `json:"connected_website"`
 	PassportData          *PassportData         `json:"passport_data"`
 	ReplyMarkup           *InlineKeyboardMarkup `json:"reply_markup"`
+	TimeInit			  float64
 
 	// internals
 	utf16Text           []uint16
@@ -198,41 +198,67 @@ type Message struct {
 }
 
 var timeProc float64 = 0
+var timeInit float64 = 0
 
 func (b Bot) ParseMessage(message json.RawMessage) (mess *Message, err error) {
+	timeInit = GetJeda(time.Now())
 	mess = &Message{Bot: b}
 	return mess, json.Unmarshal(message, mess)
 }
 
 func (m Message) ReplyText(text string) (*Message, error) {
-	defer func() {
-		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
-	}()
-	text += fmt.Sprintf("\n\n⏱ %.3f s", timeProc)
+	if text != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		text += fmt.Sprintf("\n\n⏱ %.3f s|⌛️%.3f s", timeInit, timeProc)
+	}
 	return m.Bot.ReplyText(m.Chat.Id, text, m.MessageId)
 }
 
 func (m Message) ReplyTextf(format string, a ...interface{}) (*Message, error) {
+	if format != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		format += fmt.Sprintf("\n\n⏱ <code>%.3f s|⌛️%.3f s</code>", timeInit, timeProc)
+	}
 	return m.Bot.ReplyText(m.Chat.Id, fmt.Sprintf(format, a...), m.MessageId)
 }
 
 func (m Message) ReplyHTML(text string) (*Message, error) {
-	defer func() {
-		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
-	}()
-	text += fmt.Sprintf("\n\n⏱ <code>%.3f s</code>", timeProc)
+	if text != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		text += fmt.Sprintf("\n\n⏱ <code>%.3f s|⌛️%.3f s</code>", timeInit, timeProc)
+	}
 	return m.Bot.ReplyHTML(m.Chat.Id, text, m.MessageId)
 }
 
 func (m Message) ReplyHTMLf(format string, a ...interface{}) (*Message, error) {
+	if format != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		format += fmt.Sprintf("\n\n⏱ <code>%.3f s|⌛️%.3f s</code>", timeInit, timeProc)
+	}
 	return m.Bot.ReplyHTML(m.Chat.Id, fmt.Sprintf(format, a...), m.MessageId)
 }
 
 func (m Message) ReplyMarkdown(text string) (*Message, error) {
-	defer func() {
-		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
-	}()
-	text += fmt.Sprintf("\n\n⏱ `%.3f s`", timeProc)
+	if text != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		text += fmt.Sprintf("\n\n⏱ `%.3f s|⌛️%.3f s`", timeInit, timeProc)
+	}
+
 	return m.Bot.ReplyMarkdown(m.Chat.Id, text, m.MessageId)
 }
 
@@ -241,38 +267,68 @@ func (m Message) ReplyMarkdownf(format string, a ...interface{}) (*Message, erro
 }
 
 func (m Message) EditText(text string) (*Message, error) {
-	defer func() {
-		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
-	}()
-	text += fmt.Sprintf("\n\n⏱ %.3f s", timeProc)
+	if text != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+		}()
+		text += fmt.Sprintf("\n\n⏱ %.3f s|⌛️%.3f s", timeInit, timeProc)
+	}
 	return m.Bot.EditMessageText(m.Chat.Id, m.MessageId, text)
 }
 
 func (m Message) EditTextf(format string, a ...interface{}) (*Message, error) {
+	if format != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		format += fmt.Sprintf("\n\n⏱ %.3f s|⌛️%.3f s", timeInit, timeProc)
+	}
 	return m.Bot.EditMessageText(m.Chat.Id, m.MessageId, fmt.Sprintf(format, a...))
 }
 
 func (m Message) EditHTML(text string) (*Message, error) {
-	defer func() {
-		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
-	}()
-	text += fmt.Sprintf("\n\n⏱ <code>%.3f s</code>`", timeProc)
+	if text != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		text += fmt.Sprintf("\n\n⏱ <code>%.3f s|⌛️%.3f s</code>", timeInit, timeProc)
+	}
 	return m.Bot.EditMessageHTML(m.Chat.Id, m.MessageId, text)
 }
 
 func (m Message) EditHTMLf(format string, a ...interface{}) (*Message, error) {
+	if format != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		format += fmt.Sprintf("\n\n⏱ <code>%.3f s|⌛️%.3f s</code>", timeInit, timeProc)
+	}
 	return m.Bot.EditMessageHTML(m.Chat.Id, m.MessageId, fmt.Sprintf(format, a...))
 }
 
 func (m Message) EditMarkdown(text string) (*Message, error) {
-	defer func() {
-		timeProc = GetJeda(time.Unix(int64(m.Date), 0))
-	}()
-	text += fmt.Sprintf("\n\n⏱ `%.3f s`", timeProc)
+	if text != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date), 0))
+		}()
+		text += fmt.Sprintf("\n\n⏱ `%.3f s|⌛️%.3f s`", timeInit, timeProc)
+	}
 	return m.Bot.EditMessageMarkdown(m.Chat.Id, m.MessageId, text)
 }
 
 func (m Message) EditMarkdownf(format string, a ...interface{}) (*Message, error) {
+	if format != "" {
+		timeInit = GetJeda(time.Unix(int64(m.Date),  0))
+		defer func() {
+			timeProc = GetJeda(time.Unix(int64(m.Date),  0))
+		}()
+		format += fmt.Sprintf("\n\n⏱ `%.3f s|⌛️%.3f s`", timeInit, timeProc)
+	}
 	return m.Bot.EditMessageMarkdown(m.Chat.Id, m.MessageId, fmt.Sprintf(format, a...))
 }
 

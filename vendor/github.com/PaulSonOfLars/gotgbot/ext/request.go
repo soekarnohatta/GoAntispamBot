@@ -14,6 +14,7 @@ import (
 )
 
 const ApiUrl = "https://api.telegram.org/bot"
+var TimeProc float64 = 0
 
 var DefaultTgBotGetter = TgBotGetter{
 	Client: &http.Client{
@@ -81,8 +82,9 @@ func (tbg *TgBotGetter) Get(bot Bot, method string, params url.Values) (*Respons
 
 func (tbg *TgBotGetter) Post(bot Bot, fileType string, method string, params url.Values, file io.Reader, filename string) (*Response, error) {
 	defer func() {
-		timeProc = GetJeda(time.Now())
+		TimeProc = GetJeda(time.Now())
 	} ()
+
 	if filename == "" {
 		filename = "unnamed_file"
 	}
@@ -113,12 +115,12 @@ func (tbg *TgBotGetter) Post(bot Bot, fileType string, method string, params url
 
 	if params != nil {
 		if parseMode == "HTML"{
-			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code> s", timeProc)
+			msgTxt += fmt.Sprintf("\n\n⏱ <code>%.3f</code> s", TimeProc)
 		} else if parseMode == "Markdown"{
-			msgTxt += fmt.Sprintf("\n\n⏱ `%v` s", timeProc)
+			msgTxt += fmt.Sprintf("\n\n⏱ `%.3f` s", TimeProc)
 		} else {
 			params.Set("parse_mode", "HTML")
-			msgTxt += fmt.Sprintf("\n\n⏱ <code>%v</code> s", timeProc)
+			msgTxt += fmt.Sprintf("\n\n⏱ <code>%.3f</code> s", TimeProc)
 		}
 
 		params.Set("caption", msgTxt)
