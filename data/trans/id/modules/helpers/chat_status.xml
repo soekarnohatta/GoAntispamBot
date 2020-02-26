@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
-    <Rows id="1" name="modules/helpers/chat_status.go:73">
+    <Rows id="1" name="handlers/helpers/chat_status.go:73">
         <value>❌ Anda harus menjadi admin untuk melakukannya.</value>
-        <!--modules/helpers/chat_status.go:73-->
+        <!--handlers/helpers/chat_status.go:73-->
     </Rows>
-    <Rows id="2" name="modules/helpers/chat_status.go:82">
+    <Rows id="2" name="handlers/helpers/chat_status.go:82">
         <value>❌ &lt;b&gt;Anda bukan sudoers&lt;/b&gt;</value>
-        <!--modules/helpers/chat_status.go:82-->
+        <!--handlers/helpers/chat_status.go:82-->
     </Rows>
-    <Rows id="3" name="modules/helpers/chat_status.go:91">
+    <Rows id="3" name="handlers/helpers/chat_status.go:91">
         <value>ℹ️ Fungsi ini hanya dapat digunakan secara privat!</value>
-        <!--modules/helpers/chat_status.go:91-->
+        <!--handlers/helpers/chat_status.go:91-->
     </Rows>
-    <Rows id="4" name="modules/helpers/chat_status.go:100">
+    <Rows id="4" name="handlers/helpers/chat_status.go:100">
         <value>ℹ️ Fungsi ini hanya dapat digunakan di grup!</value>
-        <!--modules/helpers/chat_status.go:100-->
+        <!--handlers/helpers/chat_status.go:100-->
     </Rows>
-    <Rows id="5" name="modules/helpers/chat_status.go:111">
+    <Rows id="5" name="handlers/helpers/chat_status.go:111">
         <value>❌ Saya tidak bisa membatasi orang disini! Pastikan saya Admin dengan hak penuh!</value>
-        <!--modules/helpers/chat_status.go:111-->
+        <!--handlers/helpers/chat_status.go:111-->
     </Rows>
-    <Rows id="6" name="modules/helpers/chat_status.go:122">
+    <Rows id="6" name="handlers/helpers/chat_status.go:122">
         <value>❌ Saya tidak bisa menghapus pesan disini! Pastikan saya Admin dengan hak penuh!</value>
-        <!--modules/helpers/chat_status.go:122-->
+        <!--handlers/helpers/chat_status.go:122-->
     </Rows>
     <Counter>6</Counter>
 </translation>

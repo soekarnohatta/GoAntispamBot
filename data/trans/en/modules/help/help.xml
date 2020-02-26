@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
-    <Rows id="1" name="modules/helpers/help.go:sudo">
+    <Rows id="1" name="handlers/helpers/help.go:sudo">
         <value>*Sudo*
 As a 'SUDO', you certainly need a list of commands so that you can use this service to its full potential. Here is a list of commands specifically for 'SUDO':
 
@@ -10,9 +10,9 @@ As a 'SUDO', you certainly need a list of commands so that you can use this serv
 4. /stats - This command is used to provide statistics for this bot service. Be careful, overuse can cause this service to freeze!
 
 All activities of the 'SUDO' will be displayed on a channel that has been determined by the owner of this service! Use all of these commands wisely. * Normal users will not be able to use all of these commands *.</value>
-        <!--modules/helpers/help.go:73-->
+        <!--handlers/helpers/help.go:73-->
     </Rows>
-    <Rows id="2" name="modules/helpers/help.go:username">
+    <Rows id="2" name="handlers/helpers/help.go:username">
         <value>*Username*
 Of course, if you find someone without a username, you will have difficulty calling / _mentioning_ him. Therefore, some groups set liability rules using a Username. Our service provides a feature to crack down on someone who hasn't used a username to tell him to use it immediately. Following are the commands used to set obligations using a username:
 
@@ -20,9 +20,9 @@ Of course, if you find someone without a username, you will have difficulty call
 2. /time (`int + m / h / d`) -> Example: /time 5m - This command is used to set the penalty deadline if someone has not used a username.
 
 For further settings, use the command /settings</value>
-        <!--modules/helpers/help.go:82-->
+        <!--handlers/helpers/help.go:82-->
     </Rows>
-    <Rows id="3" name="modules/helpers/help.go:picture">
+    <Rows id="3" name="handlers/helpers/help.go:picture">
         <value>*Picture*
 Of course, if you find someone without a profile picture, you will find it difficult to choose / see him. Therefore, some groups set liability regulations using Profile Photos. Our service provides a feature to crack down on someone who hasn't used a profile photo to tell them to use it immediately. Following are the commands used to set obligations using a profile photo:
 
@@ -30,21 +30,21 @@ Of course, if you find someone without a profile picture, you will find it diffi
 2. /time (`int + m / h / d`) -> Example: `/time 5m` - This command is used to set the deadline for a sentence if someone has not used profile pictures.
 
 For further settings, use the command /settings</value>
-        <!--modules/helpers/help.go:91-->
+        <!--handlers/helpers/help.go:91-->
     </Rows>
-    <Rows id="4" name="modules/helpers/help.go:notif">
+    <Rows id="4" name="handlers/helpers/help.go:notif">
         <value>*Notifications*
 You will always get a notification if you have not used a username / photo / have not verified through a private message. You can turn off or turn on the notification feature with the /notif (`true / false`) command.</value>
-        <!--modules/helpers/help.go:100-->
+        <!--handlers/helpers/help.go:100-->
     </Rows>
-    <Rows id="5" name="modules/helpers/help.go:aspam">
+    <Rows id="5" name="handlers/helpers/help.go:aspam">
         <value>*AntiSpam*
 Polybot has multi-layered security features such as: CAS integration, @Spamwatch integration, manual surveillance, etc. Sometimes spammers come and we will always block them. However, we and the system are also people who always have errors, therefore if there is an error in blocking, please report to @Polybotsupport immediately.
 
 You can also disable and / or enable blocking if you feel disturbed by the command /enforce (true / false)</value>
-        <!--modules/helpers/help.go:111-->
+        <!--handlers/helpers/help.go:111-->
     </Rows>
-    <Rows id="6" name="modules/helpers/help.go:verify">
+    <Rows id="6" name="handlers/helpers/help.go:verify">
         <value>*Verify*
 Of course, if you find someone entering a chat, you will be confused whether he is a robot or not. Therefore, some groups set obligations for verification. Our service provides features to take action on someone who has not been verified to make sure he is not a robot. Following are the commands used to set verification obligations:
 
@@ -52,9 +52,9 @@ Of course, if you find someone entering a chat, you will be confused whether he 
 2. /time (`int + m / h / d`) -> Example: `/time 5m` - This command is used to set the penalty deadline if someone has not used a username.
 
 For further settings, use the command /settings</value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="7" name="modules/helpers/help.go:ppolicy">
+    <Rows id="7" name="handlers/helpers/help.go:ppolicy">
         <value>*Privacy Policy*
 By using our service (@Polyesterbot) created by the PolyesterBot Team, you agree that we collect some of your general data for the benefit of this service * Only *. We will never spread and / or provide such data to others without your consent. We store your data on a multi-layer protected server to ensure the security of your data. The following data will be collected:
 
@@ -66,24 +66,23 @@ By using our service (@Polyesterbot) created by the PolyesterBot Team, you agree
 6. Chat Link
 
 We have done all of this so that you can enjoy this service smoothly without spreading your data. For data deletion, you can use the / deldata command</value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="8" name="modules/helpers/help.go:helptxt">
+    <Rows id="8" name="handlers/helpers/help.go:helptxt">
         <value>*Main*
 Is a group management bot, packed with security features. You have to make me as an admin with all admin permissions in order to use my full power. Suggestions, complains, or anything else can be proposed at @PolyBotSupport.</value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="9" name="modules/helpers/help.go:noprivate">
+    <Rows id="9" name="handlers/helpers/help.go:noprivate">
         <value>📚 To get help, press button below.</value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="10" name="modules/helpers/help.go:misc">
+    <Rows id="10" name="handlers/helpers/help.go:misc">
         <value>*Misc*
 There are several other command(s) that you can use to maximize the usage of this bot, such as:
-        1. /admincache - Use this command to update the admin list in your chat
-        2. /info - This command is used to show the bot host info
-        3. /whois (`User ID/Username/Permalink`) - This command is used to know someone</value>
-        <!--modules/helpers/help.go:122-->
+1. /admincache - Use this command to update the admin list in your chat
+3. /whois (`User ID/Username/Permalink`) - This command is used to know someone</value>
+        <!--handlers/helpers/help.go:122-->
     </Rows>
     <Counter>10</Counter>
 </translation>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
-    <Rows id="1" name="modules/private/pm.go:start">
+    <Rows id="1" name="handlers/private/pm.go:start">
         <value>🤖 *{2} Bot Versi* `{1}` by *PolyDev*.
 Adalah bot multiguna, manajemen grup yang di lengkapi dengan alat keamanan. Agar fungsi saya bekerja dengan fitur penuh, jadikan saya admin dengan level standard. Saran, fitur, dan keluhan bisa di konsultasikan di @PolyBotSupport.</value>
-        <!--modules/private/pm.go:15-->
+        <!--handlers/private/pm.go:15-->
     </Rows>
     <Counter>1</Counter>
 </translation>

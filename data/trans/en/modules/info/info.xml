@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
-    <Rows id="1" name="modules/info/info.go:29">
+    <Rows id="1" name="handlers/info/info.go:29">
         <value>
 🆔*User ID :* `{1}`
 📕*First Name :* {2}
 📕*Last Name :* {3}
 🌐*UserName :* {4}</value>
-        <!--modules/private/pm.go:29-->
+        <!--handlers/private/pm.go:29-->
     </Rows>
-    <Rows id="2" name="modules/info/info.go:35">
+    <Rows id="2" name="handlers/info/info.go:35">
         <value>
 🛂*Is Spam :* `True`
 📝*Reason :* `{1}`
 👮‍♂*Banned By :* `{2}`
 🕰*Ban Time :* `{3}`</value>
-        <!--modules/private/pm.go:35-->
+        <!--handlers/private/pm.go:35-->
     </Rows>
-    <Rows id="3" name="modules/info/info.go:51">
+    <Rows id="3" name="handlers/info/info.go:51">
         <value>❌ I Can't Find The User!</value>
-        <!--modules/private/pm.go:51-->
+        <!--handlers/private/pm.go:51-->
     </Rows>
     <Counter>3</Counter>
 </translation>

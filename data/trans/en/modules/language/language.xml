@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
-    <Rows id="1" name="modules/language/language.go:51">
+    <Rows id="1" name="handlers/language/language.go:51">
         <value>ℹ️ Language has been changed to &lt;b&gt;{1}&lt;/b&gt;.</value>
-        <!--modules/language/language.go:51-->
+        <!--handlers/language/language.go:51-->
     </Rows>
-    <Rows id="2" name="modules/language/language.go:58">
+    <Rows id="2" name="handlers/language/language.go:58">
         <value>❌ &lt;b&gt;That language is not supported yet!&lt;/b&gt;</value>
-        <!--modules/language/language.go:58-->
+        <!--handlers/language/language.go:58-->
     </Rows>
     <Counter>2</Counter>
 </translation>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
-    <Rows id="1" name="modules/helpers/help.go:sudo">
+    <Rows id="1" name="handlers/helpers/help.go:sudo">
         <value>*Sudo*
 Sebagai seorang 'SUDO', Anda tentunya memerlukan daftar perintah agar Anda bisa menggunakan layanan ini dengan maksimal. Berikut adalah daftar perintah yang dikhususkan untuk para 'SUDO':
 
@@ -10,9 +10,9 @@ Sebagai seorang 'SUDO', Anda tentunya memerlukan daftar perintah agar Anda bisa 
 4. /stats - Perintah ini digunakan untuk memberikan statistik layanan bot ini. Hati-hati, penggunaan berlebih bisa menyebabkan layanan ini beku!
 
 Semua kegiatan para 'SUDO' akan ditampilkan disebuah kanal yang sudah ditentukan oleh pemilik layanan ini! Gunakanlah semua perintah ini dengan bijak. *Pengguna biasa tidak akan bisa menggunakan semua perintah ini*.</value>
-        <!--modules/helpers/help.go:73-->
+        <!--handlers/helpers/help.go:73-->
     </Rows>
-    <Rows id="2" name="modules/helpers/help.go:username">
+    <Rows id="2" name="handlers/helpers/help.go:username">
         <value>*Username*
 Tentunya apabila Anda menemukan seseorang tanpa Username, Anda akan kesulitan untuk memanggil/me_mention_ dia. Oleh karena itu, beberapa grup menetapkan peraturan kewajiban menggunakan Username. Layanan kami menyediakan fitur untuk menindak seseorang yang belum menggunakan username untuk memberi tahu dia agar segera menggunakannya. Berikut adalah perintah yang digunakan untuk mengatur kewajiban menggunakan username:
 
@@ -20,9 +20,9 @@ Tentunya apabila Anda menemukan seseorang tanpa Username, Anda akan kesulitan un
 2. /time (int + m/h/d) -> Contoh: /time 5m - Perintah ini digunakan untuk mengatur tenggat waktu hukuman apabila seseorang belum menggunakan username.
 
 Untuk pengaturan lebih lanjut gunakan perintah /settings</value>
-        <!--modules/helpers/help.go:82-->
+        <!--handlers/helpers/help.go:82-->
     </Rows>
-    <Rows id="3" name="modules/helpers/help.go:picture">
+    <Rows id="3" name="handlers/helpers/help.go:picture">
         <value>*Foto Profil*
 Tentunya apabila Anda menemukan seseorang tanpa foto profil, Anda akan kesulitan untuk memilih/melihat dia. Oleh karena itu, beberapa grup menetapkan peraturan kewajiban menggunakan Foto Profil. Layanan kami menyediakan fitur untuk menindak seseorang yang belum menggunakan foto profil untuk memberi tahu dia agar segera menggunakannya. Berikut adalah perintah yang digunakan untuk mengatur kewajiban menggunakan foto profil:
 
@@ -30,21 +30,21 @@ Tentunya apabila Anda menemukan seseorang tanpa foto profil, Anda akan kesulitan
 2. /time (int + m/h/d) -> Contoh: /time 5m - Perintah ini digunakan untuk mengatur tenggat waktu hukuman apabila seseorang belum menggunakan fotoprofil.
 
 Untuk pengaturan lebih lanjut gunakan perintah /settings</value>
-        <!--modules/helpers/help.go:91-->
+        <!--handlers/helpers/help.go:91-->
     </Rows>
-    <Rows id="4" name="modules/helpers/help.go:notif">
+    <Rows id="4" name="handlers/helpers/help.go:notif">
         <value>*Notifikasi*
 Anda pasti akan selalu mendapatkan notifikasi apabila Anda belum menggunakan username/foto/belum verifikasi melalui pesan privat. Anda dapat mematikan atau menyalakan fitur notifikasi dengan perintah /notif (true/false).</value>
-        <!--modules/helpers/help.go:100-->
+        <!--handlers/helpers/help.go:100-->
     </Rows>
-    <Rows id="5" name="modules/helpers/help.go:aspam">
+    <Rows id="5" name="handlers/helpers/help.go:aspam">
         <value>*AntiSpam*
 Polybot dilengkapi fitur keamanan berlapis seperti: Integrasi CAS, Integrasi @Spamwatch, Pengawasan manual, dll. Terkadang para spammmer datang dan kami akan selalu memblokir mereka. Tetapi, kami dan sistem juga merupakan manusia yang selalu mempunyai kesalahan, oleh karena itu apabila ada kesalahan dalam pemblokiran harap segera lapor ke @Polybotsupport.
 
 Anda juga bisa menonaktifkan dan/atau mengaktifkan pemblokiran apabila anda merasa terganggu dengan perintah /enforce (true/false)</value>
-        <!--modules/helpers/help.go:111-->
+        <!--handlers/helpers/help.go:111-->
     </Rows>
-    <Rows id="6" name="modules/helpers/help.go:verify">
+    <Rows id="6" name="handlers/helpers/help.go:verify">
         <value>*Verifikasi*
 Tentunya apabila Anda menemukan seseorang masuk ke suatu obrolan, Anda akan bingung apakah dia robot atau bukan. Oleh karena itu, beberapa grup menetapkan peraturan kewajiban untuk verifikasi. Layanan kami menyediakan fitur untuk menindak seseorang yang belum verifikasi untuk memastikan dia bukan robot. Berikut adalah perintah yang digunakan untuk mengatur kewajiban verifikasi:
 
@@ -52,9 +52,9 @@ Tentunya apabila Anda menemukan seseorang masuk ke suatu obrolan, Anda akan bing
 2. /time (int + m/h/d) -> Contoh: /time 5m - Perintah ini digunakan untuk mengatur tenggat waktu hukuman apabila seseorang belum menggunakan username.
 
 Untuk pengaturan lebih lanjut gunakan perintah /settings  </value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="7" name="modules/helpers/help.go:ppolicy">
+    <Rows id="7" name="handlers/helpers/help.go:ppolicy">
         <value>*Kebijakan Privasi*
 Dengan menggunakan layanan kami (@Polyesterbot) yang dibuat oleh Tim PolyesterBot, Anda setuju apabila kami mengumpulkan beberapa data umum Anda untuk kepentingan layanan ini *Saja*. Kami tidak akan pernah menyebar dan/atau memberikan data tersebut kepada orang lain tanpa persetujuan Anda. Kami menyimpan data Anda di sebuah server yang diproteksi keamanan berlapis untuk menjamin keamanan data Anda. Berikut data yang akan kami kumpulkan :
 
@@ -66,24 +66,24 @@ Dengan menggunakan layanan kami (@Polyesterbot) yang dibuat oleh Tim PolyesterBo
 6. Tautan Obrolan
 
 Semua ini kami lakukan agar Anda dapat menikmati layanan ini dengan lancar tanpa mengumbar data Anda. Untuk penghapusan data, Anda bisa menggunakan perintah /deldata</value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="8" name="modules/helpers/help.go:helptxt">
+    <Rows id="8" name="handlers/helpers/help.go:helptxt">
         <value>*Utama*
 Polybot Adalah bot multiguna, manajemen grup yang di lengkapi dengan alat keamanan. Agar fungsi saya bekerja dengan fitur penuh, jadikan saya admin dengan level standard. Saran, fitur, dan keluhan bisa di konsultasikan di @PolyBotSupport. Berikut dibawah ini adalah beberapa modul bantuan yang bisa Anda tekan.</value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="9" name="modules/helpers/help.go:noprivate">
+    <Rows id="9" name="handlers/helpers/help.go:noprivate">
         <value>📚 Untuk Mendapatkan Bantuan, Tekan Tombol Dibawah.</value>
-        <!--modules/helpers/help.go:122-->
+        <!--handlers/helpers/help.go:122-->
     </Rows>
-    <Rows id="9" name="modules/helpers/help.go:noprivate">
+    <Rows id="9" name="handlers/helpers/help.go:misc">
         <value>*Misc*
 There are several other command(s) that you can use to maximize the usage of this bot, such as:
-        1. /admincache - Use this command to update the admin list in your chat
-        2. /info - This command is used to show the bot host info
-        3. /whois (`User ID/Username/Permalink`) - This command is used to know someone</value>
-    <!--modules/helpers/help.go:122-->
+1. /admincache - Use this command to update the admin list in your chat
+2. /info - This command is used to show the bot host info
+3. /whois (`User ID/Username/Permalink`) - This command is used to know someone</value>
+    <!--handlers/helpers/help.go:122-->
     </Rows>
     <Counter>10</Counter>
 </translation>

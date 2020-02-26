@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
-    <Rows id="1" name="modules/reporting/report.go:start">
+    <Rows id="1" name="handlers/reporting/report.go:start">
         <value>`Message has been reported`</value>
-        <!--modules/private/pm.go:15-->
+        <!--handlers/private/pm.go:15-->
+    </Rows>
+    <Rows id="2" name="handlers/reporting/report.go:report">
+        <value>`🔄 Reported to {1} succesfully`</value>
+        <!--handlers/private/pm.go:15-->
     </Rows>
     <Counter>1</Counter>
 </translation>
