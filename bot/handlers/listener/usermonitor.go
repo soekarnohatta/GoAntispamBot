@@ -12,13 +12,13 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jumatberkah/antispambot/bot/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/helpers/chat_status"
 	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/helpers/extraction"
 	"github.com/jumatberkah/antispambot/bot/helpers/function"
-	"github.com/jumatberkah/antispambot/bot/helpers/logger"
 	"github.com/jumatberkah/antispambot/bot/sql"
 )
 
@@ -212,7 +212,7 @@ func usernameScan(b ext.Bot, u *gotgbot.Update) error {
 		err_handler.HandleErr(err)
 	}
 
-	err := logger.SendLog(b, u, "username", "")
+	err := function.SendLog(b, u, "username", "")
 	return err
 }
 
@@ -245,7 +245,6 @@ func pictureScan(b ext.Bot, u *gotgbot.Update) error {
 
 	photo, err := user.GetProfilePhotos(0, 0)
 	if err != nil {
-		photo, _ = user.GetProfilePhotos(0, 0)
 		err_handler.HandleErr(err)
 		return gotgbot.ContinueGroups{}
 	}
@@ -401,7 +400,7 @@ func pictureScan(b ext.Bot, u *gotgbot.Update) error {
 		err_handler.HandleErr(err)
 	}
 
-	err = logger.SendLog(b, u, "picture", "")
+	err = function.SendLog(b, u, "picture", "")
 	return err
 }
 
@@ -473,7 +472,7 @@ func welcomeScan(b ext.Bot, u *gotgbot.Update) error {
 		err_handler.HandleErr(err)
 	}
 
-	err = logger.SendLog(b, u, "welcome", "")
+	err = function.SendLog(b, u, "welcome", "")
 	return err
 }
 
@@ -502,14 +501,11 @@ func spamScan(b ext.Bot, u *gotgbot.Update) error {
 	if ban != nil {
 		err := function.SpamFunc(b, u)
 		err_handler.HandleErr(err)
-		err = logger.SendLog(b, u, "spam", ban.Reason)
+		err = function.SendLog(b, u, "spam", ban.Reason)
 		return gotgbot.EndGroups{}
-	} else {
-		ret, _ := function.CasListener(b, u)
-		if ret {
-			return gotgbot.EndGroups{}
-		}
 	}
+
+	_ = function.CasListener(b, u)
 	return gotgbot.ContinueGroups{}
 }
 
@@ -565,7 +561,7 @@ func linkScan(b ext.Bot, u *gotgbot.Update) error {
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
-			err = logger.SendLog(b, u, "link", "")
+			err = function.SendLog(b, u, "link", "")
 			return err
 		}
 	}
@@ -577,13 +573,13 @@ func linkScan(b ext.Bot, u *gotgbot.Update) error {
 				"1": fmt.Sprint(user.Id),
 				"2": html.EscapeString(user.FirstName),
 				"3": fmt.Sprint(user.Id),
-				"4": "Forwarded Message",
+				"4": " Forwarded Message",
 			}
 			replyText := function.GetStringf(chat.Id, "handlers/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
-			err = logger.SendLog(b, u, "link", "")
+			err = function.SendLog(b, u, "link", "")
 			return err
 		}
 	}
@@ -595,13 +591,13 @@ func linkScan(b ext.Bot, u *gotgbot.Update) error {
 				"1": fmt.Sprint(user.Id),
 				"2": html.EscapeString(user.FirstName),
 				"3": fmt.Sprint(user.Id),
-				"4": "Arabic Text",
+				"4": " Arabic Text",
 			}
 			replyText := function.GetStringf(chat.Id, "handlers/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
-			err = logger.SendLog(b, u, "link", "")
+			err = function.SendLog(b, u, "link", "")
 			return err
 		}
 
@@ -612,13 +608,13 @@ func linkScan(b ext.Bot, u *gotgbot.Update) error {
 				"1": fmt.Sprint(user.Id),
 				"2": html.EscapeString(user.FirstName),
 				"3": fmt.Sprint(user.Id),
-				"4": "Chinese Text",
+				"4": " Chinese Text",
 			}
 			replyText := function.GetStringf(chat.Id, "handlers/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
-			err = logger.SendLog(b, u, "link", "")
+			err = function.SendLog(b, u, "link", "")
 			return err
 		}
 
@@ -631,13 +627,13 @@ func linkScan(b ext.Bot, u *gotgbot.Update) error {
 				"1": fmt.Sprint(user.Id),
 				"2": html.EscapeString(user.FirstName),
 				"3": fmt.Sprint(user.Id),
-				"4": "Arabic Name",
+				"4": " Chinese Name",
 			}
 			replyText := function.GetStringf(chat.Id, "handlers/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
-			err = logger.SendLog(b, u, "link", "")
+			err = function.SendLog(b, u, "link", "")
 			return err
 		}
 
@@ -650,17 +646,47 @@ func linkScan(b ext.Bot, u *gotgbot.Update) error {
 				"1": fmt.Sprint(user.Id),
 				"2": html.EscapeString(user.FirstName),
 				"3": fmt.Sprint(user.Id),
-				"4": "Arabic Name",
+				"4": " Arabic Name",
 			}
 			replyText := function.GetStringf(chat.Id, "handlers/listener/listener.go:dellink", val)
 			reply := b.NewSendableMessage(chat.Id, replyText)
 			reply.ParseMode = parsemode.Html
 			_, err = reply.Send()
-			err = logger.SendLog(b, u, "link", "")
+			err = function.SendLog(b, u, "link", "")
 			return err
 		}
 
 	}
+	return gotgbot.ContinueGroups{}
+}
+
+// Thanks to https://github.com/mojurasu/kantek for the kriminalamt plugin
+func kriminalamtHandler(b ext.Bot, u *gotgbot.Update) error {
+	user := u.EffectiveUser
+	chat := u.EffectiveChat
+	//msg := u.EffectiveMessage
+
+	time.Sleep(1 * time.Second)
+	getChat, err := b.GetChatMember(chat.Id, user.Id)
+	if err != nil {
+		err_handler.HandleErr(err)
+		fmt.Print(getChat)
+	}
+
+	if getChat != nil && getChat.Status == "left" {
+		rson := "AutoKriminalamt #" + strings.Replace(fmt.Sprint(chat.Id), "-100", "", 1) + " No. 1"
+		sql.UpdateUserSpam(
+			user.Id,
+			rson,
+			fmt.Sprint(b.Id),
+			int(time.Now().Unix()),
+		)
+		err := function.SpamFunc(b, u)
+		err_handler.HandleErr(err)
+		err = function.SendLog(b, u, "spam", rson)
+		return gotgbot.EndGroups{}
+	}
+
 	return gotgbot.ContinueGroups{}
 }
 
@@ -705,7 +731,6 @@ func update(_ ext.Bot, u *gotgbot.Update) error {
 
 		if sql.GetNotification(user.Id) == nil {
 			sql.UpdateNotification(user.Id, "true")
-
 		}
 		return gotgbot.ContinueGroups{}
 	}
@@ -745,16 +770,16 @@ func usernameQuery(b ext.Bot, u *gotgbot.Update) error {
 				}
 				_, err = b.UnRestrictChatMember(chat.Id, user.Id)
 				return err
-			} else {
-				_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id,
-					"handlers/listener/listener.go:441"), true)
-				err_handler.HandleErr(err)
-				_, err = msg.Message.Delete()
-				err_handler.HandleErr(err)
-				cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
-				_, err = b.UnRestrictChatMember(cid, user.Id)
-				return err
 			}
+
+			_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id,
+				"handlers/listener/listener.go:441"), true)
+			err_handler.HandleErr(err)
+			_, err = msg.Message.Delete()
+			err_handler.HandleErr(err)
+			cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
+			_, err = b.UnRestrictChatMember(cid, user.Id)
+			return err
 		}
 		_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id,
 			"handlers/listener/listener.go:458"), true)
@@ -803,15 +828,15 @@ func pictureQuery(b ext.Bot, u *gotgbot.Update) error {
 				_, err = b.UnRestrictChatMember(chat.Id, user.Id)
 				err_handler.HandleErr(err)
 				return err
-			} else {
-				_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "handlers/listener/listener.go:441"), true)
-				err_handler.HandleErr(err)
-				_, err = msg.Message.Delete()
-				err_handler.HandleErr(err)
-				cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
-				_, err = b.UnRestrictChatMember(cid, user.Id)
-				return err
 			}
+
+			_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "handlers/listener/listener.go:441"), true)
+			err_handler.HandleErr(err)
+			_, err = msg.Message.Delete()
+			err_handler.HandleErr(err)
+			cid, _ := strconv.Atoi(strings.Split(splt, "_")[1])
+			_, err = b.UnRestrictChatMember(cid, user.Id)
+			return err
 		}
 		_, err := b.AnswerCallbackQueryText(msg.Id, function.GetString(chat.Id, "handlers/listener/listener.go:515"), true)
 		err_handler.HandleErr(err)
@@ -869,9 +894,9 @@ func warnQuery(bot ext.Bot, u *gotgbot.Update) error {
 	}
 
 	if pattern.MatchString(query.Data) {
-		userId := pattern.FindStringSubmatch(query.Data)[1]
+		userID := pattern.FindStringSubmatch(query.Data)[1]
 		chat := u.EffectiveChat
-		res := sql.RemoveWarn(userId, strconv.Itoa(chat.Id))
+		res := sql.RemoveWarn(userID, strconv.Itoa(chat.Id))
 		if res {
 			_, err := bot.AnswerCallbackQueryText(query.Id, "Warn Removed.", true)
 			err_handler.HandleErr(err)
@@ -885,6 +910,7 @@ func warnQuery(bot ext.Bot, u *gotgbot.Update) error {
 func LoadUserListener(u *gotgbot.Updater) {
 	defer logrus.Info("Usermonitor listener Loaded...")
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, update))
+	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.NewChatMembers(), kriminalamtHandler))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, spamScan))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, linkScan))
 	u.Dispatcher.AddHandler(handlers.NewMessage(Filters.All, usernameScan))
