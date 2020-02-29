@@ -23,21 +23,21 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
-	userId := extraction.ExtractUser(msg, args)
-	if userId != 0 {
+	userID := extraction.ExtractUser(msg, args)
+	if userID != 0 {
 		replyText := "*User Info*"
-		userInfo := sql.GetUser(userId)
+		userInfo := sql.GetUser(userID)
 		if userInfo != nil {
 			val := map[string]string{
-				"1": strconv.Itoa(userId),
-				"2": userInfo.FirstName,
-				"3": userInfo.LastName,
-				"4": userInfo.UserName,
+				"1": strconv.Itoa(userID),
+				"2": helpers.EscapeMarkdown(userInfo.FirstName),
+				"3": helpers.EscapeMarkdown(userInfo.LastName),
+				"4": helpers.EscapeMarkdown(userInfo.UserName),
 			}
 			replyText += function.GetStringf(chat.Id, "handlers/info/info.go:29", val)
 		}
 
-		spamStatus := sql.GetUserSpam(userId)
+		spamStatus := sql.GetUserSpam(userID)
 		if spamStatus != nil {
 			timeBanned, _ := strconv.ParseInt(
 				fmt.Sprint(spamStatus.TimeAdded),
@@ -45,29 +45,30 @@ func getUser(b ext.Bot, u *gotgbot.Update, args []string) error {
 				64,
 			)
 			val := map[string]string{
-				"1": spamStatus.Reason,
-				"2": spamStatus.Banner,
+				"1": helpers.EscapeMarkdown(spamStatus.Reason),
+				"2": helpers.EscapeMarkdown(spamStatus.Banner),
 				"3": fmt.Sprint(time.Unix(timeBanned, 0)),
 			}
 
 			replyText += function.GetStringf(chat.Id, "handlers/info/info.go:35", val)
 		}
 
-		if c, _ := function.CasListener(b, u); c == true {
-			replyText += "\n*🏴󠁣󠁯󠁣󠁡󠁳󠁿 CAS Banned*: " + fmt.Sprint(c)
+		checkCas := function.CheckCas(u)
+		if checkCas {
+			replyText += "\n*🏴󠁣󠁯󠁣󠁡󠁳󠁿 CAS Banned*: " + fmt.Sprint(checkCas)
 		}
 
 		if !(replyText == "*User Info*") {
 			_, err := msg.ReplyMarkdown(replyText)
 			return err
-		} else {
-			_, err := msg.ReplyHTML(function.GetString(chat.Id, "handlers/info/info.go:51"))
-			return err
 		}
-	} else {
+
 		_, err := msg.ReplyHTML(function.GetString(chat.Id, "handlers/info/info.go:51"))
 		return err
 	}
+
+	_, err := msg.ReplyHTML(function.GetString(chat.Id, "handlers/info/info.go:51"))
+	return err
 }
 
 func getBot(b ext.Bot, u *gotgbot.Update) error {

@@ -15,22 +15,22 @@ func handleReport(b ext.Bot, u *gotgbot.Update) error {
 
 	if pattern.MatchString(query.Data) {
 		action := pattern.FindStringSubmatch(query.Data)[1]
-		chatId, _ := strconv.Atoi(pattern.FindStringSubmatch(query.Data)[2])
-		userId, _ := strconv.Atoi(pattern.FindStringSubmatch(query.Data)[3])
+		chatID, _ := strconv.Atoi(pattern.FindStringSubmatch(query.Data)[2])
+		userID, _ := strconv.Atoi(pattern.FindStringSubmatch(query.Data)[3])
 
 		switch action {
 		case "kick":
-			_, _ = b.KickChatMember(chatId, userId)
+			_, _ = b.KickChatMember(chatID, userID)
 			_, _ = b.AnswerCallbackQueryText(query.Id, "Kicked.", true)
 			_, _ = query.Message.Delete()
 		case "ban":
-			ban := b.NewSendableKickChatMember(chatId, userId)
+			ban := b.NewSendableKickChatMember(chatID, userID)
 			ban.UntilDate = -1
 			_, _ = ban.Send()
 			_, _ = b.AnswerCallbackQueryText(query.Id, "Banned.", true)
 			_, _ = query.Message.Delete()
 		case "del":
-			_, _ = b.DeleteMessage(chatId, userId)
+			_, _ = b.DeleteMessage(chatID, userID)
 			_, _ = b.AnswerCallbackQueryText(query.Id, "Deleted.", true)
 			_, _ = query.Message.Delete()
 		}

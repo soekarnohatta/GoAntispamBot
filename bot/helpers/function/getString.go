@@ -45,11 +45,11 @@ func GetStringf(chatId int, val string, args map[string]string) string {
 	return dummy
 }
 
-func getLang(chatId int) string {
-	lang, err := caching.REDIS.Get(fmt.Sprintf("lang_%v", chatId)).Result()
+func getLang(chatID int) string {
+	lang, err := caching.REDIS.Get(fmt.Sprint("lang_%v", chatID)).Result()
 	if err != nil {
 		if err == redis.Nil || lang == "" {
-			lg := sql.GetLang(chatId)
+			lg := sql.GetLang(chatID)
 			if lg != nil {
 				lang = lg.Lang
 			} else {

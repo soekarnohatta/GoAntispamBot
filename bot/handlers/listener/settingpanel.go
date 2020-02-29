@@ -379,12 +379,12 @@ func updateUserControl(b ext.Bot, u *gotgbot.Update) error {
 	return err
 }
 
-func mainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButton) {
-	emoji := getEmoji(chatId)
+func mainControlMenu(chatID int) (string, [][]string, [][]ext.InlineKeyboardButton) {
+	emoji := getEmoji(chatID)
 	if emoji != nil {
-		replyText := function.GetStringf(chatId, "handlers/helpers/function.go:13",
+		replyText := function.GetStringf(chatID, "handlers/helpers/function.go:13",
 			map[string]string{"1": emoji[0][0], "2": emoji[1][0], "3": emoji[2][0], "4": emoji[0][1], "5": emoji[1][1],
-				"6": emoji[2][1], "7": emoji[0][2], "8": emoji[2][3], "9": emoji[3][0], "10": strconv.Itoa(sql.GetWarnSetting(strconv.Itoa(chatId))),
+				"6": emoji[2][1], "7": emoji[0][2], "8": emoji[2][3], "9": emoji[3][0], "10": strconv.Itoa(sql.GetWarnSetting(strconv.Itoa(chatID))),
 				"11": emoji[0][4], "12": emoji[5][0], "13": emoji[5][1], "14": emoji[5][2]})
 
 		kn := make([][]ext.InlineKeyboardButton, 0)
@@ -443,10 +443,10 @@ func mainControlMenu(chatId int) (string, [][]string, [][]ext.InlineKeyboardButt
 	return "", nil, nil
 }
 
-func mainSpamMenu(chatId int) (string, [][]ext.InlineKeyboardButton) {
-	emoji := getEmoji(chatId)
+func mainSpamMenu(chatID int) (string, [][]ext.InlineKeyboardButton) {
+	emoji := getEmoji(chatID)
 	if emoji != nil {
-		replyText := function.GetStringf(chatId, "handlers/helpers/function.go:66", map[string]string{"1": emoji[0][3]})
+		replyText := function.GetStringf(chatID, "handlers/helpers/function.go:66", map[string]string{"1": emoji[0][3]})
 
 		kn := make([][]ext.InlineKeyboardButton, 0)
 
@@ -464,40 +464,40 @@ func mainSpamMenu(chatId int) (string, [][]ext.InlineKeyboardButton) {
 	return "", nil
 }
 
-func mainMenu(chatId int) (string, [][]ext.InlineKeyboardButton) {
+func mainMenu(chatID int) (string, [][]ext.InlineKeyboardButton) {
 
-	replyText := function.GetString(chatId, "handlers/helpers/function.go:85")
+	replyText := function.GetString(chatID, "handlers/helpers/function.go:85")
 
 	kn := make([][]ext.InlineKeyboardButton, 0)
 
 	ki := make([]ext.InlineKeyboardButton, 2)
-	ki[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "handlers/helpers/function.go:91"), CallbackData: "mk_utama"}
-	ki[1] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "handlers/helpers/function.go:92"), CallbackData: "mk_spam"}
+	ki[0] = ext.InlineKeyboardButton{Text: function.GetString(chatID, "handlers/helpers/function.go:91"), CallbackData: "mk_utama"}
+	ki[1] = ext.InlineKeyboardButton{Text: function.GetString(chatID, "handlers/helpers/function.go:92"), CallbackData: "mk_spam"}
 	kn = append(kn, ki)
 
 	kz := make([]ext.InlineKeyboardButton, 2)
-	kz[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "handlers/helpers/function.go:96"), CallbackData: "mk_media"}
-	kz[1] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "handlers/helpers/function.go:97"), CallbackData: "mk_pesan"}
+	kz[0] = ext.InlineKeyboardButton{Text: function.GetString(chatID, "handlers/helpers/function.go:96"), CallbackData: "mk_media"}
+	kz[1] = ext.InlineKeyboardButton{Text: function.GetString(chatID, "handlers/helpers/function.go:97"), CallbackData: "mk_pesan"}
 	kn = append(kn, kz)
 
 	kd := make([]ext.InlineKeyboardButton, 1)
-	kd[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "handlers/helpers/function.go:101"), CallbackData: "mk_reset"}
+	kd[0] = ext.InlineKeyboardButton{Text: function.GetString(chatID, "handlers/helpers/function.go:101"), CallbackData: "mk_reset"}
 	kn = append(kn, kd)
 
 	kk := make([]ext.InlineKeyboardButton, 1)
-	kk[0] = ext.InlineKeyboardButton{Text: function.GetString(chatId, "handlers/helpers/function.go:105"), CallbackData: "close"}
+	kk[0] = ext.InlineKeyboardButton{Text: function.GetString(chatID, "handlers/helpers/function.go:105"), CallbackData: "close"}
 	kn = append(kn, kk)
 
 	return replyText, kn
 }
 
-func getEmoji(chatId int) [][]string {
-	chat := sql.GetUsername(chatId)
-	pic := sql.GetPicture(chatId)
-	ver := sql.GetVerify(chatId)
-	tim := sql.GetSetting(chatId)
-	spm := sql.GetEnforceGban(chatId)
-	aspm := sql.GetAntispam(chatId)
+func getEmoji(chatID int) [][]string {
+	chat := sql.GetUsername(chatID)
+	pic := sql.GetPicture(chatID)
+	ver := sql.GetVerify(chatID)
+	tim := sql.GetSetting(chatID)
+	spm := sql.GetEnforceGban(chatID)
+	aspm := sql.GetAntispam(chatID)
 
 	lastLetter := "m"
 
@@ -543,7 +543,7 @@ func getEmoji(chatId int) [][]string {
 		act[0] = chat.Action
 		del[0] = chat.Deletion
 	} else {
-		go sql.UpdateUsername(chatId, "true", "mute", "-", "true")
+		go sql.UpdateUsername(chatID, "true", "mute", "-", "true")
 	}
 
 	if pic != nil {
@@ -575,7 +575,7 @@ func getEmoji(chatId int) [][]string {
 		act[1] = pic.Action
 		del[1] = pic.Deletion
 	} else {
-		go sql.UpdatePicture(chatId, "true", "mute", "-", "true")
+		go sql.UpdatePicture(chatID, "true", "mute", "-", "true")
 	}
 
 	if ver != nil {
@@ -594,7 +594,7 @@ func getEmoji(chatId int) [][]string {
 		opt[2] = ver.Option
 		del[3] = ver.Deletion
 	} else {
-		go sql.UpdateVerify(chatId, "true", "-", "true")
+		go sql.UpdateVerify(chatID, "true", "-", "true")
 	}
 
 	if spm != nil {
@@ -606,7 +606,7 @@ func getEmoji(chatId int) [][]string {
 
 		opt[3] = spm.Option
 	} else {
-		go sql.UpdateEnforceGban(chatId, "true")
+		go sql.UpdateEnforceGban(chatID, "true")
 	}
 
 	if tim != nil {
@@ -619,7 +619,7 @@ func getEmoji(chatId int) [][]string {
 		ti[0] = tim.Time
 		del[2] = tim.Deletion
 	} else {
-		go sql.UpdateSetting(chatId, "5m", "true")
+		go sql.UpdateSetting(chatID, "5m", "true")
 	}
 
 	if aspm != nil {

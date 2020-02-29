@@ -12,29 +12,30 @@ import (
 	"github.com/jumatberkah/antispambot/bot/helpers/function"
 )
 
-var infoButtons = [][]ext.InlineKeyboardButton{
-	{ext.InlineKeyboardButton{
-		Text: "📡 Help",
-		Url:  fmt.Sprintf("https://t.me/%v?start=help", ext.Bot{}.UserName),
-	}}}
-
 func start(b ext.Bot, u *gotgbot.Update, args []string) error {
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
-	var startButtons = [][]ext.InlineKeyboardButton{
-		{ext.InlineKeyboardButton{
-			Text:         "📝 Help",
-			CallbackData: "start(help)",
-		}},
-		{ext.InlineKeyboardButton{
-			Text:         "🇦🇺 Language",
-			CallbackData: "start(language)",
-		}},
-		{ext.InlineKeyboardButton{
-			Text: "🔗 Add Me To Your Groups",
-			Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
-		}}}
+	var (
+		startButtons = [][]ext.InlineKeyboardButton{
+			{ext.InlineKeyboardButton{
+				Text:         "📝 Help",
+				CallbackData: "start(help)",
+			}},
+			{ext.InlineKeyboardButton{
+				Text:         "🇦🇺 Language",
+				CallbackData: "start(language)",
+			}},
+			{ext.InlineKeyboardButton{
+				Text: "🔗 Add Me To Your Groups",
+				Url:  fmt.Sprintf("https://t.me/%v?startgroup=new", b.UserName),
+			}}}
+		infoButtons = [][]ext.InlineKeyboardButton{
+			{ext.InlineKeyboardButton{
+				Text: "📡 Help",
+				Url:  fmt.Sprintf("https://t.me/%v?start=help", b.UserName),
+			}}}
+	)
 
 	if chat.Type == "private" {
 		if len(args) != 0 {
