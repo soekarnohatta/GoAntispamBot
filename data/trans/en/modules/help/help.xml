@@ -65,7 +65,7 @@ By using our service (@Polyesterbot) created by the PolyesterBot Team, you agree
 5. Chat Name
 6. Chat Link
 
-We have done all of this so that you can enjoy this service smoothly without spreading your data. For data deletion, you can use the / deldata command</value>
+We have done all of this so that you can enjoy this service smoothly without spreading your data. For data deletion, you can use the /deldata command</value>
         <!--handlers/helpers/help.go:122-->
     </Rows>
     <Rows id="8" name="handlers/helpers/help.go:helptxt">

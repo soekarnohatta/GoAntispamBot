@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="handlers/reporting/report.go:start">
-        <value>`Message has been reported`</value>
+        <value>`Sending report...`</value>
         <!--handlers/private/pm.go:15-->
     </Rows>
     <Rows id="2" name="handlers/reporting/report.go:report">
         <value>`🔄 Reported to {1} succesfully`</value>
         <!--handlers/private/pm.go:15-->
     </Rows>
-    <Counter>1</Counter>
+    <Rows id="3" name="handlers/reporting/report.go:reportFailed">
+        <value>*Please reply a message to report.*</value>
+        <!--handlers/private/pm.go:15-->
+    </Rows>
+    <Counter>3</Counter>
 </translation>

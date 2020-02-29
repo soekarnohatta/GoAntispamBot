@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translation>
     <Rows id="1" name="handlers/reporting/report.go:start">
-        <value>`Pesan laporan telah dikirim`</value>
+        <value>`Mengirim pesan laporan...`</value>
         <!--handlers/private/pm.go:15-->
     </Rows>
     <Rows id="2" name="handlers/reporting/report.go:report">
         <value>`🔄 Selesai Melaporkan ke {1}`</value>
         <!--handlers/private/pm.go:15-->
     </Rows>
-    <Counter>2</Counter>
+    <Rows id="3" name="handlers/reporting/report.go:reportFailed">
+        <value>*Balas pesan yang mau dilaporkan.*</value>
+        <!--handlers/private/pm.go:15-->
+    </Rows>
+    <Counter>3</Counter>
 </translation>
