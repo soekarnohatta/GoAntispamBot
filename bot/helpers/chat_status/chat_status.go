@@ -120,12 +120,11 @@ func RequireSupergroup(chat *ext.Chat, msg *ext.Message) bool {
 
 func CanRestrict(bot ext.Bot, chat *ext.Chat) bool {
 	restrict, err := caching.CACHE.Get(fmt.Sprintf("restrict_%v", chat.Id))
-
 	if err != nil {
 		doRestrictCache(chat, bot)
 		botChatMember, err := chat.GetMember(bot.Id)
 		err_handler.HandleErr(err)
-		if !botChatMember.CanRestrictMembers {
+		if botChatMember != nil && !botChatMember.CanRestrictMembers {
 			_, err := bot.SendMessage(chat.Id, function.GetString(chat.Id, "handlers/helpers/chat_status.go:111"))
 			err_handler.HandleErr(err)
 			return false
@@ -175,7 +174,7 @@ func doDeleteCache(chat *ext.Chat, bot ext.Bot) {
 	botChatMember, err := chat.GetMember(bot.Id)
 	err_handler.HandleErr(err)
 	deleteCaches := false
-	if botChatMember.CanDeleteMessages {
+	if botChatMember != nil && botChatMember.CanDeleteMessages {
 		deleteCaches = true
 	}
 
@@ -188,7 +187,7 @@ func doRestrictCache(chat *ext.Chat, bot ext.Bot) {
 	botChatMember, err := chat.GetMember(bot.Id)
 	err_handler.HandleErr(err)
 	deleteRestrict := false
-	if botChatMember.CanRestrictMembers {
+	if botChatMember != nil && botChatMember.CanRestrictMembers {
 		deleteRestrict = true
 	}
 
