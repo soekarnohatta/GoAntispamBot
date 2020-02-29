@@ -48,9 +48,9 @@ func handleHelp(b ext.Bot, u *gotgbot.Update) error {
 			msg.ReplyMarkup = &markup
 		}
 
-		_, err := query.Message.Delete()
+		_, err := msg.Send()
 		err_handler.HandleErr(err)
-		_, err = msg.Send()
+		_, err = query.Message.Delete()
 		err_handler.HandleErr(err)
 	}
 	return gotgbot.ContinueGroups{}
