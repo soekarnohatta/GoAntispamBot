@@ -12,7 +12,7 @@ What things you need to install or you have to maintain or deploy this software.
 
 ```
 -Golang Version 1.12 and above.
--PostgreSQL Version 11 and above.
+-PostgreSQL Version 12 and above.
 -Redis.
 -Windows/Linux, Linux is recommended
 -Telegram Bot Token
@@ -59,5 +59,4 @@ This project is licensed under the GNU GPL V3 License - see the [LICENSE](LICENS
 ## Acknowledgments
 
 * Hat tip to anyone whose code was used.
-* JetBrains for making awesome software.
 * Telegram Community.

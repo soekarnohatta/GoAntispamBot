@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
 )
@@ -91,6 +92,11 @@ func BuildKeyboardf(path string, size int, dataMap map[string]string) (res [][]e
 	}
 
 	return append(res, btnList)
+}
+
+func GetJeda(jeda time.Time) float64 {
+	timeSpan := time.Since(jeda)
+	return timeSpan.Seconds()
 }
 
 func isValidUrl(str string) bool {

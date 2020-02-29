@@ -14,7 +14,10 @@ import (
 	"github.com/jumatberkah/antispambot/bot/helpers/function"
 )
 
+const lang = "*Available Language(s):*"
+
 func handleStart(b ext.Bot, u *gotgbot.Update) error {
+	Req.Init(u)
 	query := u.CallbackQuery
 	pattern, _ := regexp.Compile(`start\((.+?)\)`)
 
@@ -32,25 +35,32 @@ func handleStart(b ext.Bot, u *gotgbot.Update) error {
 				bot.BotConfig.BotVer,
 			)
 			replyText += function.GetString(chat.Id, "handlers/helpers/help.go:helptxt")
-			reply := b.NewSendableMessage(chat.Id, replyText)
-			reply.ReplyMarkup = &markup
-			reply.ParseMode = parsemode.Markdown
+
+			Req.SendTextAsync(replyText,
+				0,
+				0,
+				parsemode.Markdown,
+				&markup,
+			)
+
 			_, err := query.Message.Delete()
 			err_handler.HandleErr(err)
-			_, err = reply.Send()
-			err_handler.HandleErr(err)
 		case "language":
-			var btnLang = function.BuildKeyboardf(
+			btnLang := function.BuildKeyboardf(
 				"data/keyboard/language.json",
 				2,
 				map[string]string{"1": fmt.Sprint(chat.Id)},
 			)
+
+			Req.SendTextAsync(lang,
+				0,
+				0,
+				parsemode.Markdown,
+				&ext.InlineKeyboardMarkup{InlineKeyboard: &btnLang},
+			)
+
 			_, err := query.Message.Delete()
 			err_handler.HandleErr(err)
-			newMsg := b.NewSendableMessage(chat.Id, "*Available Language(s):*")
-			newMsg.ParseMode = parsemode.Markdown
-			newMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &btnLang}
-			_, err = newMsg.Send()
 			return err
 		}
 	}

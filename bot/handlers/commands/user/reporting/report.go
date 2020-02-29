@@ -15,15 +15,18 @@ import (
 
 	"github.com/jumatberkah/antispambot/bot/helpers/caching"
 	"github.com/jumatberkah/antispambot/bot/helpers/chat_status"
-	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
 	"github.com/jumatberkah/antispambot/bot/helpers/function"
+	"github.com/jumatberkah/antispambot/bot/helpers/telegramProvider"
 )
 
 type adminCache struct {
 	Admin []string `json:"admin"`
 }
 
+var _requestProvider = new(telegramProvider.RequestProvider)
+
 func report(b ext.Bot, u *gotgbot.Update) error {
+	_requestProvider.Init(u)
 	msg := u.EffectiveMessage
 	chat := u.EffectiveChat
 
@@ -47,13 +50,19 @@ func report(b ext.Bot, u *gotgbot.Update) error {
 		replyMsg.ParseMode = parsemode.Markdown
 		replyMsg.ReplyToMessageId = msg.ReplyToMessage.MessageId
 		sent, err := replyMsg.Send()
-		go reportUser(b, msg, reason, sent)
+		go reportUser(b, u, msg, reason, sent)
 		return err
 	}
+	_requestProvider.ReplyMarkdown(
+		function.GetString(chat.Id, "handlers/reporting/report.go:reportFailed"))
 	return nil
 }
 
-func reportUser(b ext.Bot, msg *ext.Message, reason string, sent *ext.Message) {
+func reportUser(b ext.Bot, u *gotgbot.Update, msg *ext.Message, reason string, sent *ext.Message) {
+	_requestProvider.Init(u)
+	if sent == nil || msg == nil {
+		return
+	}
 	admins, err := caching.CACHE.Get(fmt.Sprintf("admin_%v", msg.Chat.Id))
 
 	if err != nil {
@@ -97,8 +106,8 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string, sent *ext.Message) {
 
 	counter := 0
 	for _, adm := range x.Admin {
-		uId, _ := strconv.Atoi(adm)
-		sendMsg := b.NewSendableMessage(uId, reportTxt)
+		userID, _ := strconv.Atoi(adm)
+		sendMsg := b.NewSendableMessage(userID, reportTxt)
 		sendMsg.ParseMode = parsemode.Markdown
 		sendMsg.ReplyMarkup = &ext.InlineKeyboardMarkup{InlineKeyboard: &reportButtons}
 		sendMsg.DisableWebPreview = true
@@ -108,19 +117,22 @@ func reportUser(b ext.Bot, msg *ext.Message, reason string, sent *ext.Message) {
 			counter++
 		}
 
-		_, err = sent.EditMarkdown(function.GetStringf(
-			sent.Chat.Id,
-			"handlers/reporting/report.go:report",
-			map[string]string{"1": fmt.Sprint(uId)}),
+		_requestProvider.EditMessageMarkdown(
+			sent.MessageId,
+			function.GetStringf(
+				sent.Chat.Id,
+				"handlers/reporting/report.go:report",
+				map[string]string{"1": fmt.Sprint(userID)}),
 		)
-		err_handler.HandleErr(err)
 	}
 
-	_, err = sent.EditMarkdownf(
-		"`Succesfully Reported to %d/%d admin(s)`",
-		counter,
-		len(x.Admin))
-	err_handler.HandleErr(err)
+	_requestProvider.EditMessageMarkdown(
+		sent.MessageId,
+		fmt.Sprintf(
+			"`Succesfully Reported to %d/%d admin(s)`",
+			counter,
+			len(x.Admin)),
+	)
 }
 
 func LoadReport(u *gotgbot.Updater) {
