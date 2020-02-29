@@ -12,32 +12,48 @@ import (
 	"unicode"
 
 	"github.com/jumatberkah/antispambot/bot/helpers/err_handler"
-	"github.com/jumatberkah/antispambot/bot/helpers/logger"
 	"github.com/jumatberkah/antispambot/bot/sql"
 )
 
-type casban struct {
-	Status bool `json:"ok"`
+type CasBan struct {
+	Status bool    `json:"ok"`
+	Result Results `json:"result"`
 }
 
-func CasListener(b ext.Bot, u *gotgbot.Update) (bool, error) {
-	user := u.EffectiveUser
-	spam := &casban{}
-	response, err := http.Get(fmt.Sprintf("https://combot.org/api/cas/check?user_id=%v", user.Id))
-	err_handler.HandleErr(err)
-	defer response.Body.Close()
-	if response != nil {
-		body, _ := ioutil.ReadAll(response.Body)
-		_ = json.Unmarshal(body, &spam)
-		if spam.Status == true {
-			err = SpamFunc(b, u)
-			err_handler.HandleErr(err)
-			err = logger.SendLog(b, u, "spam", "CAS Banned (Powered By CAS)")
-			return true, err
-		}
-		return false, gotgbot.ContinueGroups{}
+type Results struct {
+	Offenses  int      `json:"offenses"`
+	Messages  []string `json:"messages"`
+	TimeAdded int      `json:"time_added"`
+}
+
+func CasListener(b ext.Bot, u *gotgbot.Update) error {
+	if CheckCas(u) {
+		err := SpamFunc(b, u)
+		err_handler.HandleErr(err)
+		err = SendLog(b, u, "spam", "CAS Banned (Powered By CAS)")
+		return gotgbot.EndGroups{}
 	}
-	return false, gotgbot.ContinueGroups{}
+	return gotgbot.ContinueGroups{}
+}
+
+func CheckCas(u *gotgbot.Update) bool {
+	user := u.EffectiveUser
+	spam := new(CasBan)
+	response, err := http.Get(fmt.Sprintf("https://api.cas.chat/check?user_id=%v", user.Id))
+	err_handler.HandleErr(err)
+	if response != nil {
+		defer response.Body.Close()
+		body, _ := ioutil.ReadAll(response.Body)
+		err = json.Unmarshal(body, &spam)
+		err_handler.HandleErr(err)
+		//z, _ := json.Marshal(&CasBan{})
+		//fmt.Print(string(z))
+		if spam.Status {
+			return true
+		}
+		return false
+	}
+	return false
 }
 
 func CheckChinese(val string) bool {
@@ -93,7 +109,7 @@ func SpamFunc(b ext.Bot, u *gotgbot.Update) error {
 		}
 	}
 
-	_, err = msg.ReplyHTML(txtBan)
+	a, err := msg.ReplyHTML(txtBan)
 	if err != nil {
 		if err.Error() == "Bad Request: reply message not found" {
 			_, err = b.SendMessageHTML(chat.Id, txtBan)
@@ -110,5 +126,7 @@ func SpamFunc(b ext.Bot, u *gotgbot.Update) error {
 			}
 		}
 	}
+
+	_, _ = a.Delete()
 	return nil
 }
