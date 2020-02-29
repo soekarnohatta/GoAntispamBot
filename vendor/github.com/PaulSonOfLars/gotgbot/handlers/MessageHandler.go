@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
-	"time"
 )
 
 type FilterFunc func(message *ext.Message) bool
@@ -15,8 +14,6 @@ type Message struct {
 	Filter       FilterFunc
 	Response     func(b ext.Bot, u *gotgbot.Update) error
 }
-
-var TimeInit float64 = 0
 
 func NewMessage(filterFunc FilterFunc, response func(b ext.Bot, u *gotgbot.Update) error) Message {
 	return Message{
@@ -31,7 +28,6 @@ func NewMessage(filterFunc FilterFunc, response func(b ext.Bot, u *gotgbot.Updat
 }
 
 func (h Message) HandleUpdate(u *gotgbot.Update, d gotgbot.Dispatcher) error {
-	TimeInit = ext.GetJeda(time.Now())
 	return h.Response(*d.Bot, u)
 }
 
