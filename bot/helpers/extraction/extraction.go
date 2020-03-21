@@ -1,14 +1,20 @@
+// Package extraction is a package that handles something to extract.
+// This package should handle all extractions activity.
 package extraction
 
 import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"GoAntispamBot/bot/helpers/trans"
+	"GoAntispamBot/bot/providers"
 	"GoAntispamBot/bot/services"
 )
 
+// idFromReply will return the user id and the message of the user
+// from the replied message.
 func idFromReply(m *ext.Message) (int, string) {
 	prevMessage := m.ReplyToMessage
 	if prevMessage == nil {
@@ -23,7 +29,9 @@ func idFromReply(m *ext.Message) (int, string) {
 	return userID, res[1]
 }
 
-func extractUserText(m *ext.Message, args []string) (int, string) {
+// ExtractUserText will return the user id and the message of the user.
+func ExtractUserText(telegramProvider providers.TelegramProvider, args []string) (int, string) {
+	m := telegramProvider.Message
 	prevMessage := m.ReplyToMessage
 	splitText := strings.SplitN(m.Text, " ", 2)
 
@@ -42,7 +50,7 @@ func extractUserText(m *ext.Message, args []string) (int, string) {
 		ent = &entities[0]
 	}
 
-	if entities != nil && ent != nil && ent.Offset == (len(m.Text) - len(textToParse)) {
+	if entities != nil && ent != nil && ent.Offset == (len(m.Text)-len(textToParse)) {
 		ent = &entities[0]
 		userID := ent.User.Id
 		text = m.Text[ent.Offset+ent.Length:]
@@ -51,7 +59,12 @@ func extractUserText(m *ext.Message, args []string) (int, string) {
 		user, _ := strconv.Atoi(args[0])
 		userIDs, err := services.FindUser(user)
 		if userIDs == nil || err != nil {
-			_, _ = m.ReplyHTML(trans.GetString(m.Chat.Id, "error/usernotindb"))
+			go telegramProvider.SendText(
+				trans.GetString(m.Chat.Id, "error/usernotindb"),
+				m.Chat.Id,
+				0,
+				nil,
+			)
 			return 0, ""
 		} else {
 			res := strings.SplitN(m.Text, " ", 2)
@@ -60,6 +73,29 @@ func extractUserText(m *ext.Message, args []string) (int, string) {
 				return userIDs.UserID, text
 			}
 		}
+	} else if len(args) >= 1 {
+		isID := true
+		for _, r := range args[0] {
+			if unicode.IsDigit(r) {
+				continue
+			} else {
+				isID = false
+				break
+			}
+		}
+
+		if isID {
+			userID, _ := strconv.Atoi(args[0])
+			res := strings.SplitN(m.Text, " ", 2)
+			if len(res) >= 3 {
+				text := res[2]
+				return userID, text
+			}
+		}
+
+	} else if prevMessage != nil {
+		userID, text := idFromReply(prevMessage)
+		return userID, text
 	}
 
 	return 0, ""

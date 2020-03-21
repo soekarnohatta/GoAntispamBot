@@ -17,7 +17,7 @@ type (
 	GlobalBan struct {
 		UserID     int    `bson:"user_id" json:"user_id"`
 		Reason     string `bson:"reason" json:"reason_id"`
-		BannedBy   string `bson:"banner" json:"banner"`
+		BannedBy   int    `bson:"banner" json:"banner"`
 		BannedFrom int    `bson:"appeal" json:"appeal"`
 		TimeAdded  int    `bson:"time_added" json:"time_added"`
 	}
@@ -28,6 +28,10 @@ type (
 		Gban           bool `bson:"enforce_gban" json:"enforce_gban"`
 		Username       bool `bson:"enforce_username" json:"enforce_username"`
 		ProfilePicture bool `bson:"enforce_profile_picture" json:"enforce_profile_picture"`
+		Time           int  `bson:"time_settings" json:"time_settings"`
+	}
+
+	LockSetting struct {
 	}
 
 	// Struct ChatLog holds the basic chat data of a chat.

@@ -8,11 +8,11 @@ package providers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PaulSonOfLars/gotgbot"
 	"net/http"
 	"time"
 
 	"GoAntispamBot/bot/helpers/errHandler"
+	"GoAntispamBot/bot/helpers/trans"
 	"GoAntispamBot/bot/model"
 	"GoAntispamBot/bot/services"
 )
@@ -45,17 +45,25 @@ func IsCASBan(userID int) bool {
 	return ban.Ok
 }
 
-func FilterSpamUser(u *gotgbot.Update, telegramProvider TelegramProvider) {
-	if IsGlobalBan(u.EffectiveUser.Id) {
-		doBanSpammer(u, telegramProvider)
+func FilterSpamUser(telegramProvider TelegramProvider) {
+	msg := telegramProvider.Message
+
+	if IsGlobalBan(msg.From.Id) {
+		doBanSpammer(telegramProvider)
 		return
-	} else if IsCASBan(u.EffectiveUser.Id) {
-		doBanSpammer(u, telegramProvider)
+	} else if IsCASBan(msg.From.Id) {
+		doBanSpammer(telegramProvider)
 		return
 	}
 }
 
-func doBanSpammer(u *gotgbot.Update, telegramProvider TelegramProvider) {
-	telegramProvider.Init(u)
-	go telegramProvider.KickMember(u.EffectiveUser.Id, u.EffectiveChat.Id, -1)
+func doBanSpammer(telegramProvider TelegramProvider) {
+	msg := telegramProvider.Message
+	go telegramProvider.KickMember(msg.From.Id, msg.Chat.Id, -1)
+	go telegramProvider.SendText(
+		trans.GetStringf(telegramProvider.Message.Chat.Id, "actions/spammer", map[string]string{"1": msg.Text}),
+		0,
+		0,
+		nil,
+	)
 }

@@ -5,14 +5,11 @@ This package should handle all error(s).
 package errHandler
 
 import (
-	"github.com/PaulSonOfLars/gotgbot"
 	log "github.com/sirupsen/logrus"
 
 	"GoAntispamBot/bot/helpers/trans"
 	"GoAntispamBot/bot/providers"
 )
-
-var telegramProvider = providers.TelegramProvider{}
 
 // Error function returns nothing as it only handles error and log it.
 func Error(err error) {
@@ -29,12 +26,11 @@ func Fatal(err error) {
 }
 
 // SendError function will send an error message to the chat.
-func SendError(err error, u *gotgbot.Update) {
+func SendError(err error, telegramProvider providers.TelegramProvider) {
 	if err != nil {
-		telegramProvider.Init(u)
 		go telegramProvider.SendText(
-			trans.GetStringf(u.EffectiveChat.Id, "error/error", map[string]string{"1": err.Error()}),
-			u.EffectiveChat.Id,
+			trans.GetStringf(telegramProvider.Message.Chat.Id, "error/error", map[string]string{"1": err.Error()}),
+			0,
 			0,
 			nil,
 		)

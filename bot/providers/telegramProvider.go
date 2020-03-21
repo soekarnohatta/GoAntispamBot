@@ -9,12 +9,12 @@ import (
 )
 
 type TelegramProvider struct {
-	Update *gotgbot.Update
-	Bot ext.Bot
-	Message *ext.Message
-	EditedMessage *ext.Message
+	Update          *gotgbot.Update
+	Bot             ext.Bot
+	Message         *ext.Message
+	EditedMessage   *ext.Message
 	MessageOrEdited *ext.Message
-	SentMessageID int
+	SentMessageID   int
 
 	// Self Added Type
 	TimeInit float64
@@ -41,6 +41,9 @@ func (r TelegramProvider) Init(u *gotgbot.Update) {
 }
 
 func (r TelegramProvider) SendText(txtToSend string, chatID int, repMsgID int, btn *ext.InlineKeyboardMarkup) {
+	if chatID == 0 {
+		chatID = r.Message.Chat.Id
+	}
 	sendMsg := r.Bot.NewSendableMessage(chatID, txtToSend)
 	sendMsg.ReplyToMessageId = repMsgID
 	sendMsg.DisableWebPreview = true
