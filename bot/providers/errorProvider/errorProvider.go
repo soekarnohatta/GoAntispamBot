@@ -3,7 +3,7 @@ Package "providers" is a package that provides required things reqired by the bo
 to be used by other funcs.
 This package should has all providers for the bot.
 */
-package providers
+package errorProvider
 
 const (
 	// BadRequest Error

@@ -1,4 +1,4 @@
-package providers
+package telegramProvider
 
 import (
 	"github.com/PaulSonOfLars/gotgbot"
@@ -6,6 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
 
 	"GoAntispamBot/bot/helpers/errHandler"
+	"GoAntispamBot/bot/providers/errorProvider"
 )
 
 type TelegramProvider struct {
@@ -52,7 +53,7 @@ func (r TelegramProvider) SendText(txtToSend string, chatID int, repMsgID int, b
 	sendMsg.DisableNotification = false
 	send, err := sendMsg.Send()
 	if err != nil {
-		if err.Error() == RepMsgNotFound {
+		if err.Error() == errorProvider.RepMsgNotFound {
 			sendMsg.ReplyToMessageId = 0
 			_, _ = sendMsg.Send()
 		} else {
@@ -82,5 +83,5 @@ func (r TelegramProvider) KickMember(userID int, chatID int, dur int64) {
 	kickMem := r.Bot.NewSendableKickChatMember(chatID, userID)
 	kickMem.UntilDate = dur
 	_, err := kickMem.Send()
-	errHandler.SendError(err, r.Update)
+	errHandler.SendError(err)
 }

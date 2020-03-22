@@ -1,29 +1,32 @@
-package handlers
+package handler
 
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 
 	"GoAntispamBot/bot/model"
-	"GoAntispamBot/bot/providers"
-	"GoAntispamBot/bot/services"
+	"GoAntispamBot/bot/providers/antiSpamProvider"
+	"GoAntispamBot/bot/providers/telegramProvider"
+	"GoAntispamBot/bot/services/logService"
+	"GoAntispamBot/bot/services/settingsService"
 )
 
-type UpdateHandler model.Message
+type Handler struct {
+	TelegramProvider telegramProvider.TelegramProvider
+}
 
-func (r UpdateHandler) UpdateChat(b ext.Bot, u *gotgbot.Update) error {
+func (r Handler) UpdateChat(b ext.Bot, u *gotgbot.Update) error {
 	doUpdateLog(u)
 	doUpdateSetting(u)
 	return gotgbot.ContinueGroups{}
 }
 
-func (r UpdateHandler) GbanHandler(_ ext.Bot, u *gotgbot.Update) error {
+func (r Handler) GbanHandler(_ ext.Bot, u *gotgbot.Update) error {
 	r.TelegramProvider.Init(u)
 	msg := u.EffectiveMessage
 	if msg != nil {
-		providers.FilterSpamUser(r.TelegramProvider)
+		antiSpamProvider.FilterSpamUser(r.TelegramProvider)
 	}
-
 	return gotgbot.ContinueGroups{}
 }
 
@@ -41,7 +44,7 @@ func doUpdateLog(u *gotgbot.Update) {
 				UserName:  user.Username,
 			}
 
-			services.UpdateUser(userStruct)
+			logService.UpdateUser(userStruct)
 		}
 
 		chatStruct := model.ChatLog{
@@ -50,7 +53,7 @@ func doUpdateLog(u *gotgbot.Update) {
 			ChatTitle: chat.Title,
 			ChatType:  chat.Type,
 		}
-		services.UpdateChat(chatStruct)
+		logService.UpdateChat(chatStruct)
 	}
 }
 
@@ -60,14 +63,14 @@ func doUpdateSetting(u *gotgbot.Update) {
 
 	if msg != nil {
 		if chat.Type == "supergroup" {
-			if services.FindGroupSetting(chat.Id) == nil {
+			if settingsService.FindGroupSetting(chat.Id) == nil {
 				settingStruct := model.GroupSetting{
 					ChatID:         chat.Id,
 					Gban:           true,
 					Username:       true,
 					ProfilePicture: true,
 				}
-				services.UpdateGroupSetting(settingStruct)
+				settingsService.UpdateGroupSetting(settingStruct)
 			}
 		}
 	}

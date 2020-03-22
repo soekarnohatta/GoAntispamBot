@@ -9,10 +9,11 @@ import (
 	"GoAntispamBot/bot"
 	"GoAntispamBot/bot/helpers/errHandler"
 	"GoAntispamBot/bot/helpers/trans"
-	"GoAntispamBot/bot/providers"
+	"GoAntispamBot/bot/providers/redisProvider"
+	"GoAntispamBot/bot/providers/telegramProvider"
 )
 
-func RequireSudo(userID int, telegramProvider providers.TelegramProvider) bool {
+func RequireSudo(userID int, telegramProvider telegramProvider.TelegramProvider) bool {
 	if !IsSudo(userID) {
 		go telegramProvider.SendText(
 			trans.GetString(telegramProvider.Message.Chat.Id, "error/nosudo"),
@@ -25,7 +26,7 @@ func RequireSudo(userID int, telegramProvider providers.TelegramProvider) bool {
 	return true
 }
 
-func RequireAdmin(userID int, telegramProvider providers.TelegramProvider) bool {
+func RequireAdmin(userID int, telegramProvider telegramProvider.TelegramProvider) bool {
 	if !isAdmin(userID, telegramProvider.Message.Chat) {
 		go telegramProvider.SendText(
 			trans.GetString(telegramProvider.Message.Chat.Id, "error/noadmin"),
@@ -38,7 +39,7 @@ func RequireAdmin(userID int, telegramProvider providers.TelegramProvider) bool 
 	return true
 }
 
-func RequireSuperGroup(chat *ext.Chat, telegramProvider providers.TelegramProvider) bool {
+func RequireSuperGroup(chat *ext.Chat, telegramProvider telegramProvider.TelegramProvider) bool {
 	if chat.Type != "supergroup" {
 		go telegramProvider.SendText(
 			trans.GetString(telegramProvider.Message.Chat.Id, "error/nosupergroup"),
@@ -51,7 +52,7 @@ func RequireSuperGroup(chat *ext.Chat, telegramProvider providers.TelegramProvid
 	return true
 }
 
-func RequirePrivate(chat *ext.Chat, telegramProvider providers.TelegramProvider) bool {
+func RequirePrivate(chat *ext.Chat, telegramProvider telegramProvider.TelegramProvider) bool {
 	if chat.Type != "private" {
 		go telegramProvider.SendText(
 			trans.GetString(telegramProvider.Message.Chat.Id, "error/noprivate"),
@@ -69,7 +70,7 @@ func IsSudo(userID int) bool {
 }
 
 func isAdmin(userID int, chat *ext.Chat) bool {
-	admins := providers.Redis.Get(fmt.Sprintf("admin_%v", chat.Id))
+	admins := redisProvider.Redis.Get(fmt.Sprintf("admin_%v", chat.Id))
 	if admins.Err() != redis.Nil {
 		doCreateAdminCache(chat)
 	}
@@ -91,7 +92,7 @@ func doCreateAdminCache(chat *ext.Chat) {
 		cacheAdmin := make(map[string][]int)
 		cacheAdmin["admins"] = admins
 		finalCache, _ := json.Marshal(&cacheAdmin)
-		err := providers.Redis.Set(fmt.Sprintf("admin_%v", chat.Id), finalCache, 600)
+		err := redisProvider.Redis.Set(fmt.Sprintf("admin_%v", chat.Id), finalCache, 600)
 		errHandler.Error(err.Err())
 	}
 }

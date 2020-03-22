@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 
 	"GoAntispamBot/bot/helpers/errHandler"
-	"GoAntispamBot/bot/services"
+	"GoAntispamBot/bot/services/langService"
 )
 
 const notFound = "Error: The desired string is not found"
@@ -22,7 +22,7 @@ func init() {
 
 func GetString(chatId int, key string) string {
 	if chatId != 0 && key != "" {
-		lang := services.FindLang(chatId)
+		lang := langService.FindLang(chatId)
 		ret := goloc.Trnl(lang, key)
 		if ret != "" {
 			return ret
@@ -33,7 +33,7 @@ func GetString(chatId int, key string) string {
 
 func GetStringf(chatId int, key string, args map[string]string) string {
 	if args != nil && chatId != 0 && key != "" {
-		lang := services.FindLang(chatId)
+		lang := langService.FindLang(chatId)
 		ret := goloc.Trnlf(lang, key, args)
 		if ret != "" {
 			return ret

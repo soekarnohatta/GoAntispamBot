@@ -5,9 +5,14 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/ext"
 
 	"GoAntispamBot/bot/helpers/trans"
+	"GoAntispamBot/bot/providers/telegramProvider"
 )
 
-func (r CommandHandler) Start(b ext.Bot, u *gotgbot.Update) error {
+type CommandStart struct {
+	TelegramProvider telegramProvider.TelegramProvider
+}
+
+func (r CommandStart) Start(b ext.Bot, u *gotgbot.Update) error {
 	r.TelegramProvider.Init(u)
 	msg := u.EffectiveMessage
 

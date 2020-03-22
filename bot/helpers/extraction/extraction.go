@@ -9,8 +9,8 @@ import (
 	"unicode"
 
 	"GoAntispamBot/bot/helpers/trans"
-	"GoAntispamBot/bot/providers"
-	"GoAntispamBot/bot/services"
+	"GoAntispamBot/bot/providers/telegramProvider"
+	"GoAntispamBot/bot/services/logService"
 )
 
 // idFromReply will return the user id and the message of the user
@@ -30,7 +30,7 @@ func idFromReply(m *ext.Message) (int, string) {
 }
 
 // ExtractUserText will return the user id and the message of the user.
-func ExtractUserText(telegramProvider providers.TelegramProvider, args []string) (int, string) {
+func ExtractUserText(telegramProvider telegramProvider.TelegramProvider, args []string) (int, string) {
 	m := telegramProvider.Message
 	prevMessage := m.ReplyToMessage
 	splitText := strings.SplitN(m.Text, " ", 2)
@@ -57,7 +57,7 @@ func ExtractUserText(telegramProvider providers.TelegramProvider, args []string)
 		return userID, text
 	} else if len(args) >= 1 && args[0][0] == '@' {
 		user, _ := strconv.Atoi(args[0])
-		userIDs, err := services.FindUser(user)
+		userIDs, err := logService.FindUser(user)
 		if userIDs == nil || err != nil {
 			go telegramProvider.SendText(
 				trans.GetString(m.Chat.Id, "error/usernotindb"),

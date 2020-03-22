@@ -3,7 +3,7 @@ Package "providers" is a package that provides required things reqired by the bo
 to be used by other funcs.
 This package should has all providers for the bot.
 */
-package providers
+package antiSpamProvider
 
 import (
 	"encoding/json"
@@ -14,13 +14,14 @@ import (
 	"GoAntispamBot/bot/helpers/errHandler"
 	"GoAntispamBot/bot/helpers/trans"
 	"GoAntispamBot/bot/model"
-	"GoAntispamBot/bot/services"
+	"GoAntispamBot/bot/providers/telegramProvider"
+	"GoAntispamBot/bot/services/securityService"
 )
 
 var myClient = &http.Client{Timeout: 5 * time.Second}
 
 func IsGlobalBan(userID int) bool {
-	_, err := services.FindGlobalBan(userID) // Find a user from the DB.
+	_, err := securityService.FindGlobalBan(userID) // Find a user from the DB.
 	if err != nil {
 		// Theoritically if there's an error it would be likely the user is not a
 		// spammer because the DB returned record not found error.
@@ -45,7 +46,7 @@ func IsCASBan(userID int) bool {
 	return ban.Ok
 }
 
-func FilterSpamUser(telegramProvider TelegramProvider) {
+func FilterSpamUser(telegramProvider telegramProvider.TelegramProvider) {
 	msg := telegramProvider.Message
 
 	if IsGlobalBan(msg.From.Id) {
@@ -57,7 +58,7 @@ func FilterSpamUser(telegramProvider TelegramProvider) {
 	}
 }
 
-func doBanSpammer(telegramProvider TelegramProvider) {
+func doBanSpammer(telegramProvider telegramProvider.TelegramProvider) {
 	msg := telegramProvider.Message
 	go telegramProvider.KickMember(msg.From.Id, msg.Chat.Id, -1)
 	go telegramProvider.SendText(

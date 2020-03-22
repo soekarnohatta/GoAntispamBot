@@ -6,9 +6,6 @@ package errHandler
 
 import (
 	log "github.com/sirupsen/logrus"
-
-	"GoAntispamBot/bot/helpers/trans"
-	"GoAntispamBot/bot/providers"
 )
 
 // Error function returns nothing as it only handles error and log it.
@@ -26,13 +23,8 @@ func Fatal(err error) {
 }
 
 // SendError function will send an error message to the chat.
-func SendError(err error, telegramProvider providers.TelegramProvider) {
+func SendError(err error) {
 	if err != nil {
-		go telegramProvider.SendText(
-			trans.GetStringf(telegramProvider.Message.Chat.Id, "error/error", map[string]string{"1": err.Error()}),
-			0,
-			0,
-			nil,
-		)
+
 	}
 }

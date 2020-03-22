@@ -7,10 +7,15 @@ import (
 
 	"GoAntispamBot/bot/helpers/chatStatus"
 	"GoAntispamBot/bot/helpers/trans"
-	"GoAntispamBot/bot/services"
+	"GoAntispamBot/bot/providers/telegramProvider"
+	"GoAntispamBot/bot/services/langService"
 )
 
-func (r CommandHandler) SetLang(b ext.Bot, u *gotgbot.Update, args []string) error {
+type CommandLang struct {
+	TelegramProvider telegramProvider.TelegramProvider
+}
+
+func (r CommandLang) SetLang(b ext.Bot, u *gotgbot.Update, args []string) error {
 	r.TelegramProvider.Init(u)
 	msg := u.EffectiveMessage
 
@@ -29,7 +34,7 @@ func (r CommandHandler) SetLang(b ext.Bot, u *gotgbot.Update, args []string) err
 			return nil
 		}
 
-		services.UpdateLang(msg.Chat.Id, args[0])
+		langService.UpdateLang(msg.Chat.Id, args[0])
 		return nil
 	}
 	return nil

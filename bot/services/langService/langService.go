@@ -2,14 +2,15 @@
 Package "services" is a package that provides services to be used by other funcs.
 This package should has all services for the bot.
 */
-package services
+package langService
 
 import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"GoAntispamBot/bot/model"
-	"GoAntispamBot/bot/providers"
+	"GoAntispamBot/bot/providers/mongoProvider"
+	"GoAntispamBot/bot/providers/redisProvider"
 )
 
 func UpdateLang(chatID int, language string) {
@@ -19,7 +20,7 @@ func UpdateLang(chatID int, language string) {
 	langStruct.Language = language
 
 	// Start updating...
-	go providers.Update("lang", langStruct.ChatID, bson.M{"$set": langStruct}, true)
+	go mongoProvider.Update("lang", langStruct.ChatID, bson.M{"$set": langStruct}, true)
 	go updateLangRedis(chatID, language)
 }
 
@@ -29,7 +30,7 @@ func RemoveLang(chatID int) {
 	langStruct.ChatID = chatID
 
 	// Start removing...
-	go providers.Remove("lang", langStruct.ChatID)
+	go mongoProvider.Remove("lang", langStruct.ChatID)
 }
 
 func FindLang(chatID int) (lang string) {
@@ -44,7 +45,7 @@ func FindLang(chatID int) (lang string) {
 		return
 	}
 
-	res := providers.FindOne("lang", langStruct.ChatID) // MongoDB
+	res := mongoProvider.FindOne("lang", langStruct.ChatID) // MongoDB
 	if res != nil {
 		lang = string(res.Lookup("language").Value)
 		return
@@ -59,12 +60,12 @@ func FindLang(chatID int) (lang string) {
 func updateLangRedis(chatID int, language string) {
 	// Start updating...
 	key := fmt.Sprintf("lang_%v", chatID)
-	providers.SetRedisKey(key, language)
+	redisProvider.SetRedisKey(key, language)
 }
 
 func findLangRedis(chatID int) (lang string) {
 	// Start search...
 	key := fmt.Sprintf("lang_%v", chatID)
-	lang = providers.GetRedisKey(key)
+	lang = redisProvider.GetRedisKey(key)
 	return
 }

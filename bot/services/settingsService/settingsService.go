@@ -2,19 +2,19 @@
 Package "services" is a package that provides services to be used by other funcs.
 This package should has all services for the bot.
 */
-package services
+package settingsService
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"GoAntispamBot/bot/helpers/errHandler"
 	"GoAntispamBot/bot/model"
-	"GoAntispamBot/bot/providers"
+	"GoAntispamBot/bot/providers/mongoProvider"
 )
 
 func UpdateGroupSetting(setting model.GroupSetting) {
 	// Start updating...
-	go providers.Update("setting", setting.ChatID, bson.M{"$set": setting}, true)
+	go mongoProvider.Update("setting", setting.ChatID, bson.M{"$set": setting}, true)
 }
 
 func RemoveGroupSetting(chatID int) {
@@ -23,7 +23,7 @@ func RemoveGroupSetting(chatID int) {
 	settingStruct.ChatID = chatID
 
 	// Start removing...
-	go providers.Remove("setting", settingStruct.ChatID)
+	go mongoProvider.Remove("setting", settingStruct.ChatID)
 }
 
 func FindGroupSetting(chatID int) *model.GroupSetting {
@@ -32,7 +32,7 @@ func FindGroupSetting(chatID int) *model.GroupSetting {
 	settingStruct.ChatID = chatID
 
 	// Start search...
-	a := providers.FindOne("setting", settingStruct.ChatID)
+	a := mongoProvider.FindOne("setting", settingStruct.ChatID)
 	if a != nil {
 		err := bson.Unmarshal(a, settingStruct)
 		errHandler.Error(err)

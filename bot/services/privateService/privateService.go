@@ -2,13 +2,13 @@
 Package "services" is a package that provides services to be used by other funcs.
 This package should has all services for the bot.
 */
-package services
+package privateService
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"GoAntispamBot/bot/model"
-	"GoAntispamBot/bot/providers"
+	"GoAntispamBot/bot/providers/mongoProvider"
 )
 
 func UpdateNotification(userID int, notif bool) {
@@ -18,7 +18,7 @@ func UpdateNotification(userID int, notif bool) {
 	notifStruct.Notif = notif
 
 	// Start updating...
-	go providers.Update("notif", notifStruct.UserID, bson.M{"$set": notifStruct}, true)
+	go mongoProvider.Update("notif", notifStruct.UserID, bson.M{"$set": notifStruct}, true)
 }
 
 func RemoveNotification(userID int) {
@@ -27,7 +27,7 @@ func RemoveNotification(userID int) {
 	notifStruct.UserID = userID
 
 	// Start removing...
-	go providers.Remove("notif", notifStruct.UserID)
+	go mongoProvider.Remove("notif", notifStruct.UserID)
 }
 
 func FindNotification(userID int) (notif string) {
@@ -36,7 +36,7 @@ func FindNotification(userID int) (notif string) {
 	notifStruct.UserID = userID
 
 	// Start search...
-	res := providers.FindOne("notif", notifStruct.UserID)
+	res := mongoProvider.FindOne("notif", notifStruct.UserID)
 	if res != nil {
 		notif = string(res.Lookup("notification").Value)
 	}

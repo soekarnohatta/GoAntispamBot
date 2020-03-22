@@ -1,11 +1,11 @@
-package handlers
+package handler
 
 import (
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 )
 
-func (r UpdateHandler) PingHandler(b ext.Bot, u *gotgbot.Update) error {
+func (r Handler) PingHandler(b ext.Bot, u *gotgbot.Update) error {
 	r.TelegramProvider.Init(u)
 	go r.TelegramProvider.SendText(
 		"<b>Pong...</b>",
@@ -13,4 +13,5 @@ func (r UpdateHandler) PingHandler(b ext.Bot, u *gotgbot.Update) error {
 		0,
 		nil,
 	)
+	return nil
 }
