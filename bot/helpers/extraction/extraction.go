@@ -94,6 +94,7 @@ func ExtractUserText(telegramProvider telegramProvider.TelegramProvider, args []
 		}
 
 	} else if prevMessage != nil {
+		_, _ = prevMessage.Delete()
 		userID, text := idFromReply(prevMessage)
 		return userID, text
 	}
