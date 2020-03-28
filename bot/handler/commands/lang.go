@@ -35,6 +35,12 @@ func (r CommandLang) SetLang(b ext.Bot, u *gotgbot.Update, args []string) error 
 		}
 
 		langService.UpdateLang(msg.Chat.Id, args[0])
+		go r.TelegramProvider.SendText(
+			trans.GetString(msg.Chat.Id, "actions/changelang"),
+			msg.Chat.Id,
+			0,
+			nil,
+		)
 		return nil
 	}
 	return nil

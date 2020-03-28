@@ -52,6 +52,7 @@ func (r Handler) PictureHandler(_ ext.Bot, u *gotgbot.Update) error {
 		if settingsService.FindGroupSetting(msg.Chat.Id).ProfilePicture {
 			pic, _ := msg.From.GetProfilePhotos(0, 1)
 			if pic != nil && !(pic.TotalCount >= 1) {
+				_, _ = msg.Delete()
 				go r.TelegramProvider.SendText(
 					trans.GetStringf(msg.Chat.Id,
 						"actions/handler",
