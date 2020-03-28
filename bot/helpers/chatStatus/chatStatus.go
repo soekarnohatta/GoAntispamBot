@@ -39,8 +39,8 @@ func RequireAdmin(userID int, telegramProvider telegramProvider.TelegramProvider
 	return true
 }
 
-func RequireSuperGroup(chat *ext.Chat, telegramProvider telegramProvider.TelegramProvider) bool {
-	if chat.Type != "supergroup" {
+func RequireSuperGroup(telegramProvider telegramProvider.TelegramProvider) bool {
+	if telegramProvider.Message.Chat.Type != "supergroup" {
 		go telegramProvider.SendText(
 			trans.GetString(telegramProvider.Message.Chat.Id, "error/nosupergroup"),
 			0,
@@ -52,8 +52,8 @@ func RequireSuperGroup(chat *ext.Chat, telegramProvider telegramProvider.Telegra
 	return true
 }
 
-func RequirePrivate(chat *ext.Chat, telegramProvider telegramProvider.TelegramProvider) bool {
-	if chat.Type != "private" {
+func RequirePrivate(telegramProvider telegramProvider.TelegramProvider) bool {
+	if telegramProvider.Message.Chat.Type != "private" {
 		go telegramProvider.SendText(
 			trans.GetString(telegramProvider.Message.Chat.Id, "error/noprivate"),
 			0,
