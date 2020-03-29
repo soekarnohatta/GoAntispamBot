@@ -120,6 +120,7 @@ func doUpdateSetting(u *gotgbot.Update) {
 				Gban:           true,
 				Username:       true,
 				ProfilePicture: true,
+				Time:           5,
 			}
 			settingsService.UpdateGroupSetting(settingStruct)
 		}

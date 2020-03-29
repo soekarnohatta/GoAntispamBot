@@ -5,6 +5,7 @@ This package should has all services for the bot.
 package settingsService
 
 import (
+	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"GoAntispamBot/bot/helpers/errHandler"
@@ -15,6 +16,39 @@ import (
 func UpdateGroupSetting(setting model.GroupSetting) {
 	// Start updating...
 	go mongoProvider.Update("setting", setting.ChatID, bson.M{"$set": setting}, true)
+}
+
+func UpdateSetting(chatID int, set string) error {
+	find := FindGroupSetting(chatID)
+	if find == nil {
+		UpdateGroupSetting(model.GroupSetting{
+			ChatID:         chatID,
+			Gban:           true,
+			Username:       true,
+			ProfilePicture: true,
+			Time:           0,
+		})
+	}
+
+	if find != nil {
+		switch set {
+		case "gban":
+			find.Gban = true
+			UpdateGroupSetting(*find)
+			return nil
+		case "username":
+			find.Username = true
+			UpdateGroupSetting(*find)
+			return nil
+		case "profilepicture":
+			find.ProfilePicture = true
+			UpdateGroupSetting(*find)
+			return nil
+		default:
+			return errors.New("setting type is not correct")
+		}
+	}
+	return errors.New("setting type is not correct")
 }
 
 func RemoveGroupSetting(chatID int) {

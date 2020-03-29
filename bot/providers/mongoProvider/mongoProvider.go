@@ -17,7 +17,7 @@ import (
 
 var ctx = context.Background()
 
-func connect() (*mongo.Database, error) {
+func Connect() (*mongo.Database, error) {
 	// Initiate MongoDB connection.
 	clientOptions := options.Client()
 	clientOptions.ApplyURI(bot.BotConfig.DatabaseURL)
@@ -36,7 +36,7 @@ func connect() (*mongo.Database, error) {
 }
 
 func Insert(coll string, doc interface{}) {
-	db, err := connect() // Init connection
+	db, err := Connect() // Init connection
 	errHandler.Fatal(err)
 
 	// Start inserting..
@@ -45,7 +45,7 @@ func Insert(coll string, doc interface{}) {
 }
 
 func Update(coll string, filter interface{}, update interface{}, upsert bool) {
-	db, err := connect() // Init connection
+	db, err := Connect() // Init connection
 	errHandler.Fatal(err)
 
 	// Start updating...
@@ -55,7 +55,7 @@ func Update(coll string, filter interface{}, update interface{}, upsert bool) {
 }
 
 func Remove(coll string, doc interface{}) {
-	db, err := connect() // Init connection
+	db, err := Connect() // Init connection
 	errHandler.Fatal(err)
 
 	// Start deleting...
@@ -64,7 +64,7 @@ func Remove(coll string, doc interface{}) {
 }
 
 func FindOne(coll string, doc interface{}) (ret bson.Raw) {
-	db, err := connect() // Init connection
+	db, err := Connect() // Init connection
 	errHandler.Fatal(err)
 
 	// Start searching...
