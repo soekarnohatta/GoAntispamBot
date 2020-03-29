@@ -11,6 +11,17 @@ import (
 
 var ctx = context.Background()
 
+const (
+	TEXT        = 0
+	BUTTON_TEXT = 1
+	STICKER     = 2
+	DOCUMENT    = 3
+	PHOTO       = 4
+	AUDIO       = 5
+	VOICE       = 6
+	VIDEO       = 7
+)
+
 func GetWelcomePrefs(chatID int) *model.Welcome {
 	var welcStruct = &model.Welcome{}
 	welcStruct.ChatId = chatID
@@ -55,80 +66,73 @@ func GetCleanWelcome(chatID int) int {
 // UserClickedButton Mark the user as a human
 func UserClickedButton(userID int, chatID int) {
 	mu := &model.MutedUser{UserId: userID, ChatId: chatID, ButtonClicked: true}
-	go mongoProvider.Update("welcome", chatID, bson.M{"$set": mu}, true)
+	go mongoProvider.Update("welcomebutton", chatID, bson.M{"$set": mu}, true)
 }
 
 // HasUserClickedButton Has the user clicked button to unmute themselves
 func HasUserClickedButton(userID int, chatID int) bool {
 	mu := &model.MutedUser{UserId: userID, ChatId: chatID}
-	SESSION.FirstOrInit(mu)
+	a := mongoProvider.FindOne("welcomebutton", mu)
+	if a != nil {
+		err := bson.Unmarshal(a, mu)
+		errHandler.Error(err)
+		return mu.ButtonClicked
+	}
 	return mu.ButtonClicked
 }
 
 // IsUserHuman Is the user a human
-func IsUserHuman(userID, chatID string) bool {
-	mu := &MutedUser{UserId: userID, ChatId: chatID}
-	return SESSION.First(mu).RowsAffected != 0
+func IsUserHuman(userID int, chatID int) bool {
+	mu := &model.MutedUser{UserId: userID, ChatId: chatID}
+	return mongoProvider.FindOne("welcomebutton", mu) != nil
 }
 
 // SetWelcPref Set whether to welcome or not
-func SetWelcPref(chatID string, pref bool) {
-	w := &Welcome{ChatId: chatID}
-	tx := SESSION.Begin()
-	tx.FirstOrCreate(w)
+func SetWelcPref(chatID int, pref bool) {
+	w := &model.Welcome{ChatId: chatID}
 	w.ShouldWelcome = pref
-	tx.Save(w)
-	tx.Commit()
+	go mongoProvider.Update("welcome", chatID, bson.M{"$set": w}, true)
+
 }
 
 // SetCustomWelcome Set the custom welcome string
-func SetCustomWelcome(chatID string, welcome string, buttons []WelcomeButton, welcType int) {
-	w := &Welcome{ChatId: chatID}
+func SetCustomWelcome(chatID int, welcome string, buttons []model.WelcomeButton, welcType int) {
+	w := &model.Welcome{ChatId: chatID}
 	if buttons == nil {
-		buttons = make([]WelcomeButton, 0)
+		buttons = make([]model.WelcomeButton, 0)
 	}
 
-	tx := SESSION.Begin()
-	prevButtons := make([]WelcomeButton, 0)
-	tx.Where(&WelcomeButton{ChatId: chatID}).Find(&prevButtons)
+	prevButtons := findButton(chatID)
 	for _, btn := range prevButtons {
-		tx.Delete(&btn)
+		go mongoProvider.Remove("welcomebutton", btn)
 	}
 
 	for _, btn := range buttons {
-		tx.Save(&btn)
+		go mongoProvider.Update("welcomebutton", chatID, btn, true)
 	}
 
-	tx.FirstOrCreate(w)
 	w.CustomWelcome = welcome
 	w.WelcomeType = welcType
-	tx.Save(w)
-	tx.Commit()
+	go mongoProvider.Update("welcome", chatID, w, true)
 }
 
 // GetDelPref Get Whether to delete service messages or not
-func GetDelPref(chatID string) bool {
+func GetDelPref(chatID int) bool {
 	return GetWelcomePrefs(chatID).DelJoined
 }
 
 // SetDelPref Set whether to delete service messages or not
-func SetDelPref(chatID string, pref bool) {
-	w := &Welcome{ChatId: chatID}
-	tx := SESSION.Begin()
-	tx.FirstOrCreate(w)
+func SetDelPref(chatID int, pref bool) {
+	w := GetWelcomePrefs(chatID)
 	w.DelJoined = pref
-	tx.Save(w)
-	tx.Commit()
+	go mongoProvider.Update("welcome", chatID, w, true)
 }
 
 // SetMutePref Set whether to mute users when they join or not
-func SetMutePref(chatID string, pref bool) {
-	w := &Welcome{ChatId: chatID}
-	tx := SESSION.Begin()
-	tx.FirstOrCreate(w)
+func SetMutePref(chatID int, pref bool) {
+	w := GetWelcomePrefs(chatID)
 	w.ShouldMute = pref
-	tx.Save(w)
-	tx.Commit()
+	go mongoProvider.Update("welcome", chatID, w, true)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
