@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
-	"github.com/PaulSonOfLars/gotgbot/ext/helpers"
 	"github.com/PaulSonOfLars/gotgbot/parsemode"
 	"html"
 	"strconv"
 	"strings"
 
 	"GoAntispamBot/bot/helpers/trans"
+	"GoAntispamBot/bot/helpers/user"
 	"GoAntispamBot/bot/model"
+	"GoAntispamBot/bot/providers/telegramProvider"
 	"GoAntispamBot/bot/services/welcomeService"
 )
 
@@ -29,6 +30,10 @@ var EnumFuncMap = map[int]func(ext.Bot, int, string) (*ext.Message, error){
 	welcomeService.VIDEO:       ext.Bot.SendVideoStr,
 }
 
+type NewMember struct {
+	TelegramProvider telegramProvider.TelegramProvider
+}
+
 func send(bot ext.Bot, u *gotgbot.Update, message string, keyboard *ext.InlineKeyboardMarkup, backupMessage string, reply bool) *ext.Message {
 	msg := bot.NewSendableMessage(u.EffectiveChat.Id, message)
 	msg.ParseMode = parsemode.Html
@@ -43,7 +48,7 @@ func send(bot ext.Bot, u *gotgbot.Update, message string, keyboard *ext.InlineKe
 	return m
 }
 
-func newMember(bot ext.Bot, u *gotgbot.Update) error {
+func (r NewMember) NewMember(bot ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 	newMembers := u.EffectiveMessage.NewChatMembers
 	welcPrefs := welcomeService.GetWelcomePrefs(chat.Id)
@@ -67,7 +72,7 @@ func newMember(bot ext.Bot, u *gotgbot.Update) error {
 			}
 			firstName = mem.FirstName
 			if len(mem.FirstName) <= 0 {
-				firstName = "PersonWithNoName"
+				firstName = "Unknown"
 			}
 
 			if welcPrefs.CustomWelcome != "" {
@@ -77,7 +82,7 @@ func newMember(bot ext.Bot, u *gotgbot.Update) error {
 					fullName = firstName
 				}
 				count, _ := chat.GetMembersCount()
-				mention := helpers.MentionHtml(mem.Id, firstName)
+				mention := user.MentionHtml(mem.Id, firstName)
 
 				if mem.Username != "" {
 					username = "@" + html.EscapeString(mem.Username)
@@ -100,7 +105,6 @@ func newMember(bot ext.Bot, u *gotgbot.Update) error {
 				buttons := welcomeService.GetWelcomeButtons(chat.Id)
 				if strings.Contains(welcPrefs.CustomWelcome, "{rules}") {
 					rulesButton := model.WelcomeButton{
-						Id:       0,
 						ChatId:   u.EffectiveChat.Id,
 						Name:     "Rules",
 						Url:      fmt.Sprintf("t.me/%v?start=%v", bot.UserName, u.EffectiveChat.Id),
@@ -108,7 +112,7 @@ func newMember(bot ext.Bot, u *gotgbot.Update) error {
 					}
 					buttons = append(buttons, rulesButton)
 				}
-				keyb = helpers.BuildWelcomeKeyboard(buttons)
+				keyb = user.BuildWelcomeKeyboard(buttons)
 			} else {
 				r := strings.NewReplacer("{first}", firstName)
 				res = r.Replace(welcomeService.DefaultWelcome)
@@ -142,18 +146,18 @@ func newMember(bot ext.Bot, u *gotgbot.Update) error {
 	return nil
 }
 
-func unmuteCallback(bot ext.Bot, u *gotgbot.Update) error {
+func (r NewMember) UnmuteCallback(bot ext.Bot, u *gotgbot.Update) error {
 	query := u.CallbackQuery
-	user := u.EffectiveUser
+	effectiveUser := u.EffectiveUser
 	chat := u.EffectiveChat
 
-	if !welcomeService.IsUserHuman(user.Id, chat.Id) {
-		if !welcomeService.HasUserClickedButton(user.Id, chat.Id) {
-			_, err := bot.UnRestrictChatMember(chat.Id, user.Id)
+	if !welcomeService.IsUserHuman(effectiveUser.Id, chat.Id) {
+		if !welcomeService.HasUserClickedButton(effectiveUser.Id, chat.Id) {
+			_, err := bot.UnRestrictChatMember(chat.Id, effectiveUser.Id)
 			if err != nil {
 				return err
 			}
-			go welcomeService.UserClickedButton(user.Id, chat.Id)
+			welcomeService.UserClickedButton(effectiveUser.Id, chat.Id)
 			_, _ = bot.AnswerCallbackQueryText(query.Id, "You've proved that you are a human! "+
 				"You can now talk in this group.", false)
 			return nil

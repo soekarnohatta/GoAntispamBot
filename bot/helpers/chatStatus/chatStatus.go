@@ -27,7 +27,7 @@ func RequireSudo(userID int, telegramProvider telegramProvider.TelegramProvider)
 }
 
 func RequireAdmin(userID int, telegramProvider telegramProvider.TelegramProvider) bool {
-	if !isAdmin(userID, telegramProvider.Message.Chat) {
+	if !IsAdmin(userID, telegramProvider.Message.Chat) {
 		go telegramProvider.SendText(
 			trans.GetString(telegramProvider.Message.Chat.Id, "error/noadmin"),
 			0,
@@ -69,7 +69,7 @@ func IsSudo(userID int) bool {
 	return contains(bot.BotConfig.SudoUsers, userID)
 }
 
-func isAdmin(userID int, chat *ext.Chat) bool {
+func IsAdmin(userID int, chat *ext.Chat) bool {
 	admins := redisProvider.Redis.Get(fmt.Sprintf("admin_%v", chat.Id))
 	if admins.Err() != redis.Nil {
 		doCreateAdminCache(chat)

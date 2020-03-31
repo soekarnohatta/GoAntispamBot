@@ -43,9 +43,7 @@ func init() {
 	returnConfig := BConfig{}                               // Initiate an empty BConfig struct.
 	err := godotenv.Load("bot/storage/configurations/.env") // Load env vars from a file
 	errHandler.Fatal(err)                                   // Creates fatal error when env file is not found.
-
-	err = env.Parse(returnConfig) // Parse the env vars.
-	errHandler.Fatal(err)         // Creates fatal error when env vars is empty.
-
-	BotConfig = returnConfig // Assign filled struct to the variable.
+	err = env.Parse(returnConfig)                           // Parse the env vars.
+	errHandler.Fatal(err)                                   // Creates fatal error when env vars is empty.
+	BotConfig = returnConfig                                // Assign filled struct to the variable.
 }

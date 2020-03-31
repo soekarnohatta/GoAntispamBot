@@ -12,14 +12,15 @@ import (
 var ctx = context.Background()
 
 const (
-	TEXT        = 0
-	BUTTON_TEXT = 1
-	STICKER     = 2
-	DOCUMENT    = 3
-	PHOTO       = 4
-	AUDIO       = 5
-	VOICE       = 6
-	VIDEO       = 7
+	TEXT           = 0
+	BUTTON_TEXT    = 1
+	STICKER        = 2
+	DOCUMENT       = 3
+	PHOTO          = 4
+	AUDIO          = 5
+	VOICE          = 6
+	VIDEO          = 7
+	DefaultWelcome = "Hi {first}!"
 )
 
 func GetWelcomePrefs(chatID int) *model.Welcome {

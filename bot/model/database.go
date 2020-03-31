@@ -1,9 +1,5 @@
 package model
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
-
 type (
 	// Struct Lang holds the language preference of a chat or an user.
 	Lang struct {
@@ -65,11 +61,10 @@ type (
 	}
 
 	WelcomeButton struct {
-		Id       primitive.ObjectID `bson:"_id,omitempty"`
-		ChatId   int                `bson:"chat_id"`
-		Name     string             `bson:"btn_text"`
-		Url      string             `bson:"btn_url"`
-		SameLine bool               `bson:"btn_sameline"`
+		ChatId   int    `bson:"chat_id"`
+		Name     string `bson:"btn_text"`
+		Url      string `bson:"btn_url"`
+		SameLine bool   `bson:"btn_sameline"`
 	}
 
 	MutedUser struct {
