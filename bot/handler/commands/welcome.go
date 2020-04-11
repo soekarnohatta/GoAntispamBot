@@ -1,50 +1,51 @@
 package commands
 
 import (
-	"fmt"
-	"github.com/PaulSonOfLars/gotgbot"
-	"github.com/PaulSonOfLars/gotgbot/ext"
-	"strconv"
-	"strings"
-
 	"GoAntispamBot/bot/handler/events"
 	"GoAntispamBot/bot/helpers/chatStatus"
-	"GoAntispamBot/bot/helpers/user"
+	"GoAntispamBot/bot/helpers/extraction"
+	"GoAntispamBot/bot/helpers/message"
+	"GoAntispamBot/bot/helpers/trans"
 	"GoAntispamBot/bot/model"
+	"GoAntispamBot/bot/providers/telegramProvider"
 	"GoAntispamBot/bot/services/welcomeService"
+	"fmt"
+	"strings"
+
+	"github.com/PaulSonOfLars/gotgbot"
+	"github.com/PaulSonOfLars/gotgbot/ext"
 )
 
-func welcome(bot ext.Bot, u *gotgbot.Update, args []string) error {
+type CommandWelcome struct {
+	TelegramProvider telegramProvider.TelegramProvider
+}
+
+func (r CommandWelcome) Welcome(bot ext.Bot, u *gotgbot.Update, args []string) error {
+	r.TelegramProvider.Init(u)
 	chat := u.EffectiveChat
+	user := u.EffectiveUser
 
-	if u.EffectiveChat.Type == "private" {
-		_, err := u.EffectiveMessage.ReplyText("This command is meant to be used in a group!")
-		return err
-	}
-
-	if !chatStatus.IsAdmin(chat, u.EffectiveUser.Id) {
-		_, _ = u.EffectiveMessage.ReplyText("You need to be an admin to do this.")
-		return gotgbot.ContinueGroups{}
+	if !chatStatus.RequireSuperGroup(r.TelegramProvider) || !chatStatus.RequireAdmin(user.Id, r.TelegramProvider) {
+		return nil
 	}
 
 	if len(args) == 0 || strings.ToLower(args[0]) == "noformat" {
 		noformat := len(args) > 0 && strings.ToLower(args[0]) == "noformat"
-		welcPrefs := welcomeService.GetWelcomePrefs(strconv.Itoa(chat.Id))
-		_, _ = u.EffectiveMessage.ReplyHTMLf("I am currently welcoming users: <code>%v</code>"+
-			"\nI am currently deleting old welcomes: <code>%v</code>"+
-			"\nI am currently deleting service messages: <code>%v</code>"+
-			"\nOn joining, I am currently muting users: <code>%v</code>"+
-			"\nThe welcome message not filling the {} is:",
-			welcPrefs.ShouldWelcome,
-			welcPrefs.CleanWelcome != 0,
-			welcPrefs.DelJoined,
-			welcPrefs.ShouldMute)
+		welcPrefs := welcomeService.GetWelcomePrefs(chat.Id)
+		go r.TelegramProvider.ReplyText(
+			trans.GetStringf(
+				chat.Id, "action/welcomepref",
+				map[string]string{
+					"1": fmt.Sprint(welcPrefs.ShouldWelcome),
+					"2": fmt.Sprint(welcPrefs.CleanWelcome != 0),
+					"3": fmt.Sprint(welcPrefs.DelJoined),
+					"4": fmt.Sprint(welcPrefs.ShouldMute)}),
+		)
 
 		if welcPrefs.WelcomeType == welcomeService.BUTTON_TEXT {
 			buttons := welcomeService.GetWelcomeButtons(chat.Id)
 			if strings.Contains(welcPrefs.CustomWelcome, "{rules}") {
 				rulesButton := model.WelcomeButton{
-					Id:       0,
 					ChatId:   u.EffectiveChat.Id,
 					Name:     "Rules",
 					Url:      fmt.Sprintf("t.me/%v?start=%v", bot.UserName, u.EffectiveChat.Id),
@@ -54,54 +55,42 @@ func welcome(bot ext.Bot, u *gotgbot.Update, args []string) error {
 				strings.ReplaceAll(welcPrefs.CustomWelcome, "{rules}", "")
 			}
 			if noformat {
-				welcPrefs.CustomWelcome += user.RevertButtons(buttons)
-				_, err := u.EffectiveMessage.ReplyHTML(welcPrefs.CustomWelcome)
-				return err
-			} else {
-				keyb := user.BuildWelcomeKeyboard(buttons)
-				keyboard := ext.InlineKeyboardMarkup{InlineKeyboard: &keyb}
-				events.send(bot, u, welcPrefs.CustomWelcome, &keyboard, welcomeService.DefaultWelcome, !welcPrefs.DelJoined)
+				welcPrefs.CustomWelcome += message.RevertButtons(buttons)
+				go r.TelegramProvider.ReplyText(welcPrefs.CustomWelcome)
+				return nil
 			}
+
+			keyb := message.BuildWelcomeKeyboard(buttons)
+			keyboard := ext.InlineKeyboardMarkup{InlineKeyboard: &keyb}
+			events.Send(bot, u, welcPrefs.CustomWelcome, &keyboard, welcomeService.DefaultWelcome, !welcPrefs.DelJoined)
+
 		} else {
 			_, err := events.EnumFuncMap[welcPrefs.WelcomeType](bot, chat.Id, welcPrefs.CustomWelcome) // needs change
 			return err
 		}
 	} else if len(args) >= 1 {
-		switch strings.ToLower(args[0]) {
-		case "on", "yes":
-			welcomeService.SetWelcPref(strconv.Itoa(chat.Id), true)
-			_, err := u.EffectiveMessage.ReplyText("I'll welcome users from now on.")
-			return err
-		case "off", "no":
-			welcomeService.SetWelcPref(strconv.Itoa(chat.Id), false)
-			_, err := u.EffectiveMessage.ReplyText("I'll not welcome users from now on.")
-			return err
-		default:
-			_, err := u.EffectiveMessage.ReplyText("I understand 'on/yes' or 'off/no' only!")
-			return err
-		}
+		extractBool, _ := extraction.ExtractBool(r.TelegramProvider, strings.ToLower(args[0]))
+		welcomeService.SetWelcPref(chat.Id, extractBool)
+		go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "action/updset"))
+		return nil
+
 	}
 	return nil
 }
 
-func setWelcome(_ ext.Bot, u *gotgbot.Update) error {
+func (r CommandWelcome) SetWelcome(_ ext.Bot, u *gotgbot.Update) error {
+	r.TelegramProvider.Init(u)
 	chat := u.EffectiveChat
 	msg := u.EffectiveMessage
 
-	if u.EffectiveChat.Type == "private" {
-		_, err := u.EffectiveMessage.ReplyText("This command is meant to be used in a group!")
-		return err
+	if !chatStatus.RequireSuperGroup(r.TelegramProvider) || !chatStatus.RequireAdmin(msg.From.Id, r.TelegramProvider) {
+		return nil
 	}
 
-	if !chatStatus.IsAdmin(chat, u.EffectiveUser.Id) {
-		_, _ = u.EffectiveMessage.ReplyText("You need to be an admin to do this.")
-		return gotgbot.ContinueGroups{}
-	}
-
-	text, dataType, content, buttons := user.GetWelcomeType(msg)
+	text, dataType, content, buttons := message.GetWelcomeType(msg)
 	if dataType == -1 {
-		_, err := msg.ReplyText("You didn't specify what to reply with!")
-		return err
+		go r.TelegramProvider.ReplyText("error/wlcspecifyerror")
+		return nil
 	}
 
 	btns := make([]model.WelcomeButton, len(buttons))
@@ -120,122 +109,101 @@ func setWelcome(_ ext.Bot, u *gotgbot.Update) error {
 		welcomeService.SetCustomWelcome(chat.Id, content, btns, dataType)
 	}
 
-	_, err := msg.ReplyText("Successfully set custom welcome message!")
-	return err
+	go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "action/updwlcm"))
+	return nil
 }
 
-func resetWelcome(_ ext.Bot, u *gotgbot.Update) error {
+func (r CommandWelcome) ResetWelcome(_ ext.Bot, u *gotgbot.Update) error {
+	r.TelegramProvider.Init(u)
 	chat := u.EffectiveChat
+	msg := u.EffectiveMessage
 
-	if u.EffectiveChat.Type == "private" {
-		_, err := u.EffectiveMessage.ReplyText("This command is meant to be used in a group!")
-		return err
+	if !chatStatus.RequireSuperGroup(r.TelegramProvider) || !chatStatus.RequireAdmin(msg.From.Id, r.TelegramProvider) {
+		return nil
 	}
 
-	if !chatStatus.IsAdmin(chat, u.EffectiveUser.Id) {
-		_, _ = u.EffectiveMessage.ReplyText("You need to be an admin to do this.")
-		return gotgbot.ContinueGroups{}
-	}
-
-	go welcomeService.SetCustomWelcome(strconv.Itoa(chat.Id), welcomeService.DefaultWelcome, nil, welcomeService.TEXT)
-
-	_, err := u.EffectiveMessage.ReplyText("Succesfully reset custom welcome message to default!")
-	return err
+	welcomeService.SetCustomWelcome(chat.Id, welcomeService.DefaultWelcome, nil, welcomeService.TEXT)
+	go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "action/updreset"))
+	return nil
 }
 
-func cleanWelcome(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func (r CommandWelcome) CleanWelcome(_ ext.Bot, u *gotgbot.Update, args []string) error {
+	r.TelegramProvider.Init(u)
 	chat := u.EffectiveChat
+	msg := u.EffectiveMessage
 
-	if u.EffectiveChat.Type == "private" {
-		_, err := u.EffectiveMessage.ReplyText("This command is meant to be used in a group!")
-		return err
-	}
-
-	if !chatStatus.IsAdmin(chat, u.EffectiveUser.Id) {
-		_, _ = u.EffectiveMessage.ReplyText("You need to be an admin to do this.")
-		return gotgbot.ContinueGroups{}
+	if !chatStatus.RequireSuperGroup(r.TelegramProvider) || !chatStatus.RequireAdmin(msg.From.Id, r.TelegramProvider) {
+		return nil
 	}
 
 	if len(args) == 0 {
-		cleanPref := welcomeService.GetCleanWelcome(strconv.Itoa(chat.Id))
+		cleanPref := welcomeService.GetCleanWelcome(chat.Id)
 		if cleanPref != 0 {
-			_, err := u.EffectiveMessage.ReplyText("I should be deleting welcome messages up to two days old.")
-			return err
+			go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/upddelwlcm"))
+			return nil
 		} else {
-			_, err := u.EffectiveMessage.ReplyText("I'm currently not deleting old welcome messages!")
-			return err
+			go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/updnotdelwlcm"))
+			return nil
 		}
 	}
 
-	switch strings.ToLower(args[0]) {
-	case "off", "no":
-		welcomeService.SetCleanWelcome(strconv.Itoa(chat.Id), 0)
-		_, err := u.EffectiveMessage.ReplyText("I'll try to delete old welcome messages!")
-		return err
-	case "on", "yes":
-		welcomeService.SetCleanWelcome(strconv.Itoa(chat.Id), 1)
-		_, err := u.EffectiveMessage.ReplyText("I'll try to delete old welcome messages!")
-		return err
-	default:
-		_, err := u.EffectiveMessage.ReplyText("I understand 'on/yes' or 'off/no' only!")
-		return err
+	extractBool, _ := extraction.ExtractBool(r.TelegramProvider, strings.ToLower(args[0]))
+	switch extractBool {
+	case true:
+		welcomeService.SetCleanWelcome(chat.Id, 1)
+		go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/upddelwlcm"))
+	case false:
+		welcomeService.SetCleanWelcome(chat.Id, 0)
+		go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/updnotdelwlcm"))
 	}
+	return nil
 }
 
-func delJoined(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func (r CommandWelcome) DelJoined(_ ext.Bot, u *gotgbot.Update, args []string) error {
+	r.TelegramProvider.Init(u)
 	chat := u.EffectiveChat
+	msg := u.EffectiveMessage
 
-	if u.EffectiveChat.Type == "private" {
-		_, err := u.EffectiveMessage.ReplyText("This command is meant to be used in a group!")
-		return err
-	}
-
-	if !chatStatus.IsAdmin(chat, u.EffectiveUser.Id) {
-		_, _ = u.EffectiveMessage.ReplyText("You need to be an admin to do this.")
-		return gotgbot.ContinueGroups{}
+	if !chatStatus.RequireSuperGroup(r.TelegramProvider) || !chatStatus.RequireAdmin(msg.From.Id, r.TelegramProvider) {
+		return nil
 	}
 
 	if len(args) == 0 {
-		delPref := welcomeService.GetDelPref(strconv.Itoa(chat.Id))
+		delPref := welcomeService.GetDelPref(chat.Id)
 		if delPref {
-			_, err := u.EffectiveMessage.ReplyMarkdown("I should be deleting `user` joined the chat messages now.")
-			return err
+			_, _ = u.EffectiveMessage.ReplyMarkdown("I should be deleting `user` joined the chat messages now.")
+			return nil
 		} else {
-			_, err := u.EffectiveMessage.ReplyText("I'm currently not deleting joined messages.")
-			return err
+			_, _ = u.EffectiveMessage.ReplyText("I'm currently not deleting joined messages.")
+			return nil
 		}
 	}
 
-	switch strings.ToLower(args[0]) {
-	case "off", "no":
+	extractBool, _ := extraction.ExtractBool(r.TelegramProvider, args[0])
+	switch extractBool {
+	case false:
 		welcomeService.SetDelPref(chat.Id, false)
-		_, err := u.EffectiveMessage.ReplyText("I won't delete joined messages.")
-		return err
-	case "on", "yes":
+		go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/upddeljoin"))
+		return nil
+	case true:
 		welcomeService.SetDelPref(chat.Id, true)
-		_, err := u.EffectiveMessage.ReplyText("I'll try to delete joined messages!")
-		return err
-	default:
-		_, err := u.EffectiveMessage.ReplyText("I understand 'on/yes' or 'off/no' only!")
-		return err
+		go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/upddeljoin"))
+		return nil
 	}
+	return nil
 }
 
-func welcomeMute(_ ext.Bot, u *gotgbot.Update, args []string) error {
+func (r CommandWelcome) WelcomeMute(_ ext.Bot, u *gotgbot.Update, args []string) error {
+	r.TelegramProvider.Init(u)
 	chat := u.EffectiveChat
+	msg := u.EffectiveMessage
 
-	if u.EffectiveChat.Type == "private" {
-		_, err := u.EffectiveMessage.ReplyText("This command is meant to be used in a group!")
-		return err
-	}
-
-	if !chatStatus.IsAdmin(chat, u.EffectiveUser.Id) {
-		_, _ = u.EffectiveMessage.ReplyText("You need to be an admin to do this.")
-		return gotgbot.ContinueGroups{}
+	if !chatStatus.RequireSuperGroup(r.TelegramProvider) || !chatStatus.RequireAdmin(msg.From.Id, r.TelegramProvider) {
+		return nil
 	}
 
 	if len(args) == 0 {
-		welcPref := welcomeService.GetWelcomePrefs(strconv.Itoa(chat.Id))
+		welcPref := welcomeService.GetWelcomePrefs(chat.Id)
 		if welcPref.ShouldMute {
 			_, err := u.EffectiveMessage.ReplyMarkdown("I'm currently muting users when they join.")
 			return err
@@ -245,17 +213,16 @@ func welcomeMute(_ ext.Bot, u *gotgbot.Update, args []string) error {
 		}
 	}
 
-	switch strings.ToLower(args[0]) {
-	case "off", "no":
+	extractBool, _ := extraction.ExtractBool(r.TelegramProvider, args[0])
+	switch extractBool {
+	case false:
 		welcomeService.SetMutePref(chat.Id, false)
-		_, err := u.EffectiveMessage.ReplyText("I won't mute new users when they join.")
-		return err
-	case "on", "yes":
+		go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/updwelcmute"))
+		return nil
+	case true:
 		welcomeService.SetMutePref(chat.Id, true)
-		_, err := u.EffectiveMessage.ReplyText("I'll try to mute new users when they join!")
-		return err
-	default:
-		_, err := u.EffectiveMessage.ReplyText("I understand 'on/yes' or 'off/no' only!")
-		return err
+		go r.TelegramProvider.ReplyText(trans.GetString(chat.Id, "actions/updwelcmute"))
+		return nil
 	}
+	return nil
 }

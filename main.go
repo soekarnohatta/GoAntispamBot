@@ -11,7 +11,7 @@ import (
 	"GoAntispamBot/bot/helpers/errHandler"
 )
 
-var Prefix = []rune{'!', '/'}
+var prefix = []rune{'!', '/'}
 
 func registerHandlers(u *gotgbot.Updater) {
 	//Message handler(s)
@@ -22,15 +22,15 @@ func registerHandlers(u *gotgbot.Updater) {
 	u.Dispatcher.AddHandler(handlers.NewRegex("(^ping|/ping)", handler.Handler{}.PingHandler))
 
 	//Command handler(s)
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("lang", Prefix, commands.CommandLang{}.SetLang))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("fban", Prefix, commands.CommandAdmin{}.BanUser))
-	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("unfban", Prefix, commands.CommandAdmin{}.UnBanUser))
-	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("dbg", Prefix, commands.CommandAdmin{}.Debug))
-	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("start", Prefix, commands.CommandStart{}.Start))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("lang", prefix, commands.CommandLang{}.SetLang))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("fban", prefix, commands.CommandAdmin{}.BanUser))
+	u.Dispatcher.AddHandler(handlers.NewPrefixArgsCommand("unfban", prefix, commands.CommandAdmin{}.UnBanUser))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("dbg", prefix, commands.CommandAdmin{}.Debug))
+	u.Dispatcher.AddHandler(handlers.NewPrefixCommand("start", prefix, commands.CommandStart{}.Start))
 }
 
 func run() {
-	updater, err := gotgbot.NewUpdater(bot.BotConfig.BotApiKey)
+	updater, err := gotgbot.NewUpdater(bot.BotConfig.BotAPIKey, nil)
 	errHandler.Fatal(err)
 	registerHandlers(updater) // Register all defined handler(s)
 	err = updater.StartCleanPolling()

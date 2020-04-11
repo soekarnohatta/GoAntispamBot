@@ -38,7 +38,8 @@ func (r Handler) UsernameHandler(_ ext.Bot, u *gotgbot.Update) error {
 						map[string]string{"1": ""}),
 					0,
 					0,
-					nil)
+					nil,
+				)
 			}
 		}
 	}
@@ -59,7 +60,8 @@ func (r Handler) PictureHandler(_ ext.Bot, u *gotgbot.Update) error {
 						map[string]string{"1": ""}),
 					0,
 					0,
-					nil)
+					nil,
+				)
 			}
 		}
 	}

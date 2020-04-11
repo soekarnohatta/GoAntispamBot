@@ -7,6 +7,8 @@ github.com/PaulSonOfLars/gotgbot v0.0.0-20200123214243-abe3d8f5395b h1:SVmOBUHrW
 github.com/PaulSonOfLars/gotgbot v0.0.0-20200123214243-abe3d8f5395b/go.mod h1:dNsA+VMYN8q19nmQR4FcYTGtywF7TRCRSwJA3/HLRZQ=
 github.com/PaulSonOfLars/gotgbot v0.0.0-20200330211603-cdf2c9b8d936 h1:n9Dj4qjoUg5ezB0Fxkx2XuQagIA0U2vNXynkBMr0zgo=
 github.com/PaulSonOfLars/gotgbot v0.0.0-20200330211603-cdf2c9b8d936/go.mod h1:MEPPNkHZkNgevbRyW5py9Bt3BZf6HTKqbXbsfxuyDQ0=
+github.com/PaulSonOfLars/gotgbot v0.0.0-20200331140601-15d9cb174706 h1:s329ydR9l29mufM75glqm/bPknypg3tgvTIyPWwjnVg=
+github.com/PaulSonOfLars/gotgbot v0.0.0-20200331140601-15d9cb174706/go.mod h1:MEPPNkHZkNgevbRyW5py9Bt3BZf6HTKqbXbsfxuyDQ0=
 github.com/caarlos0/env v3.5.0+incompatible h1:Yy0UN8o9Wtr/jGHZDpCBLpNrzcFLLM2yixi/rBrKyJs=
 github.com/caarlos0/env v3.5.0+incompatible/go.mod h1:tdCsowwCzMLdkqRYDlHpZCp2UooDD3MspDBjZ2AD02Y=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

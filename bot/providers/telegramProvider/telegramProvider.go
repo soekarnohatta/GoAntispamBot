@@ -41,6 +41,29 @@ func (r TelegramProvider) Init(u *gotgbot.Update) {
 	}
 }
 
+func (r TelegramProvider) ReplyText(txtToSend string) {
+	chatID := r.Message.Chat.Id
+
+	sendMsg := r.Bot.NewSendableMessage(chatID, txtToSend)
+	sendMsg.ReplyToMessageId = r.Message.MessageId
+	sendMsg.DisableWebPreview = true
+	sendMsg.ParseMode = parsemode.Html
+	sendMsg.DisableNotification = false
+	send, err := sendMsg.Send()
+	if err != nil {
+		if err.Error() == errorProvider.RepMsgNotFound {
+			sendMsg.ReplyToMessageId = 0
+			_, _ = sendMsg.Send()
+		} else {
+			return
+		}
+	}
+
+	if send != nil {
+		r.SentMessageID = send.MessageId
+	}
+}
+
 func (r TelegramProvider) SendText(txtToSend string, chatID int, repMsgID int, btn *ext.InlineKeyboardMarkup) {
 	if chatID == 0 {
 		chatID = r.Message.Chat.Id
