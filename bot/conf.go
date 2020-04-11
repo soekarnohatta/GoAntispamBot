@@ -1,28 +1,25 @@
-/*
-Package "bot" is a package that defines all bot actions made.
-This package should has all bot action(s) to an event.
-*/
+// Package bot contains bot configurations to be used by other funcs.
 package bot
 
 import (
+	"GoAntispamBot/bot/helpers/errHandler"
+
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
-
-	"GoAntispamBot/bot/helpers/errHandler"
 )
 
-// Struct "BConfig" is a set of bot's configurations.
+// BConfig is a set of bot's configurations.
 type BConfig struct {
 	// Bot configs
-	BotApiKey    string `env:"BOT_API_KEY,required"`
+	BotAPIKey    string `env:"BOT_API_KEY,required"`
 	CleanPolling bool   `env:"CLEAN_POLLING,required"`
-	WebhookUrl   string `env:"WEBHOOK_URL,required"`
+	WebhookURL   string `env:"WEBHOOK_URL,required"`
 	WebhookPath  string `env:"WEBHOOK_PATH,required"`
 	WebhookServe string `env:"WEBHOOK_SERVE,required"`
 	WebhookPort  int    `env:"WEBHOOK_PORT,required"`
 
 	// User configs
-	OwnerId   int   `env:"OWNER_ID,required"`
+	OwnerID   int   `env:"OWNER_ID,required"`
 	LogEvent  int   `env:"LOG_EVENT,required"`
 	LogBan    int   `env:"LOG_BAN,required"`
 	MainGrp   int   `env:"MAIN_GRP,required"`

@@ -1,8 +1,8 @@
 // Package extraction is a package that handles something to extract.
-// This package should handle all extractions activity.
 package extraction
 
 import (
+	"errors"
 	"github.com/PaulSonOfLars/gotgbot/ext"
 	"strconv"
 	"strings"
@@ -100,4 +100,24 @@ func ExtractUserText(telegramProvider telegramProvider.TelegramProvider, args []
 	}
 
 	return 0, ""
+}
+
+// ExtractBool will return bool from given arguments.
+func ExtractBool(telegramProvider telegramProvider.TelegramProvider, arg string) (bool, error) {
+	if arg != "" {
+		switch arg {
+		case "on", "yes", "true", "ya":
+			return true, nil
+		case "off", "no", "false", "tidak":
+			return false, nil
+		default:
+			go telegramProvider.SendText(
+				trans.GetStringf(telegramProvider.Message.Chat.Id, "error/wrongbool", map[string]string{"1": arg}),
+				telegramProvider.Message.Chat.Id,
+				telegramProvider.Message.MessageId,
+				nil,
+			)
+			return false, errors.New("wrong bool")
+		}
+	}
 }

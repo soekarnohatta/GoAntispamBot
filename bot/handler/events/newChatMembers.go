@@ -1,6 +1,7 @@
 package events
 
 import (
+	"GoAntispamBot/bot/helpers/message"
 	"fmt"
 	"github.com/PaulSonOfLars/gotgbot"
 	"github.com/PaulSonOfLars/gotgbot/ext"
@@ -10,7 +11,6 @@ import (
 	"strings"
 
 	"GoAntispamBot/bot/helpers/trans"
-	"GoAntispamBot/bot/helpers/user"
 	"GoAntispamBot/bot/model"
 	"GoAntispamBot/bot/providers/telegramProvider"
 	"GoAntispamBot/bot/services/welcomeService"
@@ -30,11 +30,12 @@ var EnumFuncMap = map[int]func(ext.Bot, int, string) (*ext.Message, error){
 	welcomeService.VIDEO:       ext.Bot.SendVideoStr,
 }
 
+// NewMember is a collection of handlers that are handling new members
 type NewMember struct {
 	TelegramProvider telegramProvider.TelegramProvider
 }
 
-func send(bot ext.Bot, u *gotgbot.Update, message string, keyboard *ext.InlineKeyboardMarkup, backupMessage string, reply bool) *ext.Message {
+func Send(bot ext.Bot, u *gotgbot.Update, message string, keyboard *ext.InlineKeyboardMarkup, backupMessage string, reply bool) *ext.Message {
 	msg := bot.NewSendableMessage(u.EffectiveChat.Id, message)
 	msg.ParseMode = parsemode.Html
 	if reply {
@@ -48,7 +49,8 @@ func send(bot ext.Bot, u *gotgbot.Update, message string, keyboard *ext.InlineKe
 	return m
 }
 
-func (r NewMember) NewMember(bot ext.Bot, u *gotgbot.Update) error {
+// NewMemberHandler handles all incoming updates of new members.
+func (r NewMember) NewMemberHandler(bot ext.Bot, u *gotgbot.Update) error {
 	chat := u.EffectiveChat
 	newMembers := u.EffectiveMessage.NewChatMembers
 	welcPrefs := welcomeService.GetWelcomePrefs(chat.Id)
@@ -82,7 +84,7 @@ func (r NewMember) NewMember(bot ext.Bot, u *gotgbot.Update) error {
 					fullName = firstName
 				}
 				count, _ := chat.GetMembersCount()
-				mention := user.MentionHtml(mem.Id, firstName)
+				mention := message.MentionHtml(mem.Id, firstName)
 
 				if mem.Username != "" {
 					username = "@" + html.EscapeString(mem.Username)
@@ -112,7 +114,7 @@ func (r NewMember) NewMember(bot ext.Bot, u *gotgbot.Update) error {
 					}
 					buttons = append(buttons, rulesButton)
 				}
-				keyb = user.BuildWelcomeKeyboard(buttons)
+				keyb = message.BuildWelcomeKeyboard(buttons)
 			} else {
 				r := strings.NewReplacer("{first}", firstName)
 				res = r.Replace(welcomeService.DefaultWelcome)
@@ -131,7 +133,7 @@ func (r NewMember) NewMember(bot ext.Bot, u *gotgbot.Update) error {
 
 			keyboard := &ext.InlineKeyboardMarkup{InlineKeyboard: &keyb}
 			r := strings.NewReplacer("{first}", firstName)
-			sent := send(bot, u, res, keyboard, r.Replace(welcomeService.DefaultWelcome), !welcPrefs.DelJoined)
+			sent := Send(bot, u, res, keyboard, r.Replace(welcomeService.DefaultWelcome), !welcPrefs.DelJoined)
 
 			if welcPrefs.CleanWelcome != 0 {
 				_, _ = bot.DeleteMessage(chat.Id, welcPrefs.CleanWelcome)
@@ -146,6 +148,8 @@ func (r NewMember) NewMember(bot ext.Bot, u *gotgbot.Update) error {
 	return nil
 }
 
+// UnmuteCallback is a handler to handle unmute callback from verification button
+// this should help to prevent spammer.
 func (r NewMember) UnmuteCallback(bot ext.Bot, u *gotgbot.Update) error {
 	query := u.CallbackQuery
 	effectiveUser := u.EffectiveUser

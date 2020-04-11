@@ -30,19 +30,9 @@ func (r CommandAdmin) BanUser(_ ext.Bot, u *gotgbot.Update, args []string) error
 
 	userID, reason := extraction.ExtractUserText(r.TelegramProvider, args)
 	if userID == 0 {
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "error/userinvalid"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "error/userinvalid"))
 	} else if chatStatus.IsSudo(userID) {
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "error/userissudo"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "error/userissudo"))
 	} else if reason == "" {
 		reason = "None Specified"
 	}
@@ -51,12 +41,7 @@ func (r CommandAdmin) BanUser(_ ext.Bot, u *gotgbot.Update, args []string) error
 	if res != nil && err == nil {
 		res.Reason = reason
 		securityService.UpdateGlobalBan(*res)
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "actions/updgban"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "actions/updgban"))
 	} else {
 		banStruct := model.GlobalBan{
 			UserID:     userID,
@@ -66,12 +51,7 @@ func (r CommandAdmin) BanUser(_ ext.Bot, u *gotgbot.Update, args []string) error
 			TimeAdded:  int(time.Now().Unix()),
 		}
 		securityService.UpdateGlobalBan(banStruct)
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "actions/newgban"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "actions/newgban"))
 	}
 	return nil
 }
@@ -86,30 +66,15 @@ func (r CommandAdmin) UnBanUser(_ ext.Bot, u *gotgbot.Update, args []string) err
 
 	target, _ := strconv.Atoi(args[0])
 	if chatStatus.IsSudo(target) {
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "error/userissudo"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "error/userissudo"))
 	}
 
 	res, err := securityService.FindGlobalBan(target)
 	if res != nil && err == nil {
 		securityService.RemoveGlobalBan(target)
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "actions/ungban"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "actions/ungban"))
 	} else {
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "error/userinvalid"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "error/userinvalid"))
 	}
 	return nil
 }

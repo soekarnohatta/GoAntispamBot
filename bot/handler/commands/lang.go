@@ -25,22 +25,12 @@ func (r CommandLang) SetLang(b ext.Bot, u *gotgbot.Update, args []string) error 
 
 	if args != nil {
 		if !goloc.IsLangSupported(args[0]) {
-			go r.TelegramProvider.SendText(
-				trans.GetString(msg.Chat.Id, "error/langnotsupp"),
-				msg.Chat.Id,
-				0,
-				nil,
-			)
+			go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "error/langnotsupp"))
 			return nil
 		}
 
 		langService.UpdateLang(msg.Chat.Id, args[0])
-		go r.TelegramProvider.SendText(
-			trans.GetString(msg.Chat.Id, "actions/changelang"),
-			msg.Chat.Id,
-			0,
-			nil,
-		)
+		go r.TelegramProvider.ReplyText(trans.GetString(msg.Chat.Id, "actions/changelang"))
 		return nil
 	}
 	return nil

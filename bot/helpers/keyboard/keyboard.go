@@ -12,7 +12,7 @@ import (
 	"GoAntispamBot/bot/model"
 )
 
-// This function will handle buttons creation from a json file
+// BuildKeyboard will handle buttons creation from a json file
 // and defined size.
 func BuildKeyboard(path string, size int) (res [][]ext.InlineKeyboardButton) {
 	jsonFile, err := os.Open(path)

@@ -1,5 +1,5 @@
 /*
-Package "services" is a package that provides services to be used by other funcs.
+Package langService is a package that provides services to be used by other funcs.
 This package should has all services for the bot.
 */
 package langService
